@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+
+    </script>
+
+</head>
+<body>
+<img id="guy" src="img/woody_s.bmp" style="position:absolute;">
+
+<script type="text/javascript">
+    //setInterval(movePlane, 20);
+    //var keys = {};
+//
+    //$(document).keydown(function(key) {
+    //    keys[key.keyCode] = true;
+//
+    //});
+//
+    //$(document).keyup(function(key) {
+    //    delete keys[key.keyCode];
+    //});
+//
+//
+    //function movePlane() {
+    //    for (var direction in keys) {
+    //        if (!keys.hasOwnProperty(direction)) continue;
+    //        if (direction == 37) {
+    //            $("#guy").animate({left: "-=5"}, 0);
+    //        }
+    //        if (direction == 38) {
+    //            $("#guy").animate({top: "-=5"}, 0);
+    //        }
+    //        if (direction == 39) {
+    //            $("#guy").animate({left: "+=5"}, 0);
+    //        }
+    //        if (direction == 40) {
+    //            $("#guy").animate({top: "+=5"}, 0);
+    //        }
+    //    }
+    //}
+
+    var timer;
+    var keyStatus = [];
+    timer = setInterval(checkActionMove, 20);
+
+    //when key pressed call the function
+    $(document).keydown(function(key){
+        keyStatus[key.keyCode] = true;
+    });
+
+    $(document).keyup(function(key){
+        //keyStatus[key.keyCode] = false;
+        delete keyStatus[key.keyCode];
+    });
+
+    //function checkKey(){
+    //    clearInterval(timer);
+    //    console.log(keyStatus.length !== 0);
+    //    if(keyStatus.length !== 0){
+    //
+    //    }
+    //}
+
+    function checkActionMove() {
+            //if (keyStatus[37] && keyStatus[38]){//left & up
+            //    //console.log("37"+ keyStatus[37]+" 38"+keyStatus[38]);
+            //    $("#guy").animate({left: "-=5"}, 0);
+            //    $("#guy").animate({top: "-=5"}, 0);
+            //}
+            //else if (keyStatus[37] && keyStatus[40]){//left & down
+            //    //console.log("37"+ keyStatus[37]+" 40"+keyStatus[40]);
+            //    $("#guy").animate({left: "-=5"}, 0);
+            //    $("#guy").animate({top: "+=5"}, 0);
+            //}
+            //else if (keyStatus[39] && keyStatus[38]){//right & up
+            //    //console.log("39"+ keyStatus[39]+" 38"+keyStatus[38]);
+            //    $("#guy").animate({left: "+=5"}, 0);
+            //    $("#guy").animate({top: "-=5"}, 0);
+            //}
+            //else if (keyStatus[39] && keyStatus[40]){//right & down
+            //    //console.log("39"+ keyStatus[39]+" 40"+keyStatus[40]);
+            //    $("#guy").animate({left: "+=5"}, 0);
+            //    $("#guy").animate({top: "+=5"}, 0);
+            //}
+            if (keyStatus[37]){//left
+                //console.log("37"+ keyStatus[37]);
+                $("#guy").animate({left: "-=5"}, 0);
+            }
+            if (keyStatus[38]){//up
+                //console.log("38"+ keyStatus[38]);
+                $("#guy").animate({top: "-=5"}, 0);
+            }
+            if (keyStatus[39]){//right
+                //console.log("39"+ keyStatus[39]);
+                $("#guy").animate({left: "+=5"}, 0);
+            }
+            if (keyStatus[40]){//down
+                //console.log("40"+ keyStatus[40]);
+                $("#guy").animate({top: "+=5"}, 0);
+            }
+
+        //switch (key.keyCode) {
+        //    case 37://left & up
+        //        $("#guy").animate({left: "-=5"}, 0);
+        //        $("#plane").animate({top: "-=5"}, 0);
+        //        break;
+        //    case 38://left & down
+        //        $("#guy").animate({top: "-=5"}, 0);
+        //        $("#plane").animate({top: "+=5"}, 0);
+        //        break;
+        //    case 39://right & up
+        //        $("#guy").animate({left: "+=5"}, 0);
+        //        $("#plane").animate({top: "-=5"}, 0);
+        //        break;
+        //    case 40://right & down
+        //        $("#guy").animate({top: "+=5"}, 0);
+        //        $("#plane").animate({top: "+=5"}, 0);
+        //        break;
+        //    case 37://left
+        //        $("#guy").animate({left: "-=5"}, 0);
+        //        break;
+        //    case 38://up
+        //        $("#guy").animate({top: "-=5"}, 0);
+        //        break;
+        //    case 39://right
+        //        $("#guy").animate({left: "+=5"}, 0);
+        //        break;
+        //    case 40://down
+        //        $("#guy").animate({top: "+=5"}, 0);
+        //        break;
+        //    default://others
+        //        return false;
+        //}
+    }
+</script>
+
+</body>
+</html>
