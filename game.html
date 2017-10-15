@@ -4,47 +4,84 @@
     <meta charset="UTF-8">
     <title>Title</title>
 
-    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
+    <!--<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>-->
     <script type="text/javascript">
 
     </script>
 
 </head>
 <body>
-<img id="guy" src="img/woody_s.bmp" style="position:absolute;">
+<img id="player" class="character" src="img/woody_s.bmp" style="position:absolute;">
 
 <script type="text/javascript">
-    var timer;
     var keyStatus = [];
-    timer = setInterval(checkActionMove, 20);
+    var timer = 0;
+    var player = document.getElementById("player");
 
-    //when key pressed call the function
-    $(document).keydown(function(key){
+    setInterval(timerFunction,1000);
+    setInterval(checkActionMove, 20);
+
+    function timerFunction() {
+        timer += 1;
+        console.log(timer);
+    }
+
+    document.onkeydown = function(key){
         keyStatus[key.keyCode] = true;
-    });
+    };
 
-    $(document).keyup(function(key){
+    document.onkeyup = function(key){
         delete keyStatus[key.keyCode];
-    });
+    };
 
     function checkActionMove() {
         if (keyStatus[37]){//left
             //console.log("37"+ keyStatus[37]);
-            $("#guy").animate({left: "-=5"}, 0);
+            //player.style.left.animate = player.style.left - (5+"px");
+            player.style.left = (parseInt(player.style.left) - 5) + "px";
+            //$("#guy").animate({left: "-=5"}, 0);
         }
         if (keyStatus[38]){//up
             //console.log("38"+ keyStatus[38]);
-            $("#guy").animate({top: "-=5"}, 0);
+            //$("#player").animate({top: "-=5"}, 0);
         }
         if (keyStatus[39]){//right
             //console.log("39"+ keyStatus[39]);
-            $("#guy").animate({left: "+=5"}, 0);
+            //$("#player").animate({left: "+=5"}, 0);
+            player.style.left = (parseInt(player.style.left) + 5) + "px";
         }
         if (keyStatus[40]){//down
             //console.log("40"+ keyStatus[40]);
-            $("#guy").animate({top: "+=5"}, 0);
+            //$("#player").animate({top: "+=5"}, 0);
         }
     }
+
+    //jQuery ver movement
+    //when key pressed call the function
+    //$(document).keydown(function(key){
+    //    keyStatus[key.keyCode] = true;
+    //});
+    //$(document).keyup(function(key){
+    //    delete keyStatus[key.keyCode];
+    //});
+    //function checkActionMove() {
+    //    if (keyStatus[37]){//left
+    //        //console.log("37"+ keyStatus[37]);
+    //        $("#guy").animate({left: "-=5"}, 0);
+    //    }
+    //    if (keyStatus[38]){//up
+    //        //console.log("38"+ keyStatus[38]);
+    //        $("#guy").animate({top: "-=5"}, 0);
+    //    }
+    //    if (keyStatus[39]){//right
+    //        //console.log("39"+ keyStatus[39]);
+    //        $("#guy").animate({left: "+=5"}, 0);
+    //    }
+    //    if (keyStatus[40]){//down
+    //        //console.log("40"+ keyStatus[40]);
+    //        $("#guy").animate({top: "+=5"}, 0);
+    //    }
+    //}
 </script>
 
 </body>
