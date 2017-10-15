@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <!--<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>-->
+    <script type="text/javascript">
+
+    </script>
+
+</head>
+<body>
+<img id="player" class="character" src="img/woody_s.bmp" style="left:0px;top:0px;position:absolute;">
+
+<script type="text/javascript">
+    var keyStatus = [];
+    var timer = 0;
+    var player = document.getElementById("player");
+
+    setInterval(timerFunction,1000);
+    setInterval(checkActionMove, 20);
+
+    function timerFunction() {
+        timer += 1;
+        console.log(timer);
+    }
+
+    document.onkeydown = function(key){
+        keyStatus[key.keyCode] = true;
+    };
+
+    document.onkeyup = function(key){
+        delete keyStatus[key.keyCode];
+    };
+
+    function checkActionMove() {
+        if (keyStatus[37]){//left
+            //console.log("37"+ keyStatus[37]);
+            player.style.left = (parseInt(player.style.left) - 5) + "px";
+        }
+        if (keyStatus[38]){//up
+            //console.log("38"+ keyStatus[38]);
+            player.style.top = (parseInt(player.style.top) - 5) + "px";
+        }
+        if (keyStatus[39]){//right
+            //console.log("39"+ keyStatus[39]);
+            player.style.left = (parseInt(player.style.left) + 5) + "px";
+        }
+        if (keyStatus[40]){//down
+            //console.log("40"+ keyStatus[40]);
+            player.style.top = (parseInt(player.style.top) + 5) + "px";
+        }
+    }
+
+    //jQuery ver movement
+    //when key pressed call the function
+    //$(document).keydown(function(key){
+    //    keyStatus[key.keyCode] = true;
+    //});
+    //$(document).keyup(function(key){
+    //    delete keyStatus[key.keyCode];
+    //});
+    //function checkActionMove() {
+    //    if (keyStatus[37]){//left
+    //        //console.log("37"+ keyStatus[37]);
+    //        $("#guy").animate({left: "-=5"}, 0);
+    //    }
+    //    if (keyStatus[38]){//up
+    //        //console.log("38"+ keyStatus[38]);
+    //        $("#guy").animate({top: "-=5"}, 0);
+    //    }
+    //    if (keyStatus[39]){//right
+    //        //console.log("39"+ keyStatus[39]);
+    //        $("#guy").animate({left: "+=5"}, 0);
+    //    }
+    //    if (keyStatus[40]){//down
+    //        //console.log("40"+ keyStatus[40]);
+    //        $("#guy").animate({top: "+=5"}, 0);
+    //    }
+    //}
+</script>
+
+</body>
+</html>
