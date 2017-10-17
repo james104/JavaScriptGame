@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <title>Title</title>
 
-   <script type="text/javascript">
-
-    </script>
+    <script src="gameStatus.js"></script>
 
 </head>
 <body>
@@ -14,7 +12,10 @@
 <div id="gameStatus">
     <div id="gameTime">00:00</div>
 </div>
-<canvas id="gameCanvas" width="1500" height="500">
+
+<img src="img/bc2.bmp" width="1500" height="300" style="position:absolute;" />
+
+<canvas id="gameCanvas" width="1500" height="400" style="margin:300px 0 0 0;background:url(img/floor3.bmp);background-repeat:no-repeat;background-size:cover;">
 
 </canvas>
 
@@ -22,64 +23,45 @@
     //canvas
     var canvasElement = document.getElementById("gameCanvas");
     var ctx = canvasElement.getContext && canvasElement.getContext('2d');
-    ctx.fillStyle = "#FFFF00";
-    ctx.fillRect(0,200,1500,300);
-    
-    backgroudImage = new Image();
-    backgroudImage.id = "backgroundImage";
-    backgroudImage.src = "img/floor3.bmp";
-    backgroudImage.onload = drawInCanvas("background",ctx,backgroudImage);
+        
+    function drawInCanvas(canvas,drawType,oriImage,reqImageX,reqImageY,reqImageW,reqImageH,canvasX,canvasY){
+        if(drawType == "player"){
+            canvas.drawImage(oriImage,reqImageX,reqImageY,reqImageW,reqImageH,canvasX,canvasY,reqImageW,reqImageH);
+            removeBackground(canvasX,canvasY,reqImageW,reqImageH);
+        }
+    }
 
+    function removeBackground(canvasX,canvasY,reqImageW,reqImageH){
+        //remove image background 
+        var imgd = ctx.getImageData(canvasX, canvasY, reqImageW, reqImageH),pix = imgd.data,newColor = {r:0,g:0,b:0, a:0};
+        for (var i = 0, n = pix.length; i <n; i += 4) {
+            var r = pix[i],g = pix[i+1],b = pix[i+2];
+        
+            if(r == 0 && g == 0 && b == 0){
+                // Change the white to the new color.
+                pix[i] = newColor.r;
+                pix[i+1] = newColor.g;
+                pix[i+2] = newColor.b;
+                pix[i+3] = newColor.a;
+            }
+        }
+        ctx.putImageData(imgd, canvasX, canvasY);
+    }
+
+    
+    //player
     playerImage = new Image();
     playerImage.id = "playerImage";
-    playerImage.src = "img/woody_s.bmp";
-    playerImage.onload = drawInCanvas("player",ctx,playerImage);
-    
-    function drawInCanvas(drawType,canvas,image,x=0,y=300){
-        if(drawType == "background"){
-            canvas.drawImage(image,0,0);
-        }else if(drawType == "player"){
-            canvas.drawImage(image,x,y);
-        }else if(drawType == "npc"){
-            canvas.drawImage(image,18,5,41,75,100,100,41,75);
-        }
-    }
+    playerImage.src = "img/woody_0.bmp";
+    playerImage.onload = drawInCanvas(ctx,"player",playerImage,18,5,41,75,100,100);
 
-
-    //game status
-    var timerMin = 0;
-    var timerSec = 0;
-  
-    setInterval(timerFunction,1000);
-    
-    function timerFunction(){
-        timerSec += 1;
-        if(timerSec == 60){
-            timerMin++;
-            timerSec = 0;
-        }
-        if(timerSec < 10){
-            var lessThanTenSec = "0";
-        }else{
-            var lessThanTenSec = "";
-        }
-        if(timerMin < 10){
-            var lessThanTenMin = "0";
-        }else{
-            var lessThanTenMin = "";
-        }
-        document.getElementById("gameTime").innerText = lessThanTenMin + timerMin + ":" + lessThanTenSec + timerSec;
-    }
-
-
-    //player
     var keyStatus = [];    
     var playerObject = new playerObject();
 
     function playerObject(){
         this.speed = 5;
-        this.x = 0;
-        this.y = 300;
+        this.x = 100;
+        this.y = 100;
     }
 
     setInterval(checkActionMove, 20);
@@ -98,28 +80,28 @@
             //player.style.left = (parseInt(player.style.left) - 5) + "px";
             ctx.clearRect(playerObject.x,playerObject.y,playerImage.width,playerImage.height);
             playerObject.x -= playerObject.speed;
-            drawInCanvas("player",ctx,playerImage,playerObject.x,playerObject.y);
+            drawInCanvas(ctx,"player",playerImage,18,5,41,75,playerObject.x,playerObject.y);
         }
         if (keyStatus[38]){//up
             //console.log("38"+ keyStatus[38]);
             //player.style.top = (parseInt(player.style.top) - 5) + "px";
             ctx.clearRect(playerObject.x,playerObject.y,playerImage.width,playerImage.height);
             playerObject.y -= playerObject.speed;
-            drawInCanvas("player",ctx,playerImage,playerObject.x,playerObject.y);
+            drawInCanvas(ctx,"player",playerImage,18,5,41,75,playerObject.x,playerObject.y);
         }
         if (keyStatus[39]){//right
             //console.log("39"+ keyStatus[39]);
             //player.style.left = (parseInt(player.style.left) + 5) + "px";
             ctx.clearRect(playerObject.x,playerObject.y,playerImage.width,playerImage.height);
             playerObject.x += playerObject.speed;
-            drawInCanvas("player",ctx,playerImage,playerObject.x,playerObject.y);
+            drawInCanvas(ctx,"player",playerImage,18,5,41,75,playerObject.x,playerObject.y);
         }
         if (keyStatus[40]){//down
             //console.log("40"+ keyStatus[40]);
             //player.style.top = (parseInt(player.style.top) + 5) + "px";
             ctx.clearRect(playerObject.x,playerObject.y,playerImage.width,playerImage.height);
             playerObject.y += playerObject.speed;
-            drawInCanvas("player",ctx,playerImage,playerObject.x,playerObject.y);
+            drawInCanvas(ctx,"player",playerImage,18,5,41,75,playerObject.x,playerObject.y);
         }
         
     }
