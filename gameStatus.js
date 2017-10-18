@@ -1,8 +1,8 @@
 //game status
+setInterval(timerFunction,1000);
+
 var timerMin = 0;
 var timerSec = 0;
-
-setInterval(timerFunction,1000);
 
 function timerFunction(){
     timerSec += 1;
