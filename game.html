@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -17,35 +17,7 @@
 
 </canvas>
 
-<script type="text/javascript">
-    //canvas
-    var canvasElement = document.getElementById("gameCanvas");
-    var ctx = canvasElement.getContext && canvasElement.getContext('2d');
-        
-    function drawInCanvas(canvas,drawType,oriImage,reqImageX,reqImageY,reqImageW,reqImageH,canvasX,canvasY){
-        if(drawType == "player"){
-            canvas.drawImage(oriImage,reqImageX,reqImageY,reqImageW,reqImageH,canvasX,canvasY,reqImageW,reqImageH);
-            removeBackground(canvasX,canvasY,reqImageW,reqImageH);
-        }
-    }
-
-    function removeBackground(canvasX,canvasY,reqImageW,reqImageH){
-        //remove image background
-        var imgd = ctx.getImageData(canvasX, canvasY, reqImageW, reqImageH), pix = imgd.data, newColor = {r:0,g:0,b:0, a:0};
-        for (var i = 0, n = pix.length; i < n; i += 4) {
-            var r = pix[i],g = pix[i+1],b = pix[i+2];
-        
-            if(r == 0 && g == 0 && b == 0){
-                // Change the white to the new color.
-                pix[i] = newColor.r;
-                pix[i+1] = newColor.g;
-                pix[i+2] = newColor.b;
-                pix[i+3] = newColor.a;
-            }
-        }
-        ctx.putImageData(imgd, canvasX, canvasY);
-    }
-</script>
+<script src="game.js"></script>
 <script src="gamePlayer.js"></script>
 <script src="gameStatus.js"></script>
 </body>
