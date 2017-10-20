@@ -10,11 +10,27 @@ One door, one AI (an animal).
 Win: Player needs to get the key and open the door and get in.
 Stragety: Get the key quickly and leave, then hit the door to win.
 1 AI is sleeping and guarding a key, if close enough, then wake up and attack.
+Speed: slower than player
 Attack: 
-Chase within a specified area, if the player leaves, then go back to original position sleep.
+Chase within a specified area, if the player leaves, then go back to original position sleep. 
 If not, only short attack until the player dies.
 AI algor: 
 Pathfinding - chase
 Random position
 -----------------------------------------------------------------------------------------------
 Stage 2:
+Three AI, one door.
+Red hat (same speed): 
+Keep chasing, if close enough, short attack only. (rest every 2s)
+Drunk man(slow):
+Random walk, if close enough, speed faster than player, and chase player. If he leaves specified area, slow down, and random walk
+(rest every 2s).
+Green hat(slow):
+Up and down, every 2s, long attack.
+Win: Kill all enemies, get the key and open the door and get in.
+AI algor: 
+Pathfinding - chase
+Random walk (drunk man)
+Pattern movement
+-----------------------------------------------------------------------------------------------
+Stage 3 (boss):
