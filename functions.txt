@@ -1,0 +1,21 @@
+No defend
+No running
+Long attack, short attack.
+HP, MP, Hit rate(super attack)
+Timer
+1 computer helper (to fight boss only)
+=====================================================
+Stage 1:
+One door, one AI (an animal).
+Win: Player needs to get the key and open the door and get in.
+Stragety: Get the key quickly and leave, then hit the door to win.
+1 AI is sleeping and guarding a key, if close enough, then wake up and attack.
+Attack: 
+Chase within a specified area, if the player leaves, then go back to original position sleep.
+If not, only short attack until the player dies.
+AI algor: 
+Pathfinding - chase
+Random position
+-----------------------------------------------------------------------------------------------
+Stage 2:
+
