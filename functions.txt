@@ -33,4 +33,7 @@ Pathfinding - chase
 Random walk (drunk man)
 Pattern movement
 -----------------------------------------------------------------------------------------------
-Stage 3 (boss):
+Stage 5 (2nd boss):
+one AI.
+Faster, Chase (random within 2-4s), after that, MUST random attack (long or short).
+Learning: count the escape path (upper or lower), after 3 times, gives a sudden attack in the escape path (upper or lower) [must hurt the player if he really appears in the path]
