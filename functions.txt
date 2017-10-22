@@ -3,7 +3,8 @@ No running
 Long attack, short attack.
 HP, MP, Hit rate(super attack)
 Timer
-1 computer helper (to fight boss only)
+1 computer helper (to fight 1st boss only)
+boss has no MP
 =====================================================
 Stage 1:
 One door, one AI (an animal).
@@ -32,8 +33,48 @@ AI algor:
 Pathfinding - chase
 Random walk (drunk man)
 Pattern movement
------------------------------------------------------------------------------------------------
-Stage 5 (2nd boss):
-one AI.
-Faster, Chase (random within 2-4s), after that, MUST random attack (long or short).
-Learning: count the escape path (upper or lower), after 3 times, gives a sudden attack in the escape path (upper or lower) [must hurt the player if he really appears in the path]
+--------------------------------------------------------------------------------------------------------
+Stage 3 (1st boss):
+five AI, boss, enemies, and computer helper [disappear after 1 minute].
+
+computer helper: only perform long attack (chase horizontally, up and down)
+
+Fuzzy logic:
+If the boss HP is low:
+[Fuzzy sets: very high, high, near high, fine, near low, low, very low]
+   call three allies [stage 2's AI, available again after 3minutes];
+   if cannot call allies: tracking attack (small bats/knives for 5s)
+
+If it is outnumbered:
+[Fuzzy sets: more, same, less]
+   (faster)escape, and long attack only
+Else if it is same:
+   slower, Chase ->[Fuzzy sets: very far, far, near, very near]
+               If the player is close enough:perform short attack;
+               else: keep cahsing;
+Else: //more, with allies
+    same speed, keep distance and Long attack (chase horizontally)
+--------------------------------------------------------------------------------------------------------
+Stage 4:
+
+--------------------------------------------------------------------------------------------------------
+Stage 5 (2nd boss, no helper):
+one AI, milk (for boss only, to recover HP, available again after 3minutes).
+
+Fuzzy logic:
+If the boss HP is low:
+[Fuzzy sets: very high, high, near high, fine, near low, low, very low]
+   drink milk [not fully recover, maybe half?];
+
+If the player is close enough:
+[Fuzzy sets: very far, far, near, very near]
+   perform short attack;
+Else:
+   1) Faster, Chase (random within 2-4s), after that, Must perform short attack.
+   2) same speed, keep distance and Long attack (chase horizontally)
+   Randomly perform either 1) or 2) attack (every randomly 1-4s).
+
+Learning: (cumulative, not to reset)count the escape path when attack(upper or lower), after 3 times, gives a sudden attack in the escape path while attacking (upper or lower) [must hurt the player if he really appears in the path]
+----------------------------------------------------------------------------------------------------------
+Stage 6 (for fun)
+defeat 2 bosses, stage 3 + stage 5 boss.
