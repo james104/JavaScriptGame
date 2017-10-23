@@ -47,7 +47,7 @@ If the boss HP is low:
    //or boss may call allies based on the hp instead of time? call when hp is 100%, 75%, 50% and 25%?
    
    //i have not see the lecture slides seriously, maybe we can apply rule-based on this boss???
-   //e.g. if three allies alive > boss's defense 75%, if two allies alive > boss's defense 50% ......
+   //e.g. if three allies alive > boss's defense +75%, if two allies alive > boss's defense +50% ......
    //e.g. if all allies are dead > launch 3 tracking attacks continuously
 
 
