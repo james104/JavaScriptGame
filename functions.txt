@@ -43,23 +43,71 @@ Fuzzy logic:
 If the boss HP is low:
 [Fuzzy sets: very high, high, near high, fine, near low, low, very low]
    call three allies [stage 2's AI, available again after 3minutes];
-   if cannot call allies: tracking attack (small bats/knives for 5s)
+   //maybe too long, i think 1 to 1.5 min is ok
+   //or boss may call allies based on the hp instead of time? call when hp is 100%, 75%, 50% and 25%?
+   
+   //i have not see the lecture slides seriously, maybe we can apply rule-based on this boss???
+   //e.g. if three allies alive > boss's defense 75%, if two allies alive > boss's defense 50% ......
 
-If it is outnumbered:
+
+   if cannot call allies: tracking attack (small bats/knives for 5s)
+   //tracking attack = this boss's long attack???
+
+
+If it is outnumbered: //first 1 min and have not call allies
 [Fuzzy sets: more, same, less]
    (faster)escape, and long attack only
-Else if it is same:
+
+Else if it is same: //after 1 min and have not call allies
    slower, Chase ->[Fuzzy sets: very far, far, near, very near]
                If the player is close enough:perform short attack;
                else: keep cahsing;
+
 Else: //more, with allies
     same speed, keep distance and Long attack (chase horizontally)
 --------------------------------------------------------------------------------------------------------
 Stage 4:
+no moving enemies
+In 1min, player only need to move forward
+
+divide road into five parts, 1 gun for one part
+road:
+===================================================
+1                                              gun1
+===================================================
+2                                              gun2
+===================================================
+3                                              gun3
+===================================================
+4                                              gun4
+===================================================
+5                                              gun5
+===================================================
+
+every 1s, randomly choose 2 or 3 guns to launch "輝哥" like tracking attack (shoot player's current position)
+every 15s, randomly choose 4 guns to launch attack on their part (instance kill), player need to dodge in no attack part
+===================================================
+1                      < < < < < < < < < < < < gun1
+===================================================
+2                             no attack        gun2
+===================================================
+3                      < < < < < < < < < < < < gun3
+===================================================
+4                      < < < < < < < < < < < < gun4
+===================================================
+5                      < < < < < < < < < < < < gun5
+===================================================
+
+AI algor:
+Pathfinding - speciﬁed location?
+Random guns to attack
 
 --------------------------------------------------------------------------------------------------------
 Stage 5 (2nd boss, no helper):
 one AI, milk (for boss only, to recover HP, available again after 3minutes).
+//maybe too long, i think 1 to 1.5 min is ok
+//it it too easy, 3 mins can kill a boss three times may be
+
 
 Fuzzy logic:
 If the boss HP is low:
@@ -75,6 +123,13 @@ Else:
    Randomly perform either 1) or 2) attack (every randomly 1-4s).
 
 Learning: (cumulative, not to reset)count the escape path when attack(upper or lower), after 3 times, gives a sudden attack in the escape path while attacking (upper or lower) [must hurt the player if he really appears in the path]
+
+//i think we also can consider to use keyboard key up and down to predict the player moves
+//whenever players moves and want to dodge short or long attack, they may always move up or down based on their habit
+//the checking on player action will be refreashed in short interval, +1 for each up or down
+//we can get many records to calculate and collect records at the beginning of this stage no need to wait for long attack
+
+
 ----------------------------------------------------------------------------------------------------------
 Stage 6 (for fun)
 defeat 2 bosses, stage 3 + stage 5 boss.
