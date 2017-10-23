@@ -48,6 +48,7 @@ If the boss HP is low:
    
    //i have not see the lecture slides seriously, maybe we can apply rule-based on this boss???
    //e.g. if three allies alive > boss's defense 75%, if two allies alive > boss's defense 50% ......
+   //e.g. if all allies are dead > launch 3 tracking attacks continuously
 
 
    if cannot call allies: tracking attack (small bats/knives for 5s)
