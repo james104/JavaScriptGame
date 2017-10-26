@@ -85,17 +85,17 @@ if(ctx){
     
     function attackAnimation(image, attackXyL, attackXyR, imageW, imageH, object) {
         //add 1 for each move
-        //object.attackRepeat++;
-        //if (object.attackRepeat == 5) {
-        //    //reset attackAnimte
-        //    if(object.attackAnimte == 4){
-        //        object.attackAnimte = 0;
-        //    }
-        //    //add 1 for count the attack animation
-        //    object.attackAnimte++;
-        //    //reset for next attack animation
-        //    object.attackRepeat = 0;
-        //}
+        object.attackRepeat++;
+        if (object.attackRepeat == 5) {
+           //reset attackAnimte
+           if(object.attackAnimte == 4){
+               object.attackAnimte = 0;
+           }
+           //add 1 for count the attack animation
+           object.attackAnimte++;
+           //reset for next attack animation
+           object.attackRepeat = 0;
+        }
 
         //check facing left/right for attack animation
         var attackXyArr, animateLength;
@@ -104,16 +104,31 @@ if(ctx){
         }else if(object.face == faceRight){
             attackXyArr = attackXyR;
         }
+
+        drawInCanvas(object.type, image, attackXyArr["x" + object.attackAnimte], attackXyArr["y" + object.attackAnimte], imageW, imageH, object.x, object.y);
+
         //get length of attack animation, x & y are 1 animation
         // animateLength = Object.keys(attackXyArr).length / 2;
         // var count = 1;
-        // setTimeout(drawInCanvas(object.type, image, attackXyArr["x"+count], attackXyArr["y"+count], imageW, imageH, object.x, object.y),1000);
-        // count++;
-        // setTimeout(drawInCanvas(object.type, image, attackXyArr["x"+count], attackXyArr["y"+count], imageW, imageH, object.x, object.y),2000);
-        // count++;
-        // setTimeout(drawInCanvas(object.type, image, attackXyArr["x"+count], attackXyArr["y"+count], imageW, imageH, object.x, object.y),3000);
-        // count++;
-        // setTimeout(drawInCanvas(object.type, image, attackXyArr["x"+count], attackXyArr["y"+count], imageW, imageH, object.x, object.y),4000);
+        // while(true){
+        //     count++;
+        //     if(count % 5 == 0){
+        //         break;
+        //     }
+        // }
+        // console.log(object.attackAnimte);
+        
+        // object.attackAnimte++;
+
+        // if(object.attackAnimte == 5){            
+        //     object.shortAttackLaunched = false;
+        //     object.attackAnimte = 1;
+        //     return false; 
+        // }
+
+        // attackAnimation(image, attackXyL, attackXyR, imageW, imageH, object);
+
+        
         
         
         //for(var i = 1;i <= animateLength;i++){
@@ -140,8 +155,9 @@ if(ctx){
         this.walkAnimate = 1;
         this.walkRepeat = 0;
         this.attackAnimte = 1;
-        this.attackRepeat = 0;        
-    }    
+        this.attackRepeat = 0;
+        this.shortAttackLaunched = false;
+    }
     var playerObject = new playerObject();
     var keyStatus = [];
 
@@ -217,7 +233,11 @@ if(ctx){
         }    
     
         if (keyStatus[68]) {//D(attack)
-            attackAnimation(playerImage, playerAttackL, playerAttackR, playerImageW, playerImageH, playerObject); 
+            if(!playerObject.shortAttackLaunched){
+                //playerObject.shortAttackLaunched = true;
+                attackAnimation(playerImage, playerAttackL, playerAttackR, playerImageW, playerImageH, playerObject);
+            }
+            
             return true;           
         }
         
