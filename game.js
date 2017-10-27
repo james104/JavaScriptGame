@@ -18,8 +18,6 @@ if(ctx){
     var playerType = "player";
     var faceLeft = "left", faceRight = "right";
 
-    
-
     //--- 2 end of global_variable ---//
 // 
 //     
@@ -87,25 +85,18 @@ if(ctx){
             }else if(object.face == faceRight){
                 attackXyArr = attackXyR;
             }
-
             drawInCanvas(image, attackXyArr["x" + object.attackAnimte], attackXyArr["y" + object.attackAnimte], object);
         },25);        
     }
 
     function ensureCollision(obj, preX, preY, currX, currY) {        
-        if (currX <= 0) {
-            obj.x = preX;
-        }
-        else if (currX + obj.imgWidth >= 1500) {
+        if (currX <= 0 || currX + obj.imgWidth >= 1500) {
             obj.x = preX;
         }
         else {
             obj.x = currX;
         }
-        if (currY <= 0) {
-            obj.y = preY;
-        }
-        else if (currY + obj.imgHeight >= 400) {
+        if (currY <= 0 || currY + obj.imgHeight >= 400) {
             obj.y = preY;
         }
         else {
@@ -121,7 +112,7 @@ if(ctx){
 //     
     //--- 4 start of player_function ---//
    
-    //player object add status
+    //player object
     function playerObject() {
         this.type = "player";
         this.speed = 5;
@@ -255,6 +246,7 @@ if(ctx){
 // 
 //     
     //--- 5 start of start_function ---//
+
     function init(){
         var gameStatus = "start";
         
@@ -263,6 +255,7 @@ if(ctx){
     }
     
     init();
+
     //--- 5 end of start_function ---//
 // 
 // 
@@ -270,6 +263,7 @@ if(ctx){
 // 
 //     
     //--- 6 start of game_data ---//
+
     setInterval(timerFunction, 1000);
     
     var timerMin = 0;
@@ -294,5 +288,6 @@ if(ctx){
         }
         gameTime.innerText = lessThanTenMin + timerMin + ":" + lessThanTenSec + timerSec;
     }
+    
     //--- 6 end of game_data ---//    
 }
