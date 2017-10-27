@@ -18,7 +18,7 @@ var ctx = canvasElement.getContext && canvasElement.getContext('2d');
 if(ctx){
     //--- 2 start of global_variable ---//
 
-    var gameImage = "img/gameImage.bmp";
+    var gameImage = "img/gameImage.gif";
     var playerType = "player";
     var faceLeft = "left", faceRight = "right";
 
@@ -36,7 +36,7 @@ if(ctx){
         if(drawType == playerType){
             ctx.drawImage(oriImage,reqImageX,reqImageY,reqImageW,reqImageH,canvasX,canvasY,reqImageW,reqImageH);
         }
-        removeBackground(canvasX,canvasY,reqImageW,reqImageH);
+        //removeBackground(canvasX,canvasY,reqImageW,reqImageH);
     }
 
     function removeBackground(canvasX,canvasY,reqImageW,reqImageH){
@@ -82,7 +82,7 @@ if(ctx){
         }
         drawInCanvas(object.type, image, walkXyArr["x"+object.walkAnimate], walkXyArr["y"+object.walkAnimate], imageW, imageH, object.x, object.y);
     }
-    
+
     function attackAnimation(image, attackXyL, attackXyR, imageW, imageH, object) {
         //add 1 for each move
         object.attackRepeat++;
@@ -157,8 +157,10 @@ if(ctx){
         this.attackAnimte = 1;
         this.attackRepeat = 0;
         this.shortAttackLaunched = false;
+        this.imgWidth = 80;
+        this.imgHeight = 80;
     }
-    var playerObject = new playerObject();
+    playerObject = new playerObject();
     var keyStatus = [];
 
     //player image width and height for crop
@@ -198,7 +200,9 @@ if(ctx){
 
     //record player input
     document.onkeydown = function (key) {
+        key.returnValue = false;
         keyStatus[key.keyCode] = true;
+        
     };
     
     //remove player input
@@ -208,38 +212,47 @@ if(ctx){
             
     //define all player action in here
     function playerAction() {
-        //check player movement only for arrow key
-        if (keyStatus[37] || keyStatus[38] || keyStatus[39] || keyStatus[40]) {
-            //clear the previous player image
-            clearPreviousImage(playerObject.x, playerObject.y, playerImage.width, playerImage.height);
-    
-            //assign new postion and dicide facing
-            if (keyStatus[37]) {//left            
-                playerObject.x -= playerObject.speed;
-                playerObject.face = faceLeft;
-            }
-            if (keyStatus[38]) {//up
-                playerObject.y -= playerObject.speed;
-            }
-            if (keyStatus[39]) {//right
-                playerObject.x += playerObject.speed;
-                playerObject.face = faceRight;
-            }
-            if (keyStatus[40]) {//down
-                playerObject.y += playerObject.speed;
-            }
-            walkAnimation(playerImage, playerWalkL, playerWalkR, playerImageW, playerImageH, playerObject);   
-            return true;         
-        }    
-    
-        if (keyStatus[68]) {//D(attack)
-            if(!playerObject.shortAttackLaunched){
+        clearPreviousImage(playerObject.x, playerObject.y, playerImage.width, playerImage.height);
+
+        if (keyStatus[90]) {//Z(attack)
+            if (!playerObject.shortAttackLaunched) {
                 //playerObject.shortAttackLaunched = true;
                 attackAnimation(playerImage, playerAttackL, playerAttackR, playerImageW, playerImageH, playerObject);
             }
-            
-            return true;           
+
+            return true;
         }
+
+        //check player movement only for arrow key
+        if (keyStatus[37] || keyStatus[38] || keyStatus[39] || keyStatus[40]) {
+            var preX = playerObject.x;
+            var preY = playerObject.y;
+            var currX = playerObject.x;
+            var currY = playerObject.y;
+            //assign new postion and dicide facing
+            if (keyStatus[37]) {//left           
+                //playerObject.x -= playerObject.speed;
+                currX = currX -  playerObject.speed;
+                playerObject.face = faceLeft;
+            }
+            if (keyStatus[38]) {//up
+                //playerObject.y -= playerObject.speed;
+                currY = currY -  playerObject.speed;
+            }
+            if (keyStatus[39]) {//right
+                //playerObject.x += playerObject.speed;
+                currX = currX +  playerObject.speed;
+                playerObject.face = faceRight;
+            }
+            if (keyStatus[40]) {//down
+                //playerObject.y += playerObject.speed;
+                currY = currY +  playerObject.speed;
+            }
+
+            ensureCollision(playerObject, preX, preY, currX, currY);
+            walkAnimation(playerImage, playerWalkL, playerWalkR, playerImageW, playerImageH, playerObject);   
+            return true;         
+        }    
         
         //when no movement draw player standing image
         walkAnimate = 1, walkRepeat = 0;
@@ -253,7 +266,30 @@ if(ctx){
         }
     }
     
-    
+    function ensureCollision(obj, preX, preY, currX, currY) {
+
+        if (currX <= 0) {
+            obj.x = preX;
+        }
+        else if (currX + obj.imgWidth >= 1500) {
+            obj.x = preX;
+        }
+
+        else {
+            obj.x = currX;
+        }
+
+        if (currY <= 0) {
+            obj.y = preY;
+        }
+        else if (currY + obj.imgHeight >= 400) {
+            obj.y = preY;
+        }
+        else {
+            obj.y = currY;
+        }
+
+    }
     
     //--- 4 end of player_function ---//
 //     
