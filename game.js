@@ -8,10 +8,6 @@
 //6.game_data
 //------------------------------------------------//
 
-
-//not done yet
-
-
 //  start of 1 canvas ---//
 var canvasElement = document.getElementById("gameCanvas");
 var ctx = canvasElement.getContext && canvasElement.getContext('2d');
@@ -32,35 +28,21 @@ if(ctx){
 // 
     //--- 3 start of global_function ---//
 
-    function drawInCanvas(drawType,oriImage,reqImageX,reqImageY,reqImageW,reqImageH,canvasX,canvasY){
-        if(drawType == playerType){
-            ctx.drawImage(oriImage,reqImageX,reqImageY,reqImageW,reqImageH,canvasX,canvasY,reqImageW,reqImageH);
-        }
-        //removeBackground(canvasX,canvasY,reqImageW,reqImageH);
+    function callIntervalFunction(){
+        playerAction();
     }
-
-    function removeBackground(canvasX,canvasY,reqImageW,reqImageH){
-        //remove image background
-        var imgd = ctx.getImageData(canvasX, canvasY, reqImageW, reqImageH), pix = imgd.data, newColor = {r:0,g:0,b:0, a:0};
-        for (var i = 0, n = pix.length; i < n; i += 4) {
-            var r = pix[i],g = pix[i+1],b = pix[i+2];
-            
-            if(r == 0 && g == 0 && b == 0){
-                // Change the white to the new color.
-                pix[i] = newColor.r;
-                pix[i+1] = newColor.g;
-                pix[i+2] = newColor.b;
-                pix[i+3] = newColor.a;
-            }
+    
+    function drawInCanvas(image, x, y, object){
+        if(object.type == playerType){
+            ctx.drawImage(image, x, y, object.imgWidth, object.imgHeight, object.x, object.y, object.imgWidth, object.imgHeight);
         }
-        ctx.putImageData(imgd, canvasX, canvasY);
     }
 
     function clearPreviousImage(x, y, width, height){
         ctx.clearRect(x, y, width, height);
     }
     
-    function walkAnimation(image, walkXyL, walkXyR, imageW, imageH, object) {
+    function walkAnimation(image, walkXyL, walkXyR, object) {
         //add 1 for each move
         object.walkRepeat++;
         if (object.walkRepeat == 5) {
@@ -80,61 +62,55 @@ if(ctx){
         }else if(object.face == faceRight){
             walkXyArr = walkXyR;
         }
-        drawInCanvas(object.type, image, walkXyArr["x"+object.walkAnimate], walkXyArr["y"+object.walkAnimate], imageW, imageH, object.x, object.y);
+        drawInCanvas(image, walkXyArr["x"+object.walkAnimate], walkXyArr["y"+object.walkAnimate], object);
     }
 
-    function attackAnimation(image, attackXyL, attackXyR, imageW, imageH, object) {
-        //add 1 for each move
-        object.attackRepeat++;
-        if (object.attackRepeat == 5) {
-           //reset attackAnimte
-           if(object.attackAnimte == 4){
-               object.attackAnimte = 0;
-               clearInterval(object.actionInterval);
-           }
-           //add 1 for count the attack animation
-           object.attackAnimte++;
-           //reset for next attack animation
-           object.attackRepeat = 0;
+    function attackAnimation(image, attackXyL, attackXyR, object) {
+        var interval = setInterval(function(){
+            //add 1 for each move
+            object.attackRepeat++;
+            if (object.attackRepeat == 5) {
+               //reset attackAnimte
+               if(object.attackAnimte == 4){
+                   object.attackAnimte = 0;
+                   clearInterval(interval);
+               }
+               //add 1 for count the attack animation
+               object.attackAnimte++;
+               //reset for next attack animation
+               object.attackRepeat = 0;
+            }
+            //check facing left/right for attack animation
+            var attackXyArr, animateLength;
+            if(object.face == faceLeft){
+                attackXyArr = attackXyL;
+            }else if(object.face == faceRight){
+                attackXyArr = attackXyR;
+            }
+
+            drawInCanvas(image, attackXyArr["x" + object.attackAnimte], attackXyArr["y" + object.attackAnimte], object);
+        },25);        
+    }
+
+    function ensureCollision(obj, preX, preY, currX, currY) {        
+        if (currX <= 0) {
+            obj.x = preX;
         }
-
-        //check facing left/right for attack animation
-        var attackXyArr, animateLength;
-        if(object.face == faceLeft){
-            attackXyArr = attackXyL;
-        }else if(object.face == faceRight){
-            attackXyArr = attackXyR;
+        else if (currX + obj.imgWidth >= 1500) {
+            obj.x = preX;
         }
-
-        drawInCanvas(object.type, image, attackXyArr["x" + object.attackAnimte], attackXyArr["y" + object.attackAnimte], imageW, imageH, object.x, object.y);
-
-        //get length of attack animation, x & y are 1 animation
-        // animateLength = Object.keys(attackXyArr).length / 2;
-        // var count = 1;
-        // while(true){
-        //     count++;
-        //     if(count % 5 == 0){
-        //         break;
-        //     }
-        // }
-        // console.log(object.attackAnimte);
-        
-        // object.attackAnimte++;
-
-        // if(object.attackAnimte == 5){            
-        //     object.shortAttackLaunched = false;
-        //     object.attackAnimte = 1;
-        //     return false; 
-        // }
-
-        // attackAnimation(image, attackXyL, attackXyR, imageW, imageH, object);
-
-        
-        
-        
-        //for(var i = 1;i <= animateLength;i++){
-        //    console.log("芟");
-        //}
+        else {
+            obj.x = currX;
+        }
+        if (currY <= 0) {
+            obj.y = preY;
+        }
+        else if (currY + obj.imgHeight >= 400) {
+            obj.y = preY;
+        }
+        else {
+            obj.y = currY;
+        }
     }
 
     //--- 3 end of global_function ---//
@@ -164,9 +140,6 @@ if(ctx){
     }
     playerObject = new playerObject();
     var keyStatus = [];
-
-    //player image width and height for crop
-    var playerImageW = 80, playerImageH = 80;
 
     //player image position face left (L)
     var playerImageXL = 720, playerImageYL = 460;//stand
@@ -198,119 +171,81 @@ if(ctx){
     playerImage = new Image();
     playerImage.id = "playerImage";
     playerImage.src = gameImage;
-    playerImage.onload = drawInCanvas(playerObject.type, playerImage, playerImageXR, playerImageYR, playerImageW, playerImageH, playerObject.x, playerObject.y);
+    playerImage.onload = drawInCanvas(playerImage, playerImageXR, playerImageYR, playerObject);
 
     //record player input
     document.onkeydown = function (key) {
         key.returnValue = false;
-        keyStatus[key.keyCode] = true;
-        
+        if(key.keyCode != 90 || keyStatus[90] != false){
+            keyStatus[key.keyCode] = true;
+        }
     };
     
     //remove player input
     document.onkeyup = function (key) {
-        if (key.keyCode == 90) {
-            playerObject.shortAttackLaunched = false;
-        }
         delete keyStatus[key.keyCode];
     };
             
     //define all player action in here
     function playerAction() {
         clearPreviousImage(playerObject.x, playerObject.y, playerImage.width, playerImage.height);
-
-        if (keyStatus[90]) {//Z(attack)
-            if (!playerObject.shortAttackLaunched) {
-                playerObject.shortAttackLaunched = true;
-                playerObject.actionInterval = setInterval(function () {
-                    attackAnimation(playerImage, playerAttackL, playerAttackR, playerImageW, playerImageH, playerObject);
-                }, 50);
-                return true;
-            }
-
-           
+       
+        if (keyStatus[90] && !playerObject.shortAttackLaunched) {//Z(attack)
+            playerObject.shortAttackLaunched = true;
+            attackAnimation(playerImage, playerAttackL, playerAttackR, playerObject);
+            setTimeout(function(){playerObject.shortAttackLaunched = false;keyStatus[90] = false;},510);
+            return true;
         }
-
-        //check player movement only for arrow key
-        if (keyStatus[37] || keyStatus[38] || keyStatus[39] || keyStatus[40]) {
-            var preX = playerObject.x;
-            var preY = playerObject.y;
-            var currX = playerObject.x;
-            var currY = playerObject.y;
-            //assign new postion and dicide facing
-            if (keyStatus[37]) {//left           
-                //playerObject.x -= playerObject.speed;
-                currX = currX -  playerObject.speed;
-                playerObject.face = faceLeft;
-            }
-            if (keyStatus[38]) {//up
-                //playerObject.y -= playerObject.speed;
-                currY = currY -  playerObject.speed;
-            }
-            if (keyStatus[39]) {//right
-                //playerObject.x += playerObject.speed;
-                currX = currX +  playerObject.speed;
-                playerObject.face = faceRight;
-            }
-            if (keyStatus[40]) {//down
-                //playerObject.y += playerObject.speed;
-                currY = currY +  playerObject.speed;
-            }
-
-            ensureCollision(playerObject, preX, preY, currX, currY);
-            walkAnimation(playerImage, playerWalkL, playerWalkR, playerImageW, playerImageH, playerObject);   
-            return true;         
-        }    
         
-        //when no movement draw player standing image
-
-
-        if (!playerObject.shortAttackLaunched) {
+        if (playerObject.shortAttackLaunched) {
             var attackXyArr;
             if (playerObject.face == faceLeft) {
                 attackXyArr = playerAttackL;
             } else if (playerObject.face == faceRight) {
                 attackXyArr = playerAttackR;
             }
-            drawInCanvas(playerObject.type, playerImage, attackXyArr["x" + playerObject.attackAnimte], attackXyArr["y" + playerObject.attackAnimte], playerImageW, playerImageH, playerObject.x, playerObject.y);
-        } else {
-            walkAnimate = 1, walkRepeat = 0;
-            playerAttackAnimte = 1, playerAttackRepeat = 0;
+            drawInCanvas(playerImage, attackXyArr["x" + playerObject.attackAnimte], attackXyArr["y" + playerObject.attackAnimte], playerObject);
+        } 
+        else {
+            //check player movement only for arrow key
+            if (keyStatus[37] || keyStatus[38] || keyStatus[39] || keyStatus[40]) {
+                var preX = playerObject.x;
+                var preY = playerObject.y;
+                var currX = playerObject.x;
+                var currY = playerObject.y;
+                //assign new postion and dicide facing
+                if (keyStatus[37]) {//left           
+                    //playerObject.x -= playerObject.speed;
+                    currX = currX -  playerObject.speed;
+                    playerObject.face = faceLeft;
+                }
+                if (keyStatus[38]) {//up
+                    //playerObject.y -= playerObject.speed;
+                    currY = currY -  playerObject.speed;
+                }
+                if (keyStatus[39]) {//right
+                    //playerObject.x += playerObject.speed;
+                    currX = currX +  playerObject.speed;
+                    playerObject.face = faceRight;
+                }
+                if (keyStatus[40]) {//down
+                    //playerObject.y += playerObject.speed;
+                    currY = currY +  playerObject.speed;
+                }
+                ensureCollision(playerObject, preX, preY, currX, currY);
+                walkAnimation(playerImage, playerWalkL, playerWalkR, playerObject);   
+                return true;         
+            }
+
+            //when no movement or action draw player standing image
+            //walkAnimate = 1, walkRepeat = 0;
+            //playerAttackAnimte = 1, playerAttackRepeat = 0;
             if (playerObject.face == faceLeft) {
-                playerImageX = 720, playerImageY = 460, playerImageW = 80, playerImageH = 80;
-                drawInCanvas(playerType, playerImage, playerImageX, playerImageY, playerImageW, playerImageH, playerObject.x, playerObject.y);
+                drawInCanvas(playerImage, playerImageXL, playerImageYL, playerObject);
             } else if (playerObject.face == faceRight) {
-                playerImageX = 0, playerImageY = 300, playerImageW = 80, playerImageH = 80;
-                drawInCanvas(playerType, playerImage, playerImageX, playerImageY, playerImageW, playerImageH, playerObject.x, playerObject.y);
+                drawInCanvas(playerImage, playerImageXR, playerImageYR, playerObject);
             }
         }
-        
-       
-    }
-    
-    function ensureCollision(obj, preX, preY, currX, currY) {
-
-        if (currX <= 0) {
-            obj.x = preX;
-        }
-        else if (currX + obj.imgWidth >= 1500) {
-            obj.x = preX;
-        }
-
-        else {
-            obj.x = currX;
-        }
-
-        if (currY <= 0) {
-            obj.y = preY;
-        }
-        else if (currY + obj.imgHeight >= 400) {
-            obj.y = preY;
-        }
-        else {
-            obj.y = currY;
-        }
-
     }
     
     //--- 4 end of player_function ---//
@@ -324,7 +259,7 @@ if(ctx){
         var gameStatus = "start";
         
         //player status and function
-        setInterval(playerAction, 20);
+        setInterval(callIntervalFunction, 20);
     }
     
     init();
