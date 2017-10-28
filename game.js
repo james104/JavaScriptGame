@@ -117,7 +117,7 @@ if(ctx){
         this.type = "player";
         this.speed = 5;
         this.x = 100;
-        this.y = 100;
+        this.y = 400;
         this.face = faceRight;
         //animate = animation count, repeat = after few times change animation
         this.walkAnimate = 1;
@@ -167,6 +167,7 @@ if(ctx){
     //record player input
     document.onkeydown = function (key) {
         key.returnValue = false;
+        console.log(keyStatus[90]);
         if(key.keyCode != 90 || keyStatus[90] != false){
             keyStatus[key.keyCode] = true;
         }
@@ -182,9 +183,17 @@ if(ctx){
         clearPreviousImage(playerObject.x, playerObject.y, playerImage.width, playerImage.height);
        
         if (keyStatus[90] && !playerObject.shortAttackLaunched) {//Z(attack)
+            console.log(playerObject.shortAttackLaunched);
             playerObject.shortAttackLaunched = true;
             attackAnimation(playerImage, playerAttackL, playerAttackR, playerObject);
-            setTimeout(function(){playerObject.shortAttackLaunched = false;keyStatus[90] = false;},510);
+            setTimeout(function () {
+                console.log(playerObject.shortAttackLaunched);
+                playerObject.shortAttackLaunched = false;
+                if (keyStatus[90] != undefined) {
+                    keyStatus[90] = false;
+                }
+                
+            }, 500);
             return true;
         }
         
