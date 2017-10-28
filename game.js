@@ -9,14 +9,25 @@
 //------------------------------------------------//
 
 //  start of 1 canvas ---//
+
 var canvasElement = document.getElementById("gameCanvas");
+canvasElement.width = "1500";
+canvasElement.height = "700";
+canvasElement.style.background = "url(img/newBackground.bmp)";
+canvasElement.style.backgroundSize = "cover";
 var ctx = canvasElement.getContext && canvasElement.getContext('2d');
-if(ctx){
+
+//  end of 1 canvas ---//
+
+if (ctx) {
+
     //--- 2 start of global_variable ---//
 
     var gameImage = "img/gameImage.gif";
     var playerType = "player";
     var faceLeft = "left", faceRight = "right";
+    ctx.font = "30px Arial";
+    ctx.fillStyle = "red";
 
     //--- 2 end of global_variable ---//
 // 
@@ -36,7 +47,7 @@ if(ctx){
         }
     }
 
-    function clearPreviousImage(x, y, width, height){
+    function clearPreviousImage(x, y, width, height) {
         ctx.clearRect(x, y, width, height);
     }
     
@@ -96,7 +107,7 @@ if(ctx){
         else {
             obj.x = currX;
         }
-        if (currY <= 0 || currY + obj.imgHeight >= 400) {
+        if (currY <= 225 || currY + obj.imgHeight >= 700) {
             obj.y = preY;
         }
         else {
@@ -115,19 +126,20 @@ if(ctx){
     //player object
     function playerObject() {
         this.type = "player";
+        this.hp = 100;
+        this.mp = 50;
         this.speed = 5;
         this.x = 100;
-        this.y = 100;
+        this.y = 400;        
+        this.imgWidth = 80;
+        this.imgHeight = 80;
         this.face = faceRight;
+        this.shortAttackLaunched = false;
         //animate = animation count, repeat = after few times change animation
         this.walkAnimate = 1;
         this.walkRepeat = 0;
         this.attackAnimte = 1;
-        this.attackRepeat = 0;
-        this.shortAttackLaunched = false;
-        this.imgWidth = 80;
-        this.imgHeight = 80;
-        this.actionInterval;
+        this.attackRepeat = 0;        
     }
     playerObject = new playerObject();
     var keyStatus = [];
@@ -167,6 +179,7 @@ if(ctx){
     //record player input
     document.onkeydown = function (key) {
         key.returnValue = false;
+        console.log(keyStatus[90]);
         if(key.keyCode != 90 || keyStatus[90] != false){
             keyStatus[key.keyCode] = true;
         }
@@ -179,12 +192,20 @@ if(ctx){
             
     //define all player action in here
     function playerAction() {
-        clearPreviousImage(playerObject.x, playerObject.y, playerImage.width, playerImage.height);
+        clearPreviousImage(playerObject.x, playerObject.y, playerObject.imgWidth, playerObject.imgHeight);
        
         if (keyStatus[90] && !playerObject.shortAttackLaunched) {//Z(attack)
+            console.log(playerObject.shortAttackLaunched);
             playerObject.shortAttackLaunched = true;
             attackAnimation(playerImage, playerAttackL, playerAttackR, playerObject);
-            setTimeout(function(){playerObject.shortAttackLaunched = false;keyStatus[90] = false;},510);
+            setTimeout(function () {
+                console.log(playerObject.shortAttackLaunched);
+                playerObject.shortAttackLaunched = false;
+                if (keyStatus[90] != undefined) {
+                    keyStatus[90] = false;
+                }
+                
+            }, 510);
             return true;
         }
         
@@ -264,11 +285,10 @@ if(ctx){
 //     
     //--- 6 start of game_data ---//
 
-    setInterval(timerFunction, 1000);
+    //setInterval(timerFunction, 1000);
     
-    var timerMin = 0;
-    var timerSec = 0;
-    var gameTime = document.getElementById("gameTime");
+    var timerMin = 0, timerSec = 0;
+    var timerX = 10, timerY = 50, timerW = 100, timerH = 100;
     
     function timerFunction() {
         timerSec += 1;
@@ -286,8 +306,10 @@ if(ctx){
         } else {
             var lessThanTenMin = "";
         }
-        gameTime.innerText = lessThanTenMin + timerMin + ":" + lessThanTenSec + timerSec;
+
+        ctx.fillText(lessThanTenMin + timerMin + ":" + lessThanTenSec + timerSec, timerX, timerY);
     }
     
-    //--- 6 end of game_data ---//    
+    //--- 6 end of game_data ---//
+
 }
