@@ -75,6 +75,17 @@ if (ctx) {
     }
 
     function attackAnimation(image, attackXyL, attackXyR, object) {
+        //check facing left/right for attack animation   
+        var attackXyArr;
+        if(object.face == faceLeft){
+            attackXyArr = attackXyL;
+        }else if(object.face == faceRight){
+            attackXyArr = attackXyR;
+        }
+        //draw one first to prevent sparkle
+        drawInCanvas(image, attackXyArr["x" + object.attackAnimte], attackXyArr["y" + object.attackAnimte], object);
+
+        //use interval to ensure finish whole animation
         var interval = setInterval(function(){
             //add 1 for each move
             object.attackRepeat++;
@@ -88,16 +99,9 @@ if (ctx) {
                object.attackAnimte++;
                //reset for next attack animation
                object.attackRepeat = 0;
-            }
-            //check facing left/right for attack animation
-            var attackXyArr, animateLength;
-            if(object.face == faceLeft){
-                attackXyArr = attackXyL;
-            }else if(object.face == faceRight){
-                attackXyArr = attackXyR;
-            }
+            }                     
             drawInCanvas(image, attackXyArr["x" + object.attackAnimte], attackXyArr["y" + object.attackAnimte], object);
-        },25);        
+        },20);
     }
 
     function ensureCollision(obj, preX, preY, currX, currY) {        
@@ -178,8 +182,7 @@ if (ctx) {
 
     //record player input
     document.onkeydown = function (key) {
-        key.returnValue = false;
-        console.log(keyStatus[90]);
+        //key.returnValue = false;
         if(key.keyCode != 90 || keyStatus[90] != false){
             keyStatus[key.keyCode] = true;
         }
@@ -195,17 +198,16 @@ if (ctx) {
         clearPreviousImage(playerObject.x, playerObject.y, playerObject.imgWidth, playerObject.imgHeight);
        
         if (keyStatus[90] && !playerObject.shortAttackLaunched) {//Z(attack)
-            console.log(playerObject.shortAttackLaunched);
             playerObject.shortAttackLaunched = true;
             attackAnimation(playerImage, playerAttackL, playerAttackR, playerObject);
+            
+            //user timeout to enable player attack
             setTimeout(function () {
-                console.log(playerObject.shortAttackLaunched);
                 playerObject.shortAttackLaunched = false;
                 if (keyStatus[90] != undefined) {
                     keyStatus[90] = false;
-                }
-                
-            }, 510);
+                }                
+            }, 400);
             return true;
         }
         
@@ -285,10 +287,10 @@ if (ctx) {
 //     
     //--- 6 start of game_data ---//
 
-    //setInterval(timerFunction, 1000);
+    setInterval(timerFunction, 1000);
     
     var timerMin = 0, timerSec = 0;
-    var timerX = 10, timerY = 50, timerW = 100, timerH = 100;
+    var timerX = 10, timerY = 35, timerW = 100, timerH = 100;
     
     function timerFunction() {
         timerSec += 1;
@@ -306,7 +308,7 @@ if (ctx) {
         } else {
             var lessThanTenMin = "";
         }
-
+        clearPreviousImage(0,0,100,35);
         ctx.fillText(lessThanTenMin + timerMin + ":" + lessThanTenSec + timerSec, timerX, timerY);
     }
     
