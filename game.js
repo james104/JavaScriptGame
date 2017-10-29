@@ -26,8 +26,16 @@ if (ctx) {
     var gameImage = "img/gameImage.gif";
     var playerType = "player";
     var faceLeft = "left", faceRight = "right";
-    ctx.font = "30px Arial";
-    ctx.fillStyle = "red";
+    var gameSpriteNo = 0;
+    var textColor = "white", hpColor = "red", mpColor = "blue";
+    var spriteHpX = 150, spriteHpY = 20, 
+        spriteMpX = spriteHpX, spriteMpY = spriteHpY + 20,
+        spriteStatusW = 200, spriteStatusH = 15,
+        spriteHpTextX = spriteHpX + spriteStatusW, spriteHpTextY = spriteHpY + 15,
+        spriteMpTextX = spriteHpTextX, spriteMpTextY = spriteHpTextY + 20;
+    var spriteStatusArr = [];
+    ctx.font = "20px Arial";
+    ctx.fillStyle = textColor;
 
     //--- 2 end of global_variable ---//
 // 
@@ -119,6 +127,161 @@ if (ctx) {
         }
     }
 
+    function drawSpriteStatus(object){
+        gameSpriteNo++;
+        spriteStatusArr[object.name] = {fullHp : object.hp, hpX : spriteHpX, hpY : spriteHpY, fullMp : object.mp, mpX : spriteMpX, mpY : spriteMpY};
+        
+        //for hp bar
+        ctx.fillStyle = hpColor;
+        ctx.fillRect(spriteHpX, spriteHpY, spriteStatusW, spriteStatusH);        
+
+        // //for mp bar
+        ctx.fillStyle = mpColor;
+        ctx.fillRect(spriteMpX, spriteMpY, spriteStatusW, spriteStatusH);
+
+        ctx.fillStyle = textColor;
+        ctx.fillText(object.hp, spriteHpTextX, spriteHpTextY);
+        ctx.fillText(object.mp, spriteMpTextX, spriteMpTextY);
+
+        if(gameSpriteNo % 4 == 0){
+            spriteHpX = 150, spriteHpY = spriteHpY + 50;            
+        }
+        else{
+            spriteHpX = spriteHpTextX + 150;
+        }
+        spriteMpX = spriteHpX, spriteMpY = spriteHpY + 20,
+        spriteHpTextX = spriteHpX + spriteStatusW, spriteHpTextY = spriteHpY + 15,
+        spriteMpTextX = spriteHpTextX, spriteMpTextY = spriteHpTextY + 20;
+    }
+
+    function reduceHp(object, damage){
+        x = spriteStatusArr[object.name].hpX;
+        y = spriteStatusArr[object.name].hpY;        
+        spriteHpTextX = x + spriteStatusW, spriteHpTextY = y + 15;
+
+        clearPreviousImage(x, y, spriteStatusW + 40, spriteStatusH);
+
+        orignHp = spriteStatusArr[object.name].fullHp;
+        object.hp -= damage;
+        currHp = object.hp;
+        hpPercentage = currHp / orignHp;
+      
+        if(currHp <= 0){
+            currHp = 0;
+            hpPercentage = 0;
+        }
+
+        //for hp bar
+        ctx.fillStyle = hpColor;
+        ctx.fillRect(x, y, spriteStatusW * hpPercentage, spriteStatusH);
+        ctx.fillStyle = textColor;
+        ctx.fillText(currHp, spriteHpTextX, spriteHpTextY);
+
+        console.log("damage: " + damage);
+    }
+
+    function reduceMp(object, consumption){
+        x = spriteStatusArr[object.name].mpX;
+        y = spriteStatusArr[object.name].mpY;
+        spriteMpTextX = x + spriteStatusW, spriteMpTextY = y + 15;
+
+        clearPreviousImage(x, y, spriteStatusW + 40, spriteStatusH);
+
+        orignMp = spriteStatusArr[object.name].fullMp;
+        object.mp -= consumption
+        currMp = object.mp;
+        mpPercentage = currMp / orignMp;
+
+        if(currMp <= 0){
+            currMp = 0;
+            mpPercentage = 0;
+        }
+
+        //for mp bar
+        ctx.fillStyle = mpColor;
+        ctx.fillRect(x, y, spriteStatusW * mpPercentage, spriteStatusH);
+        ctx.fillStyle = textColor;
+        ctx.fillText(currMp, spriteMpTextX, spriteMpTextY);
+
+        console.log("consumption: " + consumption);
+    }
+
+    //start for test reduce hp & mp
+    // test1 = {name:"test1",hp:100,mp:100};
+    // drawSpriteStatus(test1);
+    // test2 = {name:"test2",hp:100,mp:100};
+    // drawSpriteStatus(test2);
+    // test3 = {name:"test3",hp:100,mp:100};
+    // drawSpriteStatus(test3);    
+    // test4 = {name:"test4",hp:100,mp:100};
+    // drawSpriteStatus(test4);
+    
+    //setTimeout(function(){
+    //    reduceHp(playerObject,33);
+    //    reduceMp(test3,20);
+    //},1000);
+    //setTimeout(function(){
+    //    reduceHp(test4,29);
+    //    reduceMp(playerObject,46);
+    //},2000);
+    //setTimeout(function(){
+    //    reduceHp(test1,33);
+    //    reduceMp(test4,20);
+    //},3000);
+    //setTimeout(function(){
+    //    reduceHp(test2,33);
+    //    reduceMp(test3,20);
+    //},4000);
+    //setTimeout(function(){
+    //    reduceHp(test3,29);
+    //    reduceMp(playerObject,46);
+    //},5000);
+    //setTimeout(function(){
+    //    reduceHp(test2,33);
+    //    reduceMp(test1,20);
+    //},6000);
+    setTimeout(function(){
+        reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+        reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+    },1000);
+    setTimeout(function(){
+        reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+        reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+    },2000);
+    setTimeout(function(){
+        reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+        reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+    },3000);
+    setTimeout(function(){
+        reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+        reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+    },4000);
+    setTimeout(function(){
+        reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+        reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+    },5000);
+    setTimeout(function(){
+        reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+        reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+    },6000);
+    setTimeout(function(){
+        reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+        reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+    },7000);
+    setTimeout(function(){
+        reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+        reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+    },8000);
+    setTimeout(function(){
+        reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+        reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+    },9000);
+    setTimeout(function(){
+        reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+        reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+    },10000);
+    //end for test reduce hp & mp
+
     //--- 3 end of global_function ---//
 //     
 //     
@@ -129,9 +292,10 @@ if (ctx) {
    
     //player object
     function playerObject() {
+        this.name = "keyLovers";
         this.type = "player";
         this.hp = 100;
-        this.mp = 50;
+        this.mp = 100;
         this.speed = 5;
         this.x = 100;
         this.y = 400;        
@@ -146,6 +310,8 @@ if (ctx) {
         this.attackRepeat = 0;        
     }
     playerObject = new playerObject();
+    drawSpriteStatus(playerObject);
+    
     var keyStatus = [];
 
     //player image position face left (L)
@@ -271,8 +437,8 @@ if (ctx) {
     //--- 5 start of start_function ---//
 
     function init(){
-        var gameStatus = "start";
-        
+        var gameStatus = "start";        
+        setInterval(timerFunction, 1000);
         //player status and function
         setInterval(callIntervalFunction, 20);
     }
@@ -287,7 +453,7 @@ if (ctx) {
 //     
     //--- 6 start of game_data ---//
 
-    setInterval(timerFunction, 1000);
+    
     
     var timerMin = 0, timerSec = 0;
     var timerX = 10, timerY = 35, timerW = 100, timerH = 100;
@@ -309,6 +475,7 @@ if (ctx) {
             var lessThanTenMin = "";
         }
         clearPreviousImage(0,0,100,35);
+        ctx.fillStyle = textColor;
         ctx.fillText(lessThanTenMin + timerMin + ":" + lessThanTenSec + timerSec, timerX, timerY);
     }
     
