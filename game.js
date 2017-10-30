@@ -8,7 +8,7 @@
 //6.game_data
 //------------------------------------------------//
 
-//  start of 1 canvas ---//
+//--- 1 start of canvas ---//
 
 var canvasElement = document.getElementById("gameCanvas");
 canvasElement.width = "1500";
@@ -17,7 +17,7 @@ canvasElement.style.background = "url(img/newBackground.bmp)";
 canvasElement.style.backgroundSize = "cover";
 var ctx = canvasElement.getContext && canvasElement.getContext('2d');
 
-//  end of 1 canvas ---//
+//--- 1 end of canvas ---//
 
 if (ctx) {
 
