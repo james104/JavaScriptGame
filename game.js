@@ -1,4 +1,4 @@
-//------------------------------------------------//
+//------------------------------------------------///
 //menu for game.js (search keyword before hyphen)
 //1.canvas
 //2.global_variable
