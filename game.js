@@ -117,7 +117,7 @@ if (ctx) {
                object.attackRepeat = 0;
             }                     
             drawInCanvas(image, attackXyArr["x" + object.attackAnimte], attackXyArr["y" + object.attackAnimte], object);
-        },20);
+        },15);
     }
 
     function ensureCollision(obj, preX, preY, currX, currY) {        
