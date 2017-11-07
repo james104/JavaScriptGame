@@ -54,7 +54,7 @@ if (ctx) {
     }
 
     function stage1Ai() {
-        //
+        
     }
     
     function drawInCanvas(image, x, y, object){
