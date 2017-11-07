@@ -26,6 +26,7 @@ if (ctx) {
 
     var gameImage = "img/gameImage.gif";
     var playerType = "player";
+    var ai = "ai"
     var faceLeft = "left", faceRight = "right";
     var gameSpriteNo = 0;
     var textColor = "white", hpColor = "red", mpColor = "blue";
@@ -49,16 +50,16 @@ if (ctx) {
     function callIntervalFunction(){
         playerAction();
         if (stage == 1) {
-            stage1Ai();
+            //stage1Ai();
         }
     }
-
-    function stage1Ai() {
-        
-    }
+    
     
     function drawInCanvas(image, x, y, object){
         if(object.type == playerType){
+            ctx.drawImage(image, x, y, object.imgWidth, object.imgHeight, object.x, object.y, object.imgWidth, object.imgHeight);
+        }
+        if (object.type == ai) {
             ctx.drawImage(image, x, y, object.imgWidth, object.imgHeight, object.x, object.y, object.imgWidth, object.imgHeight);
         }
     }
