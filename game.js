@@ -60,6 +60,10 @@ if (ctx) {
         ctx.drawImage(this.image, obj.imageX, obj.imageY, obj.imageWidth, obj.imageHeight, obj.posX, obj.posY, obj.imageWidth, obj.imageHeight);
     }
 
+    function clearImage(posX, posY, ImageWidth, ImageHeight) {
+        ctx.clearRect(posX, posY, ImageWidth, ImageHeight);
+    }
+
     function aiObject(imageX, imageY, imageWidth, imageHeight, posX, posY, speed) {
         this.imageX = imageX;
         this.imageY = imageY;
@@ -67,12 +71,22 @@ if (ctx) {
         this.imageHeight = imageHeight;
         this.posX = posX;
         this.posY = posY;
+        this.speed = speed
         this.face = faceLeft;
     }
 
     function stage1Ai() {
         ai = new aiObject(733, 461, 58, 80, 900, 400, 5);
         draw(ai);
+        
+    }
+
+    function ensureAIcollision(obj) {
+        if (obj.posX <= 0 || obj.posX + obj.imageWidth >= 1500 ||
+            obj.posY <= 225 || obj.posY + obj.imageWidth >= 700) {
+            return true;
+        }
+        return false;
     }
     
     function drawInCanvas(image, x, y, object){
