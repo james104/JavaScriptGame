@@ -16,6 +16,7 @@ canvasElement.height = "700";
 canvasElement.style.background = "url(img/newBackground.bmp)";
 canvasElement.style.backgroundSize = "cover";
 var ctx = canvasElement.getContext && canvasElement.getContext('2d');
+var stage = 1;
 
 //--- 1 end of canvas ---//
 
@@ -47,6 +48,13 @@ if (ctx) {
 
     function callIntervalFunction(){
         playerAction();
+        if (stage == 1) {
+            stage1Ai();
+        }
+    }
+
+    function stage1Ai() {
+
     }
     
     function drawInCanvas(image, x, y, object){
