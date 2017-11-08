@@ -106,16 +106,16 @@ if (ctx) {
         return false;
     }
     
-    function drawInCanvas(image, x, y, object){
+    function drawInCanvas(image, imageX, imageY, object){
             stage1Ai();
-            ctx.drawImage(image, x, y, object.imgWidth, object.imgHeight, object.x, object.y, object.imgWidth, object.imgHeight);
+            ctx.drawImage(image, imageX, imageY, object.imageWidth, object.imageHeight, object.posX, object.posY, object.imageWidth, object.imageHeight);
     }
     
-    function clearPreviousImage(x, y, width, height) {
-        ctx.clearRect(x, y, width, height);
+    function clearPreviousImage(posX, posY, wantedWidth, wantedHeight) {
+        ctx.clearRect(posX, posY, wantedWidth, wantedHeight);
     }
     
-    function walkAnimation(image, walkXyL, walkXyR, object) {
+    function walkAnimation(image, walkLeftXy, walkRightXy, object) {
         //add 1 for each move
         object.walkRepeat++;
         if (object.walkRepeat == 5) {
@@ -131,20 +131,20 @@ if (ctx) {
         //check facing left/right for walk animation
         var walkXyArr;
         if(object.face == faceLeft){
-            walkXyArr = walkXyL;
+            walkXyArr = walkLeftXy;
         }else if(object.face == faceRight){
-            walkXyArr = walkXyR;
+            walkXyArr = walkRightXy;
         }
         drawInCanvas(image, walkXyArr["x"+object.walkAnimate], walkXyArr["y"+object.walkAnimate], object);
     }
 
-    function attackAnimation(image, attackXyL, attackXyR, object) {
+    function attackAnimation(image, attackLeftXy, attackRightXy, object) {
         //check facing left/right for attack animation   
         var attackXyArr;
         if(object.face == faceLeft){
-            attackXyArr = attackXyL;
+            attackXyArr = attackLeftXy;
         }else if(object.face == faceRight){
-            attackXyArr = attackXyR;
+            attackXyArr = attackRightXy;
         }
         //draw one first to prevent sparkle
         drawInCanvas(image, attackXyArr["x" + object.attackAnimte], attackXyArr["y" + object.attackAnimte], object);
@@ -169,17 +169,17 @@ if (ctx) {
     }
 
     function ensureCollision(obj, preX, preY, currX, currY) {        
-        if (currX <= 0 || currX + obj.imgWidth >= 1500) {
-            obj.x = preX;
+        if (currX <= 0 || currX + obj.imageWidth >= 1500) {
+            obj.posX = preX;
         }
         else {
-            obj.x = currX;
+            obj.posX = currX;
         }
-        if (currY <= 225 || currY + obj.imgHeight >= 700) {
-            obj.y = preY;
+        if (currY <= 225 || currY + obj.imageHeight >= 700) {
+            obj.posY = preY;
         }
         else {
-            obj.y = currY;
+            obj.posY = currY;
         }
     }
 
@@ -345,7 +345,7 @@ if (ctx) {
 // 
 //     
     //--- 4 start of player_function ---//
-   
+
     //player object
     function playerObject() {
         this.name = "keyLovers";
@@ -353,10 +353,10 @@ if (ctx) {
         this.hp = 100;
         this.mp = 100;
         this.speed = 5;
-        this.x = 100;
-        this.y = 400;        
-        this.imgWidth = 80;
-        this.imgHeight = 80;
+        this.posX = 100;
+        this.posY = 400;        
+        this.imageWidth = 80;
+        this.imageHeight = 80;
         this.face = faceRight;
         this.shortAttackLaunched = false;
         //animate = animation count, repeat = after few times change animation
@@ -371,36 +371,36 @@ if (ctx) {
     var keyStatus = [];
 
     //player image position face left (L)
-    var playerImageXL = 720, playerImageYL = 460;//stand
-    var playerWalkL = []; //walk animation
-        playerWalkL["x1"] = 400, playerWalkL["y1"] = 460,
-        playerWalkL["x2"] = 320, playerWalkL["y2"] = 460,
-        playerWalkL["x3"] = 240, playerWalkL["y3"] = 460,
-        playerWalkL["x4"] = 160, playerWalkL["y4"] = 460;
-    var playerAttackL = []; //attack animation
-        playerAttackL["x1"] = 720, playerAttackL["y1"] = 540,
-        playerAttackL["x2"] = 640, playerAttackL["y2"] = 540,
-        playerAttackL["x3"] = 560, playerAttackL["y3"] = 540,
-        playerAttackL["x4"] = 480, playerAttackL["y4"] = 540;
+    var playerImageLeftStandX = 330, playerImageLeftStandY = 323;//stand
+    var playerWalkLeftXy = []; //walk animation
+        playerWalkLeftXy["x1"] = 410, playerWalkLeftXy["y1"] = 323,
+        playerWalkLeftXy["x2"] = 490, playerWalkLeftXy["y2"] = 323,
+        playerWalkLeftXy["x3"] = 570, playerWalkLeftXy["y3"] = 323,
+        playerWalkLeftXy["x4"] = 0, playerWalkLeftXy["y4"] = 403;
+    var playerAttackLeftXy = []; //attack animation
+        playerAttackLeftXy["x1"] = 83, playerAttackLeftXy["y1"] = 403,
+        playerAttackLeftXy["x2"] = 163, playerAttackLeftXy["y2"] = 403,
+        playerAttackLeftXy["x3"] = 243, playerAttackLeftXy["y3"] = 403,
+        playerAttackLeftXy["x4"] = 323, playerAttackLeftXy["y4"] = 403;
 
     //player image position face right (R)
-    var playerImageXR = 0, playerImageYR = 300;//stand
-    var playerWalkR = [];//walk animation
-        playerWalkR["x1"] = 320, playerWalkR["y1"] = 300,
-        playerWalkR["x2"] = 400, playerWalkR["y2"] = 300,
-        playerWalkR["x3"] = 480, playerWalkR["y3"] = 300,
-        playerWalkR["x4"] = 560, playerWalkR["y4"] = 300;
-    var playerAttackR = []; //attack animation
-        playerAttackR["x1"] = 0, playerAttackR["y1"] = 380,
-        playerAttackR["x2"] = 80, playerAttackR["y2"] = 380,
-        playerAttackR["x3"] = 160, playerAttackR["y3"] = 380,
-        playerAttackR["x4"] = 240, playerAttackR["y4"] = 380;
+    var playerImageRightStandX = 0, playerImageRightStandY = 242;//stand
+    var playerWalkRightXy = [];//walk animation
+        playerWalkRightXy["x1"] = 80, playerWalkRightXy["y1"] = 242,
+        playerWalkRightXy["x2"] = 160, playerWalkRightXy["y2"] = 242,
+        playerWalkRightXy["x3"] = 240, playerWalkRightXy["y3"] = 242,
+        playerWalkRightXy["x4"] = 320, playerWalkRightXy["y4"] = 242;
+    var playerAttackRightXy = []; //attack animation
+        playerAttackRightXy["x1"] = 400, playerAttackRightXy["y1"] = 242,
+        playerAttackRightXy["x2"] = 480, playerAttackRightXy["y2"] = 242,
+        playerAttackRightXy["x3"] = 560, playerAttackRightXy["y3"] = 242,
+        playerAttackRightXy["x4"] = 640, playerAttackRightXy["y4"] = 242;
 
     //create player image
     playerImage = new Image();
     playerImage.id = "playerImage";
     playerImage.src = gameImage;
-    playerImage.onload = drawInCanvas(playerImage, playerImageXR, playerImageYR, playerObject);
+    playerImage.onload = drawInCanvas(playerImage, playerImageRightStandX, playerImageRightStandY, playerObject);
     
     //record player input
     document.onkeydown = function (key) {
@@ -417,11 +417,11 @@ if (ctx) {
             
     //define all player action in here
     function playerAction() {
-        clearPreviousImage(playerObject.x, playerObject.y, playerObject.imgWidth, playerObject.imgHeight);
+        clearPreviousImage(playerObject.posX, playerObject.posY, playerObject.imageWidth, playerObject.imageHeight);
        
         if (keyStatus[90] && !playerObject.shortAttackLaunched) {//Z(attack)
             playerObject.shortAttackLaunched = true;
-            attackAnimation(playerImage, playerAttackL, playerAttackR, playerObject);
+            attackAnimation(playerImage, playerAttackLeftXy, playerAttackRightXy, playerObject);
             
             //user timeout to enable player attack
             setTimeout(function () {
@@ -436,19 +436,19 @@ if (ctx) {
         if (playerObject.shortAttackLaunched) {
             var attackXyArr;
             if (playerObject.face == faceLeft) {
-                attackXyArr = playerAttackL;
+                attackXyArr = playerAttackLeftXy;
             } else if (playerObject.face == faceRight) {
-                attackXyArr = playerAttackR;
+                attackXyArr = playerAttackRightXy;
             }
             drawInCanvas(playerImage, attackXyArr["x" + playerObject.attackAnimte], attackXyArr["y" + playerObject.attackAnimte], playerObject);
         } 
         else {
             //check player movement only for arrow key
             if (keyStatus[37] || keyStatus[38] || keyStatus[39] || keyStatus[40]) {
-                var preX = playerObject.x;
-                var preY = playerObject.y;
-                var currX = playerObject.x;
-                var currY = playerObject.y;
+                var preX = playerObject.posX;
+                var preY = playerObject.posY;
+                var currX = playerObject.posX;
+                var currY = playerObject.posY;
                 //assign new postion and dicide facing
                 if (keyStatus[37]) {//left           
                     //playerObject.x -= playerObject.speed;
@@ -469,7 +469,7 @@ if (ctx) {
                     currY = currY +  playerObject.speed;
                 }
                 ensureCollision(playerObject, preX, preY, currX, currY);
-                walkAnimation(playerImage, playerWalkL, playerWalkR, playerObject);   
+                walkAnimation(playerImage, playerWalkLeftXy, playerWalkRightXy, playerObject);   
                 return true;         
             }
 
@@ -477,9 +477,9 @@ if (ctx) {
             //walkAnimate = 1, walkRepeat = 0;
             //playerAttackAnimte = 1, playerAttackRepeat = 0;
             if (playerObject.face == faceLeft) {
-                drawInCanvas(playerImage, playerImageXL, playerImageYL, playerObject);
+                drawInCanvas(playerImage, playerImageLeftStandX, playerImageLeftStandY, playerObject);
             } else if (playerObject.face == faceRight) {
-                drawInCanvas(playerImage, playerImageXR, playerImageYR, playerObject);
+                drawInCanvas(playerImage, playerImageRightStandX, playerImageRightStandY, playerObject);
             }
         }
     }
