@@ -80,10 +80,10 @@ if (ctx) {
     }
     width = 80; height = 80;
     count = 1;
-    ai = new aiObject(325, 80, 80, 80, 900, 400, 100, 100, 5);
+    ai = new aiObject(325, 80, 80, 80, 900, 100, 100, 100, 5);
     draw(ai);
     function stage1Ai() {
-        clearImage(ai.posX, ai.posY, ai.wantedWidth+10, ai.wantedHeight);
+        clearImage(ai.posX, ai.posY, ai.wantedWidth + 10, ai.wantedHeight);
 
         ai.posX -= ai.speed;
         ai.imageX += 80;
@@ -92,13 +92,10 @@ if (ctx) {
             ai.speed = 0;
         }
         draw(ai);
-
         if (count >= 4) {
             ai.imageX = 325;
             count = 1;
         }
-
-        
     }
 
     function ensureAIcollision(obj) {
