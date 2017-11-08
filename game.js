@@ -78,21 +78,19 @@ if (ctx) {
         this.speed = 1;
         this.face = faceLeft;
     }
-    width = 80; height = 80;
     count = 1;
     ai = new aiObject(325, 80, 80, 80, 900, 400, 100, 100, 5);
-    //draw(ai);
     function stage1Ai() {
-        clearImage(ai.posX, ai.posY, ai.wantedWidth + 10, ai.wantedHeight);
-
-        ai.posX -= ai.speed;
-        ai.imageX += 80;
-        count++;
+        clearImage(ai.posX, ai.posY, ai.wantedWidth, ai.wantedHeight);
         if (ensureAIcollision(ai)) {
             ai.speed = 0;
         }
         draw(ai);
-        if (count >= 4) {
+        ai.posX -= ai.speed;
+        ai.imageX += 80;
+        count++;
+
+        if (count > 4) {
             ai.imageX = 325;
             count = 1;
         }
@@ -107,8 +105,10 @@ if (ctx) {
     }
     
     function drawInCanvas(image, imageX, imageY, object){
-            stage1Ai();
-            ctx.drawImage(image, imageX, imageY, object.imageWidth, object.imageHeight, object.posX, object.posY, object.imageWidth, object.imageHeight);
+         if (stage == 1) {
+             stage1Ai();
+         }
+         ctx.drawImage(image, imageX, imageY, object.imageWidth, object.imageHeight, object.posX, object.posY, object.imageWidth, object.imageHeight);
     }
     
     function clearPreviousImage(posX, posY, wantedWidth, wantedHeight) {
