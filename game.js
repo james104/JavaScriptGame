@@ -80,7 +80,7 @@ if (ctx) {
     count = 1;
     ai = new aiObject(325, 80, 80, 80, 900, 400, 80, 80, 5);
     function stage1Ai() {
-        clearImage(ai.posX, ai.posY, ai.wantedWidth, ai.wantedHeight);
+        clearImage(ai.posX, ai.posY, ai.wantedWidth+10, ai.wantedHeight);
         if (count > 4) {
             ai.imageX = 325;
             count = 1;
