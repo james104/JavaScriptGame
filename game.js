@@ -113,7 +113,7 @@ if (ctx) {
         if(object.type == playerType){
             ctx.drawImage(image, x, y, object.imgWidth, object.imgHeight, object.x, object.y, object.imgWidth, object.imgHeight);
             //here here for testing
-            ctx.drawImage(image, 350, 350, 80, 80, 350, 350, 80, 80);
+            ctx.drawImage(image, 325, 80, 80, 80, 350, 350, 80, 80);
         }
 
     }
