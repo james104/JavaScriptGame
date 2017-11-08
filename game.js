@@ -50,8 +50,6 @@ if (ctx) {
 
     function callIntervalFunction(){
         playerAction();
-        ctx.drawImage(image, 325, 80, 80, 80, testSpeed, testY, testW, testH);
-        ctx.drawImage(image, ai.imageX, ai.imageY, ai.imageWidth, ai.imageHeight, ai.posX, ai.posY, ai.wantedWidth, ai.wantedHeight);
         // if (stage == 1) {
         //     stage1Ai();
         // }
@@ -83,7 +81,7 @@ if (ctx) {
     width = 80; height = 80;
     count = 1;
     ai = new aiObject(325, 80, 80, 80, 900, 400, 100, 100, 5);
-    draw(ai);
+    //draw(ai);
     function stage1Ai() {
         clearImage(ai.posX, ai.posY, ai.wantedWidth + 10, ai.wantedHeight);
 
@@ -107,21 +105,11 @@ if (ctx) {
         }
         return false;
     }
-    var testSpeed = 0, testY = 350, testW = 80,testH=80; 
+    
     function drawInCanvas(image, x, y, object){
-        if(object.type == playerType){
-            testSpeed += 5;
-            clearPreviousImage(testSpeed,testY,testW,testH);
-            ctx.drawImage(image, 325, 80, 80, 80, testSpeed, testY, testW, testH);
             stage1Ai();
             ctx.drawImage(image, x, y, object.imgWidth, object.imgHeight, object.x, object.y, object.imgWidth, object.imgHeight);
-            //here here for testing
-            
-        }
-
     }
-
-    
     
     function clearPreviousImage(x, y, width, height) {
         ctx.clearRect(x, y, width, height);
