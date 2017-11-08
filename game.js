@@ -73,8 +73,8 @@ if (ctx) {
         this.imageY = imageY;
         this.imageWidth = imageWidth;
         this.imageHeight = imageHeight;
-        this.posX = 300;
-        this.posY = 300;
+        this.posX = posX;
+        this.posY = posY;
         this.wantedWidth = wantedWidth;
         this.wantedHeight = wantedHeight
         this.speed = 1;
@@ -82,12 +82,12 @@ if (ctx) {
     }
     width = 80; height = 80;
     count = 1;
-    ai = new aiObject(325, 80, 80, 80, 900, 100, 100, 100, 5);
+    ai = new aiObject(325, 80, 80, 80, 900, 400, 100, 100, 5);
     draw(ai);
     function stage1Ai() {
         clearImage(ai.posX, ai.posY, ai.wantedWidth + 10, ai.wantedHeight);
 
-        ai.posX += ai.speed;
+        ai.posX -= ai.speed;
         ai.imageX += 80;
         count++;
         if (ensureAIcollision(ai)) {
