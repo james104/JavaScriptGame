@@ -47,12 +47,10 @@ if (ctx) {
 // 
 // 
     //--- 3 start of global_function ---//
-
+    var check = true;
     function callIntervalFunction(){
         playerAction();
-        // if (stage == 1) {
-        //     stage1Ai();
-        // }
+
     }
     this.image = new Image();
     this.image.src = "assets/spriteSheet.png";
@@ -79,13 +77,16 @@ if (ctx) {
         this.face = faceLeft;
     }
     count = 1;
+
     ai = new aiObject(325, 80, 80, 80, 900, 400, 100, 100, 5);
     function stage1Ai() {
+        check = false;
         clearImage(ai.posX, ai.posY, ai.wantedWidth, ai.wantedHeight);
         if (ensureAIcollision(ai)) {
             ai.speed = 0;
         }
         draw(ai);
+        
         ai.posX -= ai.speed;
         ai.imageX += 80;
         count++;
@@ -94,6 +95,10 @@ if (ctx) {
             ai.imageX = 325;
             count = 1;
         }
+        setTimeout(function(){
+            check = true;
+        },80);
+        
     }
 
     function ensureAIcollision(obj) {
@@ -105,10 +110,10 @@ if (ctx) {
     }
     
     function drawInCanvas(image, imageX, imageY, object){
-         if (stage == 1) {
-             stage1Ai();
-         }
-         ctx.drawImage(image, imageX, imageY, object.imageWidth, object.imageHeight, object.posX, object.posY, object.imageWidth, object.imageHeight);
+        if (stage == 1 && check == true) {
+            stage1Ai();
+        }
+        ctx.drawImage(image, imageX, imageY, object.imageWidth, object.imageHeight, object.posX, object.posY, object.imageWidth, object.imageHeight);
     }
     
     function clearPreviousImage(posX, posY, wantedWidth, wantedHeight) {
