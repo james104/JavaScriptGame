@@ -24,7 +24,9 @@ if (ctx) {
 
     //--- 2 start of global_variable ---//
 
-    var gameImage = "img/gameImage.gif";
+
+    //img/gameImage.gif here for testing
+    var gameImage = "assets/spriteSheet.png";
     var playerType = "player";
     var faceLeft = "left", faceRight = "right";
     var gameSpriteNo = 0;
@@ -103,10 +105,14 @@ if (ctx) {
     function drawInCanvas(image, x, y, object){
         if(object.type == playerType){
             ctx.drawImage(image, x, y, object.imgWidth, object.imgHeight, object.x, object.y, object.imgWidth, object.imgHeight);
+            //here here for testing
+            ctx.drawImage(image, 350, 350, 80, 80, 350, 350, 80, 80);
         }
 
     }
 
+    
+    
     function clearPreviousImage(x, y, width, height) {
         ctx.clearRect(x, y, width, height);
     }
@@ -397,7 +403,7 @@ if (ctx) {
     playerImage.id = "playerImage";
     playerImage.src = gameImage;
     playerImage.onload = drawInCanvas(playerImage, playerImageXR, playerImageYR, playerObject);
-
+    
     //record player input
     document.onkeydown = function (key) {
         //key.returnValue = false;
