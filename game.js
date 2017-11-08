@@ -50,9 +50,11 @@ if (ctx) {
 
     function callIntervalFunction(){
         playerAction();
-        if (stage == 1) {
-            stage1Ai();
-        }
+        ctx.drawImage(image, 325, 80, 80, 80, testSpeed, testY, testW, testH);
+        ctx.drawImage(image, ai.imageX, ai.imageY, ai.imageWidth, ai.imageHeight, ai.posX, ai.posY, ai.wantedWidth, ai.wantedHeight);
+        // if (stage == 1) {
+        //     stage1Ai();
+        // }
     }
     this.image = new Image();
     this.image.src = "assets/spriteSheet.png";
@@ -71,11 +73,11 @@ if (ctx) {
         this.imageY = imageY;
         this.imageWidth = imageWidth;
         this.imageHeight = imageHeight;
-        this.posX = posX;
-        this.posY = posY;
+        this.posX = 300;
+        this.posY = 300;
         this.wantedWidth = wantedWidth;
         this.wantedHeight = wantedHeight
-        this.speed = speed
+        this.speed = 1;
         this.face = faceLeft;
     }
     width = 80; height = 80;
@@ -85,7 +87,7 @@ if (ctx) {
     function stage1Ai() {
         clearImage(ai.posX, ai.posY, ai.wantedWidth + 10, ai.wantedHeight);
 
-        ai.posX -= ai.speed;
+        ai.posX += ai.speed;
         ai.imageX += 80;
         count++;
         if (ensureAIcollision(ai)) {
@@ -105,12 +107,16 @@ if (ctx) {
         }
         return false;
     }
-    
+    var testSpeed = 0, testY = 350, testW = 80,testH=80; 
     function drawInCanvas(image, x, y, object){
         if(object.type == playerType){
+            testSpeed += 5;
+            clearPreviousImage(testSpeed,testY,testW,testH);
+            ctx.drawImage(image, 325, 80, 80, 80, testSpeed, testY, testW, testH);
+            stage1Ai();
             ctx.drawImage(image, x, y, object.imgWidth, object.imgHeight, object.x, object.y, object.imgWidth, object.imgHeight);
             //here here for testing
-            ctx.drawImage(image, 325, 80, 80, 80, 350, 350, 80, 80);
+            
         }
 
     }
@@ -302,46 +308,46 @@ if (ctx) {
     //    reduceHp(test2,33);
     //    reduceMp(test1,20);
     //},6000);
-    setTimeout(function(){
-        reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-        reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
-    },1000);
-    setTimeout(function(){
-        reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-        reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
-    },2000);
-    setTimeout(function(){
-        reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-        reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
-    },3000);
-    setTimeout(function(){
-        reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-        reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
-    },4000);
-    setTimeout(function(){
-        reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-        reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
-    },5000);
-    setTimeout(function(){
-        reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-        reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
-    },6000);
-    setTimeout(function(){
-        reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-        reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
-    },7000);
-    setTimeout(function(){
-        reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-        reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
-    },8000);
-    setTimeout(function(){
-        reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-        reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
-    },9000);
-    setTimeout(function(){
-        reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-        reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
-    },10000);
+  //  setTimeout(function(){
+  //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+  //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+  //  },1000);
+  //  setTimeout(function(){
+  //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+  //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+  //  },2000);
+  //  setTimeout(function(){
+  //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+  //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+  //  },3000);
+  //  setTimeout(function(){
+  //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+  //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+  //  },4000);
+  //  setTimeout(function(){
+  //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+  //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+  //  },5000);
+  //  setTimeout(function(){
+  //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+  //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+  //  },6000);
+  //  setTimeout(function(){
+  //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+  //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+  //  },7000);
+  //  setTimeout(function(){
+  //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+  //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+  //  },8000);
+  //  setTimeout(function(){
+  //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+  //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+  //  },9000);
+  //  setTimeout(function(){
+  //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+  //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+  //  },10000);
     //end for test reduce hp & mp
 
     //--- 3 end of global_function ---//
