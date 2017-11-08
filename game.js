@@ -53,7 +53,7 @@ if (ctx) {
         }
     }
     this.image = new Image();
-    this.image.src = "img/gameImage.gif";
+    this.image.src = "assets/spriteSheet.png";
     this.image.onload = init;
 
     function draw(obj) {
@@ -76,7 +76,7 @@ if (ctx) {
     }
 
     function stage1Ai() {
-        ai = new aiObject(733, 461, 58, 80, 900, 400, 5);
+        ai = new aiObject(325, 325, 80, 80, 900, 400, 5);
         draw(ai);
         
     }
