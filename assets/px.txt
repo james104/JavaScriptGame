@@ -2,5 +2,6 @@ every 170px for ninja
 every 90px for weapon, key, and bullet
 every 200px for boss1
 
-I set it in photoshop, but it is not the same as expected, so please refer to the paint to get the actual size
-and X and Y coordinates. [its like 80x80px for ninja]
+I set it in photoshop, but it is not the same as expected , so please refer to the paint to get the actual size and X and Y coordinates. [its like 80x80px for ninja]
+
+[see if you could fix this: after changing to transparent online, the picture becomes smaller, you can see the different between spritesheet.jpg and spritesheet.png, png is transparent.]

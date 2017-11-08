@@ -57,26 +57,28 @@ if (ctx) {
     this.image.onload = init;
 
     function draw(obj) {
-        ctx.drawImage(this.image, obj.imageX, obj.imageY, obj.imageWidth, obj.imageHeight, obj.posX, obj.posY, obj.imageWidth, obj.imageHeight);
+        ctx.drawImage(this.image, obj.imageX, obj.imageY, obj.imageWidth, obj.imageHeight, obj.posX, obj.posY, obj.wantedWidth, obj.wantedHeight);
     }
 
     function clearImage(posX, posY, ImageWidth, ImageHeight) {
         ctx.clearRect(posX, posY, ImageWidth, ImageHeight);
     }
 
-    function aiObject(imageX, imageY, imageWidth, imageHeight, posX, posY, speed) {
+    function aiObject(imageX, imageY, imageWidth, imageHeight, posX, posY, wantedWidth, wantedHeight, speed) {
         this.imageX = imageX;
         this.imageY = imageY;
         this.imageWidth = imageWidth;
         this.imageHeight = imageHeight;
         this.posX = posX;
         this.posY = posY;
+        this.wantedWidth = wantedWidth;
+        this.wantedHeight = wantedHeight
         this.speed = speed
         this.face = faceLeft;
     }
 
     function stage1Ai() {
-        ai = new aiObject(325, 325, 80, 80, 900, 400, 5);
+        ai = new aiObject(325, 80, 80, 80, 900, 400, 100, 100, 5);
         draw(ai);
         
     }
