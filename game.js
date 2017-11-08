@@ -60,8 +60,8 @@ if (ctx) {
         ctx.drawImage(this.image, obj.imageX, obj.imageY, obj.imageWidth, obj.imageHeight, obj.posX, obj.posY, obj.wantedWidth, obj.wantedHeight);
     }
 
-    function clearImage(posX, posY, ImageWidth, ImageHeight) {
-        ctx.clearRect(posX, posY, ImageWidth, ImageHeight);
+    function clearImage(posX, posY, wantedWidth, wantedHeight) {
+        ctx.clearRect(posX, posY, wantedWidth, wantedHeight);
     }
 
     function aiObject(imageX, imageY, imageWidth, imageHeight, posX, posY, wantedWidth, wantedHeight, speed) {
@@ -76,10 +76,19 @@ if (ctx) {
         this.speed = speed
         this.face = faceLeft;
     }
-
+    width = 80; height = 80;
+    count = 1;
+    ai = new aiObject(325, 80, 80, 80, 900, 400, 80, 80, 5);
     function stage1Ai() {
-        ai = new aiObject(325, 80, 80, 80, 900, 400, 100, 100, 5);
+        clearImage(ai.posX, ai.posY, ai.wantedWidth, ai.wantedHeight);
+        if (count > 4) {
+            ai.imageX = 325;
+            count = 1;
+        }
         draw(ai);
+        ai.posX -= ai.speed;
+        ai.imageX += 80;
+        count++;
         
     }
 
