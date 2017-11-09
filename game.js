@@ -64,6 +64,31 @@ if (ctx) {
         ctx.clearRect(posX, posY, wantedWidth, wantedHeight);
     }
 
+    //player object
+    function playerObject() {
+        this.name = "keyLovers";
+        this.type = "player";
+        this.hp = 100;
+        this.mp = 100;
+        this.speed = 5;
+        this.posX = 100;
+        this.posY = 400;
+        this.imageWidth = 80;
+        this.imageHeight = 80;
+        this.wantedWidth = 80;
+        this.wantedHeight = 80;
+        this.face = faceRight;
+        this.shortAttackLaunched = false;
+        //animate = animation count, repeat = after few times change animation
+        this.walkAnimate = 1;
+        this.walkRepeat = 0;
+        this.attackAnimte = 1;
+        this.attackRepeat = 0;
+    }
+    playerObject = new playerObject();
+    count = 1;
+    //attackFinished = false;
+    //attackType = Math.floor(Math.random() * 2 + 1);
     function aiObject(imageX, imageY, imageWidth, imageHeight, posX, posY, wantedWidth, wantedHeight, speed) {
         this.imageX = imageX;
         this.imageY = imageY;
@@ -72,22 +97,140 @@ if (ctx) {
         this.posX = posX;
         this.posY = posY;
         this.wantedWidth = wantedWidth;
-        this.wantedHeight = wantedHeight
-        this.speed = 1;
+        this.wantedHeight = wantedHeight;
+        this.speed = speed;
         this.face = faceLeft;
     }
-    count = 1;
-
-    ai = new aiObject(325, 80, 80, 80, 900, 400, 100, 100, 5);
+    ai = new aiObject(325, 80, 80, 80, 900, 400, 100, 100, playerObject.speed);
     function stage1Ai() {
+        //if (ensurePlayerCollision(ai)) {
+        //    console.log("yes");
+        //}
+        setFace(ai);
+        //random number from 1 to 2
+        //if (!attackFinished) {
+        //    attackType = Math.floor(Math.random() * 2 + 1);
+        //}
+        // Randomly perform either 1) or 2) attack (every randomly 1-4s).
+        //1: Faster, Chase (random within 2-4s), after that, Must perform short attack.
+        //2: same speed, keep distance and Long attack (chase horizontally)
+        //if (attackType == 1) {
+        //    attackFinished = false;
+        //    fastAiChase();
+        //}
+        fastAiChase();
+    }
+
+    function ensurePlayerCollision(obj) {
+        //fuzzy sets
+    }
+    faceCountR = 0;
+    faceCountL = 0;
+    function setFace(obj) {
+        if (playerObject.posX > obj.posX) {
+            faceCountL = 0;
+            obj.face = faceRight;
+            if (faceCountR == 0) {
+                obj.imageX = 0;
+                obj.imageY = 0;
+                faceCountR++;
+            }
+        }
+
+        else if (playerObject.posX < obj.posX) {
+            faceCountR = 0;
+            obj.face = faceLeft;
+            if (faceCountL == 0) {
+                obj.imageX = 325;
+                obj.imageY = 80;
+                faceCountL++;
+            }
+        }
+    }
+    position = "";
+    function fastAiChase() {
+        ai.speed = playerObject.speed * 2;
         check = false;
-        clearImage(ai.posX, ai.posY, ai.wantedWidth, ai.wantedHeight);
+        if (ai.face == faceRight) {
+            if (position == "Down") {
+                clearImage(ai.posX - ai.speed, ai.posY - ai.speed, ai.wantedWidth, ai.wantedHeight + ai.speed);
+            }
+            else {
+                clearImage(ai.posX - ai.speed, ai.posY, ai.wantedWidth, ai.wantedHeight + ai.speed);
+            }
+        }
+        else {
+            if (position == "Down") {
+                clearImage(ai.posX, ai.posY - ai.speed, ai.wantedWidth + ai.speed, ai.wantedHeight + ai.speed);
+            }
+            else {
+                clearImage(ai.posX, ai.posY, ai.wantedWidth + ai.speed, ai.wantedHeight + ai.speed);
+            }  
+        }
+        
+        //if (ensureAIcollision(ai)) {
+        //    ai.speed = 0;
+        //}
+        draw(ai);
+
+        calculateShortestDistance(ai);
+        
+        ai.imageX += 80;
+        count++;
+
+        if (count > 4 && ai.face == faceLeft) {
+            ai.imageX = 325;
+            count = 1;
+        }
+
+        else if (count > 4 && ai.face == faceRight) {
+            ai.imageX = 0;
+            count = 1;
+        }
+        setTimeout(function () {
+            check = true;
+        }, 50);
+    }
+
+    function calculateShortestDistance(obj) {
+        preX = obj.posX;
+        preY = obj.posY;
+        currX = obj.posX;
+        currY = obj.posY;
+        if (obj.posX > playerObject.posX) {
+            currX -= obj.speed;
+        }
+        else {
+            currX += obj.speed;
+        }
+        if (obj.posY > playerObject.posY) {
+            currY -= obj.speed;
+            position = "";
+        }
+        else if (obj.posY < playerObject.posY) {
+            currY += obj.speed;
+            position = "Down";
+        }
+        else {
+            position = "";
+        }
+        ensureCollision(obj, preX, preY, currX, currY);
+    }
+
+    function normalAiChase() {
+        check = false;
+        clearImage(ai.posX, ai.posY, ai.wantedWidth + ai.speed, ai.wantedHeight);
         if (ensureAIcollision(ai)) {
             ai.speed = 0;
         }
         draw(ai);
-        
-        ai.posX -= ai.speed;
+        if (ai.face == faceLeft) {
+            ai.posX -= ai.speed;
+        }
+        else if (ai.face == faceRight) {
+            ai.posX += ai.speed;
+        }
+
         ai.imageX += 80;
         count++;
 
@@ -95,10 +238,9 @@ if (ctx) {
             ai.imageX = 325;
             count = 1;
         }
-        setTimeout(function(){
+        setTimeout(function () {
             check = true;
-        },80);
-        
+        }, 70);
     }
 
     function ensureAIcollision(obj) {
@@ -174,13 +316,13 @@ if (ctx) {
     }
 
     function ensureCollision(obj, preX, preY, currX, currY) {        
-        if (currX <= 0 || currX + obj.imageWidth >= 1500) {
+        if (currX <= 0 || currX + obj.wantedWidth >= 1500) {
             obj.posX = preX;
         }
         else {
             obj.posX = currX;
         }
-        if (currY <= 225 || currY + obj.imageHeight >= 700) {
+        if (currY <= 225 || currY + obj.wantedHeight >= 700) {
             obj.posY = preY;
         }
         else {
@@ -351,26 +493,8 @@ if (ctx) {
 //     
     //--- 4 start of player_function ---//
 
-    //player object
-    function playerObject() {
-        this.name = "keyLovers";
-        this.type = "player";
-        this.hp = 100;
-        this.mp = 100;
-        this.speed = 5;
-        this.posX = 100;
-        this.posY = 400;        
-        this.imageWidth = 80;
-        this.imageHeight = 80;
-        this.face = faceRight;
-        this.shortAttackLaunched = false;
-        //animate = animation count, repeat = after few times change animation
-        this.walkAnimate = 1;
-        this.walkRepeat = 0;
-        this.attackAnimte = 1;
-        this.attackRepeat = 0;        
-    }
-    playerObject = new playerObject();
+
+    
     drawSpriteStatus(playerObject);
     
     var keyStatus = [];
