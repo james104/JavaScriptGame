@@ -104,6 +104,8 @@ if (ctx) {
         this.walkRepeat = 0; //duration to change walkAnimate (number of loop)
         this.attackAnimte = 1; 
         this.attackRepeat = 0;
+        this.walkLeftXy = [];
+        this.walkRightXy = [];
         this.attackLeftXy = [];
         this.attackRightXy = [];
     }
@@ -121,6 +123,15 @@ if (ctx) {
     ai.attackRightXy["x2"] = 480, ai.attackRightXy["y2"] = 0,
     ai.attackRightXy["x3"] = 560, ai.attackRightXy["y3"] = 0,
     ai.attackRightXy["x4"] = 640, ai.attackRightXy["y4"] = 0;
+    
+    ai.walkLeftXy["x1"] = 570, ai.walkLeftXy["y1"] = 80,
+    ai.walkLeftXy["x2"] = 490, ai.walkLeftXy["y2"] = 80,
+    ai.walkLeftXy["x3"] = 410, ai.walkLeftXy["y3"] = 80,    
+    ai.walkLeftXy["x4"] = 330, ai.walkLeftXy["y4"] = 80;
+    ai.walkRightXy["x1"] = 80, ai.walkRightXy["y1"] = 0,
+    ai.walkRightXy["x2"] = 160, ai.walkRightXy["y2"] = 0,
+    ai.walkRightXy["x3"] = 240, ai.walkRightXy["y3"] = 0,
+    ai.walkRightXy["x4"] = 320, ai.walkRightXy["y4"] = 0;
 
     //setInterval(function(){
     //    aiAttackCall(image,ai.attackLeftXy,ai.attackRightXy,ai);
@@ -225,7 +236,7 @@ if (ctx) {
         //if (ensureAIcollision(ai)) {
         //    ai.speed = 0;
         //}
-        
+        walkAnimation(gameImage,ai.walkLeftXy,ai.walkRightXy,ai);
         if (chaseType == "basicChase") {
             chase(ai);
         }
@@ -389,7 +400,7 @@ if (ctx) {
     }
     
     function drawInCanvas(image, imageX, imageY, object){
-        if (stage == 1 && check == true) {
+        if (stage == 1) {
             stage1Ai();
         }
         ctx.drawImage(image, imageX, imageY, object.imageWidth, object.imageHeight, object.posX, object.posY, object.imageWidth, object.imageHeight);
