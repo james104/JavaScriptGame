@@ -102,7 +102,9 @@ if (ctx) {
         this.face = faceLeft;
     }
     ai = new aiObject(325, 80, 80, 80, 900, 400, 100, 100, playerObject.speed);
+    chaseSpeed = "";
     chaseType = "";
+    
     function stage1Ai() {
         //if (ensurePlayerCollision(ai)) {
         //    console.log("yes");
@@ -119,8 +121,12 @@ if (ctx) {
         //    attackFinished = false;
         //    fastAiChase();
         //}
-        fastAiChase();
-        chaseType = "fast";
+        //chaseSpeed = "fast";
+        //chaseType = "basicChase"
+        chaseSpeed = "fast";
+        chaseType = "horizontalChase"
+        aiChase(chaseSpeed, chaseType);
+        
     }
 
     function ensurePlayerCollision(obj) {
@@ -150,8 +156,13 @@ if (ctx) {
         }
     }
     position = "";
-    function fastAiChase() {
-        ai.speed = playerObject.speed * 2;
+    function aiChase(chaseSpeed, chaseType) {
+        if (chaseSpeed == "fast") {
+            ai.speed = playerObject.speed * 2;
+        }
+        else if (chaseSpeed == "normal") {
+            ai.speed = playerObject.speed;
+        }
         check = false;
         if (ai.face == faceRight) {
             if (position == "Down") {
@@ -174,8 +185,14 @@ if (ctx) {
         //    ai.speed = 0;
         //}
         draw(ai);
+        if (chaseType == "basicChase") {
+            chase(ai);
+        }
 
-        chase(ai);
+        else if (chaseType == "horizontalChase") {
+            horizontalChase(ai);
+        }
+        
         
         ai.imageX += 80;
         count++;
@@ -194,12 +211,43 @@ if (ctx) {
         }, 60);
     }
 
+    function horizontalChase(obj) {
+        preX = obj.posX;
+        preY = obj.posY;
+        currX = obj.posX;
+        currY = obj.posY;
+
+        if (obj.posY > playerObject.posY) {
+            position = "";
+            if (obj.posY - 5 == playerObject.posY) {
+
+            }
+            else {
+                currY -= obj.speed;
+            }
+        }
+        else if (obj.posY < playerObject.posY) {
+            position = "Down";
+            if (obj.posY + 5 == playerObject.posY) {
+
+            }
+            else {
+                currY += obj.speed;
+            }
+        }
+        else {
+            position = "";
+        }
+
+        ensureCollision(obj, preX, preY, currX, currY);
+    }
+
     function chase(obj) {
         preX = obj.posX;
         preY = obj.posY;
         currX = obj.posX;
         currY = obj.posY;
-        if (chaseType == "fast") {
+        if (chaseSpeed == "fast") {
             if (obj.posX > playerObject.posX) {
                 if (obj.posX - 5 == playerObject.posX){
 
@@ -259,7 +307,6 @@ if (ctx) {
         }
 
         ensureCollision(obj, preX, preY, currX, currY);
-        console.log(obj.posX + " " + obj.posY + " " + playerObject.posX + " " + playerObject.posY);
     }
 
     function normalAiChase() {
