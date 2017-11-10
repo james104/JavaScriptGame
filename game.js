@@ -106,6 +106,7 @@ if (ctx) {
 
     chaseSpeed = "";
     chaseType = "";
+    distance = "";
     
     function stage1Ai() {
         //if (ensurePlayerCollision(ai)) {
