@@ -49,11 +49,16 @@ if (ctx) {
     //--- 3 start of global_function ---//
     var check = true;
     function callIntervalFunction(){
-        playerAction();
+       
         if (stage == 1) {
             stage1Ai();
         }
-
+        playerAction();
+        if(ai.face == faceLeft){
+            drawInCanvas(image, ai.walkLeftXy["x"+ai.walkAnimate], ai.walkLeftXy["y"+ai.walkAnimate], ai);
+        }else if(ai.face == faceRight){
+            drawInCanvas(image, ai.walkRightXy["x"+ai.walkAnimate], ai.walkRightXy["y"+ai.walkAnimate], ai);
+        }
     }
     this.image = new Image();
     this.image.src = "assets/spriteSheet.png";
@@ -238,15 +243,14 @@ if (ctx) {
         //if (ensureAIcollision(ai)) {
         //    ai.speed = 0;
         //}
-        walkAnimation(image, ai.walkLeftXy, ai.walkRightXy, ai);
+        
         if (chaseType == "basicChase") {
             chase(ai);
         }
-
         else if (chaseType == "horizontalChase") {
             horizontalChase(ai);
         }
-        
+        walkAnimation(image, ai.walkLeftXy, ai.walkRightXy, ai);
         //draw(ai);
         //ai.imageX += 80;
         //count++;
