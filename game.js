@@ -50,6 +50,9 @@ if (ctx) {
     var check = true;
     function callIntervalFunction(){
         playerAction();
+        if (stage == 1) {
+            stage1Ai();
+        }
 
     }
     this.image = new Image();
@@ -157,12 +160,12 @@ if (ctx) {
         //2: same speed, keep distance and Long attack (chase horizontally)
         if (attackType == 1) {
             attackFinished = false;
-            chaseSpeed = "fast";
+            chaseSpeed = "normal";
             chaseType = "basicChase";
         }
         else if (attackType == 2) {
             attackFinished = false;
-            chaseSpeed = "fast";
+            chaseSpeed = "normal";
             chaseType = "horizontalChase";
         }
 
@@ -235,7 +238,7 @@ if (ctx) {
         //if (ensureAIcollision(ai)) {
         //    ai.speed = 0;
         //}
-        walkAnimation(gameImage,ai.walkLeftXy,ai.walkRightXy,ai);
+        walkAnimation(image, ai.walkLeftXy, ai.walkRightXy, ai);
         if (chaseType == "basicChase") {
             chase(ai);
         }
@@ -399,9 +402,9 @@ if (ctx) {
     }
     
     function drawInCanvas(image, imageX, imageY, object){
-        if (stage == 1) {
-            stage1Ai();
-        }
+        //if (stage == 1) {
+        //    stage1Ai();
+        //}
         ctx.drawImage(image, imageX, imageY, object.imageWidth, object.imageHeight, object.posX, object.posY, object.imageWidth, object.imageHeight);
     }
     
