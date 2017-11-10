@@ -86,9 +86,7 @@ if (ctx) {
         this.attackRepeat = 0;
     }
     playerObject = new playerObject();
-    count = 1;
-    //attackFinished = false;
-    //attackType = Math.floor(Math.random() * 2 + 1);
+
     function aiObject(imageX, imageY, imageWidth, imageHeight, posX, posY, wantedWidth, wantedHeight, speed) {
         this.imageX = imageX;
         this.imageY = imageY;
@@ -102,6 +100,10 @@ if (ctx) {
         this.face = faceLeft;
     }
     ai = new aiObject(325, 80, 80, 80, 900, 400, 100, 100, playerObject.speed);
+
+    count = 1;
+    attackFinished = true;
+
     chaseSpeed = "";
     chaseType = "";
     
@@ -111,20 +113,23 @@ if (ctx) {
         //}
         setFace(ai);
         //random number from 1 to 2
-        //if (!attackFinished) {
-        //    attackType = Math.floor(Math.random() * 2 + 1);
-        //}
+        if (attackFinished) {
+            attackType = Math.floor(Math.random() * 2 + 1);
+        }
+        console.log(attackType);
         // Randomly perform either 1) or 2) attack (every randomly 1-4s).
         //1: Faster, Chase (random within 2-4s), after that, Must perform short attack.
         //2: same speed, keep distance and Long attack (chase horizontally)
-        //if (attackType == 1) {
-        //    attackFinished = false;
-        //    fastAiChase();
-        //}
-        //chaseSpeed = "fast";
-        //chaseType = "basicChase"
-        chaseSpeed = "fast";
-        chaseType = "horizontalChase"
+        if (attackType == 1) {
+            attackFinished = false;
+            chaseSpeed = "fast";
+            chaseType = "basicChase";
+        }
+        else if (attackType == 2) {
+            attackFinished = false;
+            chaseSpeed = "fast";
+            chaseType = "horizontalChase";
+        }
         aiChase(chaseSpeed, chaseType);
         
     }
