@@ -98,11 +98,34 @@ if (ctx) {
         this.wantedHeight = wantedHeight;
         this.speed = speed;
         this.face = faceLeft;
+
+        this.shortAttackLaunched = false;
+        this.walkAnimate = 1;
+        this.walkRepeat = 0;
+        this.attackAnimte = 1;
+        this.attackRepeat = 0;
+        this.attackLeftXy = [];
+        this.attackRightXy = [];
     }
+    
     ai = new aiObject(325, 80, 80, 80, 900, 400, 100, 100, playerObject.speed);
 
     count = 1;
     attackFinished = true;
+    ai = new aiObject(325, 80, 80, 80, 900, 400, 80, 80, playerObject.speed);
+    ai.attackLeftXy["x1"] = 0, ai.attackLeftXy["y1"] = 160,
+    ai.attackLeftXy["x2"] = 80, ai.attackLeftXy["y2"] = 160,
+    ai.attackLeftXy["x3"] = 160, ai.attackLeftXy["y3"] = 160,
+    ai.attackLeftXy["x4"] = 240, ai.attackLeftXy["y4"] = 160;
+    ai.attackRightXy["x1"] = 400, ai.attackRightXy["y1"] = 0,
+    ai.attackRightXy["x2"] = 480, ai.attackRightXy["y2"] = 0,
+    ai.attackRightXy["x3"] = 560, ai.attackRightXy["y3"] = 0,
+    ai.attackRightXy["x4"] = 640, ai.attackRightXy["y4"] = 0;
+
+    setInterval(function(){
+        aiAttackCall(image,ai.attackLeftXy,ai.attackRightXy,ai);
+    },1000);
+    
 
     chaseSpeed = "";
     chaseType = "";
@@ -121,6 +144,7 @@ if (ctx) {
         // Randomly perform either 1) or 2) attack (every randomly 1-4s).
         //1: Faster, Chase (random within 2-4s), after that, Must perform short attack.
         //2: same speed, keep distance and Long attack (chase horizontally)
+        
         if (attackType == 1) {
             attackFinished = false;
             chaseSpeed = "fast";
@@ -131,6 +155,14 @@ if (ctx) {
             chaseSpeed = "fast";
             chaseType = "horizontalChase";
         }
+        //if (attackType == 1) {
+        //    attackFinished = false;
+        //    fastAiChase();
+        //}
+        //chaseSpeed = "fast";
+        //chaseType = "basicChase"
+        chaseSpeed = "fast";
+        chaseType = "basicChase"
         aiChase(chaseSpeed, chaseType);
         
     }
@@ -162,6 +194,16 @@ if (ctx) {
         }
     }
     position = "";
+    
+    function aiAttackCall (image,attackLeftXy,attackRightXy,aiObject){
+        ai.shortAttackLaunched = true;
+        attackAnimation(image, attackLeftXy, attackRightXy, aiObject);
+        //user timeout to enable ai attack again
+        setTimeout(function () {
+            ai.shortAttackLaunched = false;
+        }, 400);
+    }
+    
     function aiChase(chaseSpeed, chaseType) {
         if (chaseSpeed == "fast") {
             ai.speed = playerObject.speed * 2;
@@ -202,7 +244,11 @@ if (ctx) {
         
         ai.imageX += 80;
         count++;
-
+        
+        if(!ai.shortAttackLaunched){
+                
+        }
+        
         if (count > 4 && ai.face == faceLeft) {
             ai.imageX = 325;
             count = 1;
