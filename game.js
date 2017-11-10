@@ -140,11 +140,10 @@ if (ctx) {
         if (attackFinished) {
             attackType = Math.floor(Math.random() * 2 + 1);
         }
-        console.log(attackType);
+
         // Randomly perform either 1) or 2) attack (every randomly 1-4s).
         //1: Faster, Chase (random within 2-4s), after that, Must perform short attack.
         //2: same speed, keep distance and Long attack (chase horizontally)
-        
         if (attackType == 1) {
             attackFinished = false;
             chaseSpeed = "fast";
