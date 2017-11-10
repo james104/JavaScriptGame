@@ -100,9 +100,9 @@ if (ctx) {
         this.face = faceLeft;
 
         this.shortAttackLaunched = false;
-        this.walkAnimate = 1; //picture number
-        this.walkRepeat = 0; //duration to change walkAnimate (number of loop)
-        this.attackAnimte = 1; 
+        this.walkAnimate = 1;
+        this.walkRepeat = 0;
+        this.attackAnimte = 1;
         this.attackRepeat = 0;
         this.attackLeftXy = [];
         this.attackRightXy = [];
@@ -221,7 +221,7 @@ if (ctx) {
         //        clearImage(ai.posX, ai.posY, ai.wantedWidth + ai.speed, ai.wantedHeight + ai.speed);
         //    }  
         //}
-        clearImage(ai.posX, ai.posY, ai.wantedWidth, ai.wantedHeight);
+        clearImage(ai.posX, ai.posY, ai.wantedWidth + 20, ai.wantedHeight + 20);
         //if (ensureAIcollision(ai)) {
         //    ai.speed = 0;
         //}
@@ -234,26 +234,26 @@ if (ctx) {
             horizontalChase(ai);
         }
         
-        //draw(ai);
-        //ai.imageX += 80;
-        //count++;
+        draw(ai);
+        ai.imageX += 80;
+        count++;
         
-        //if(!ai.shortAttackLaunched){
+        if(!ai.shortAttackLaunched){
                 
-        //}
+        }
         
-        //if (count > 4 && ai.face == faceLeft) {
-        //    ai.imageX = 325;
-        //    count = 1;
-        //}
+        if (count > 4 && ai.face == faceLeft) {
+            ai.imageX = 325;
+            count = 1;
+        }
 
-        //else if (count > 4 && ai.face == faceRight) {
-        //    ai.imageX = 0;
-        //    count = 1;
-        //}
-        //setTimeout(function () {
-        //    check = true;
-        //}, 60);
+        else if (count > 4 && ai.face == faceRight) {
+            ai.imageX = 0;
+            count = 1;
+        }
+        setTimeout(function () {
+            check = true;
+        }, 60);
     }
 
     function horizontalChase(obj) {
@@ -388,9 +388,14 @@ if (ctx) {
         return false;
     }
     
-    function drawInCanvas(image, imageX, imageY, object){
-        if (stage == 1 && check == true) {
-            stage1Ai();
+    function drawInCanvas(image, imageX, imageY, object) {
+        
+        if (stage == 1) {
+            draw(ai);
+            if (check == true){
+                stage1Ai();
+            }
+            
         }
         ctx.drawImage(image, imageX, imageY, object.imageWidth, object.imageHeight, object.posX, object.posY, object.imageWidth, object.imageHeight);
     }
