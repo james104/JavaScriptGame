@@ -170,7 +170,7 @@ if (ctx) {
         }
         else if (attackType == 2) {
             attackFinished = false;
-            chaseSpeed = "slow";
+            chaseSpeed = "normal";
             chaseType = "horizontalChase";
         }
 
@@ -223,7 +223,7 @@ if (ctx) {
             ai.speed = playerObject.speed;
         }
         else if (chaseSpeed == "slow") {
-            ai.speed = playerObject.speed - 2;
+            ai.speed = playerObject.speed - 4;
         }
         check = false;
         //if (ai.face == faceRight) {
@@ -254,7 +254,6 @@ if (ctx) {
             verticalChase(ai);
         }
         walkAnimation(image, ai.walkLeftXy, ai.walkRightXy, ai);
-        console.log(ai.posX, ai.posY, playerObject.posX, playerObject.posY);
         //draw(ai);
         //ai.imageX += 80;
         //count++;
@@ -285,7 +284,7 @@ if (ctx) {
 
         if (obj.posY > playerObject.posY) {
             position = "";
-            if (obj.posY - 2 == playerObject.posY) {
+            if (obj.posY - 4 == playerObject.posY) {
 
             }
             else {
@@ -294,7 +293,7 @@ if (ctx) {
         }
         else if (obj.posY < playerObject.posY) {
             position = "Down";
-            if (obj.posY + 2 == playerObject.posY) {
+            if (obj.posY + 4 == playerObject.posY) {
 
             }
             else {
@@ -315,7 +314,7 @@ if (ctx) {
         currY = obj.posY;
         if (chaseSpeed == "fast") {
             if (obj.posX > playerObject.posX) {
-                if (obj.posX - playerObject.speed == playerObject.posX) {
+                if (obj.posX - 5 == playerObject.posX){
 
                 }
                 else {
@@ -323,7 +322,7 @@ if (ctx) {
                 }
             }
             else if (obj.posX < playerObject.posX) {
-                if (obj.posX + playerObject.speed == playerObject.posX) {
+                if (obj.posX + 5 == playerObject.posX) {
 
                 }
                 else {
@@ -332,7 +331,7 @@ if (ctx) {
             }
             if (obj.posY > playerObject.posY) {
                 position = "";
-                if (obj.posY - playerObject.speed == playerObject.posY) {
+                if (obj.posY - 5 == playerObject.posY) {
 
                 }
                 else {
@@ -341,7 +340,7 @@ if (ctx) {
             }
             else if (obj.posY < playerObject.posY) {
                 position = "Down";
-                if (obj.posY + playerObject.speed == playerObject.posY) {
+                if (obj.posY + 5 == playerObject.posY) {
 
                 }
                 else {
