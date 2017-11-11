@@ -285,8 +285,6 @@ if (ctx) {
             ai.speed = playerObject.speed - 2;
         }
         
-        check = false;
-        
         if(!ai.attackLaunched){
             if (chaseType == "basicChase") {
                 chase(ai);
