@@ -47,7 +47,6 @@ if (ctx) {
 // 
 // 
     //--- 3 start of global_function ---//
-    var check = true;
     function callIntervalFunction(){
        
         if (stage == 1) {
@@ -204,7 +203,6 @@ if (ctx) {
             }
         }
     }
-    position = "";
     
     function aiAttackCall (image,attackLeftXy,attackRightXy,aiObject){
         ai.shortAttackLaunched = true;
@@ -225,27 +223,8 @@ if (ctx) {
         else if (chaseSpeed == "slow") {
             ai.speed = playerObject.speed - 2;
         }
-        check = false;
-        //if (ai.face == faceRight) {
-        //    if (position == "Down") {
-        //        clearImage(ai.posX - ai.speed, ai.posY - ai.speed, ai.wantedWidth, ai.wantedHeight + ai.speed);
-        //    }
-        //    else {
-        //        clearImage(ai.posX - ai.speed, ai.posY, ai.wantedWidth, ai.wantedHeight + ai.speed);
-        //    }
-        //}
-        //else {
-        //    if (position == "Down") {
-        //        clearImage(ai.posX, ai.posY - ai.speed, ai.wantedWidth + ai.speed, ai.wantedHeight + ai.speed);
-        //    }
-        //    else {
-        //        clearImage(ai.posX, ai.posY, ai.wantedWidth + ai.speed, ai.wantedHeight + ai.speed);
-        //    }  
-        //}
+
         clearImage(ai.posX, ai.posY, ai.wantedWidth, ai.wantedHeight);
-        //if (ensureAIcollision(ai)) {
-        //    ai.speed = 0;
-        //}
         
         if (chaseType == "basicChase") {
             chase(ai);
@@ -254,27 +233,7 @@ if (ctx) {
             verticalChase(ai);
         }
         walkAnimation(image, ai.walkLeftXy, ai.walkRightXy, ai);
-        console.log(ai.posX, ai.posY, playerObject.posX, playerObject.posY);
-        //draw(ai);
-        //ai.imageX += 80;
-        //count++;
-        
-        //if(!ai.shortAttackLaunched){
-                
-        //}
-        
-        //if (count > 4 && ai.face == faceLeft) {
-        //    ai.imageX = 325;
-        //    count = 1;
-        //}
 
-        //else if (count > 4 && ai.face == faceRight) {
-        //    ai.imageX = 0;
-        //    count = 1;
-        //}
-        //setTimeout(function () {
-        //    check = true;
-        //}, 60);
     }
 
     function verticalChase(obj) {
@@ -284,7 +243,6 @@ if (ctx) {
         currY = obj.posY;
 
         if (obj.posY > playerObject.posY) {
-            position = "";
             if (obj.posY - 2 == playerObject.posY) {
 
             }
@@ -293,7 +251,6 @@ if (ctx) {
             }
         }
         else if (obj.posY < playerObject.posY) {
-            position = "Down";
             if (obj.posY + 2 == playerObject.posY) {
 
             }
@@ -302,7 +259,6 @@ if (ctx) {
             }
         }
         else {
-            position = "";
         }
 
         ensureCollision(obj, preX, preY, currX, currY);
@@ -331,7 +287,6 @@ if (ctx) {
                 }
             }
             if (obj.posY > playerObject.posY) {
-                position = "";
                 if (obj.posY - playerObject.speed == playerObject.posY) {
 
                 }
@@ -340,7 +295,6 @@ if (ctx) {
                 }
             }
             else if (obj.posY < playerObject.posY) {
-                position = "Down";
                 if (obj.posY + playerObject.speed == playerObject.posY) {
 
                 }
@@ -349,7 +303,6 @@ if (ctx) {
                 }
             }
             else {
-                position = "";
             }
         }
         else if (chaseSpeed == "slow") {
@@ -370,7 +323,6 @@ if (ctx) {
                 }
             }
             if (obj.posY > playerObject.posY) {
-                position = "";
                 if (obj.posY - 2 == playerObject.posY) {
 
                 }
@@ -379,7 +331,6 @@ if (ctx) {
                 }
             }
             else if (obj.posY < playerObject.posY) {
-                position = "Down";
                 if (obj.posY + 2 == playerObject.posY) {
 
                 }
@@ -388,7 +339,6 @@ if (ctx) {
                 }
             }
             else {
-                position = "";
             }
         }
         else {
@@ -400,44 +350,15 @@ if (ctx) {
             }
             if (obj.posY > playerObject.posY) {
                 currY -= obj.speed;
-                position = "";
             }
             else if (obj.posY < playerObject.posY) {
                 currY += obj.speed;
-                position = "Down";
             }
             else {
-                position = "";
             }
         }
 
         ensureCollision(obj, preX, preY, currX, currY);
-    }
-
-    function normalAiChase() {
-        check = false;
-        clearImage(ai.posX, ai.posY, ai.wantedWidth + ai.speed, ai.wantedHeight);
-        if (ensureAIcollision(ai)) {
-            ai.speed = 0;
-        }
-        draw(ai);
-        if (ai.face == faceLeft) {
-            ai.posX -= ai.speed;
-        }
-        else if (ai.face == faceRight) {
-            ai.posX += ai.speed;
-        }
-
-        ai.imageX += 80;
-        count++;
-
-        if (count > 4) {
-            ai.imageX = 325;
-            count = 1;
-        }
-        setTimeout(function () {
-            check = true;
-        }, 70);
     }
 
     function ensureAIcollision(obj) {
@@ -449,9 +370,6 @@ if (ctx) {
     }
     
     function drawInCanvas(image, imageX, imageY, object){
-        //if (stage == 1) {
-        //    stage1Ai();
-        //}
         ctx.drawImage(image, imageX, imageY, object.imageWidth, object.imageHeight, object.posX, object.posY, object.imageWidth, object.imageHeight);
     }
     
