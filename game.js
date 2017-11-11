@@ -47,12 +47,11 @@ if (ctx) {
 // 
 // 
     //--- 3 start of global_function ---//
-    var check = true;
     function callIntervalFunction(){
         playerAction();
         if (stage == 1) {
             stage1Ai();
-        }        
+        }
         drawInCanvas(playerImage, playerObject.imageX, playerObject.imageY, playerObject);
         
     }
@@ -93,10 +92,7 @@ if (ctx) {
         this.longAttackRightXy = [];
     }
     
-    ai = new aiObject(325, 80, 80, 80, 900, 400, 100, 100, playerObject.speed);
-
-    count = 1;
-    attackFinished = true;    
+    ai = new aiObject(325, 80, 80, 80, 900, 400, 80, 80, playerObject.speed);
     ai.shortAttackLeftXy["x1"] = 0, ai.shortAttackLeftXy["y1"] = 160,
     ai.shortAttackLeftXy["x2"] = 80, ai.shortAttackLeftXy["y2"] = 160,
     ai.shortAttackLeftXy["x3"] = 160, ai.shortAttackLeftXy["y3"] = 160,
@@ -124,6 +120,7 @@ if (ctx) {
     ai.longAttackRightXy["x3"] = 160, ai.longAttackRightXy["y3"] = 80,
     ai.longAttackRightXy["x4"] = 240, ai.longAttackRightXy["y4"] = 80;
  
+    attackFinished = true;
     chaseSpeed = "";
     chaseType = "";
     distance = "";
@@ -156,7 +153,6 @@ if (ctx) {
     
             aiChase(chaseSpeed, chaseType);
         }
-
         draw(ai);
     }
 
@@ -187,7 +183,6 @@ if (ctx) {
             }
         }
     }
-    position = "";
     
     function aiAttackCall (image,attackLeftXy,attackRightXy,aiObject){
         ai.attackLaunched = true;
@@ -289,6 +284,7 @@ if (ctx) {
         else if (chaseSpeed == "slow") {
             ai.speed = playerObject.speed - 2;
         }
+        
         check = false;
         
         if(!ai.attackLaunched){
@@ -300,48 +296,7 @@ if (ctx) {
             }
             walkAnimation(image, ai.walkLeftXy, ai.walkRightXy, ai);    
         }
-        
-        //if (ai.face == faceRight) {
-        //    if (position == "Down") {
-        //        clearImage(ai.posX - ai.speed, ai.posY - ai.speed, ai.wantedWidth, ai.wantedHeight + ai.speed);
-        //    }
-        //    else {
-        //        clearImage(ai.posX - ai.speed, ai.posY, ai.wantedWidth, ai.wantedHeight + ai.speed);
-        //    }
-        //}
-        //else {
-        //    if (position == "Down") {
-        //        clearImage(ai.posX, ai.posY - ai.speed, ai.wantedWidth + ai.speed, ai.wantedHeight + ai.speed);
-        //    }
-        //    else {
-        //        clearImage(ai.posX, ai.posY, ai.wantedWidth + ai.speed, ai.wantedHeight + ai.speed);
-        //    }  
-        //}        
-        //if (ensureAIcollision(ai)) {
-        //    ai.speed = 0;
-        //}
 
-        //console.log(ai.posX, ai.posY, playerObject.posX, playerObject.posY);
-        //draw(ai);
-        //ai.imageX += 80;
-        //count++;
-        
-        //if(!ai.shortAttackLaunched){
-                
-        //}
-        
-        //if (count > 4 && ai.face == faceLeft) {
-        //    ai.imageX = 325;
-        //    count = 1;
-        //}
-
-        //else if (count > 4 && ai.face == faceRight) {
-        //    ai.imageX = 0;
-        //    count = 1;
-        //}
-        //setTimeout(function () {
-        //    check = true;
-        //}, 60);
     }
 
     function verticalChase(obj) {
@@ -351,7 +306,6 @@ if (ctx) {
         currY = obj.posY;
 
         if (obj.posY > playerObject.posY) {
-            position = "";
             if (obj.posY - 2 == playerObject.posY) {
 
             }
@@ -360,7 +314,6 @@ if (ctx) {
             }
         }
         else if (obj.posY < playerObject.posY) {
-            position = "Down";
             if (obj.posY + 2 == playerObject.posY) {
 
             }
@@ -369,7 +322,6 @@ if (ctx) {
             }
         }
         else {
-            position = "";
         }
 
         ensureCollision(obj, preX, preY, currX, currY);
@@ -398,7 +350,6 @@ if (ctx) {
                 }
             }
             if (obj.posY > playerObject.posY) {
-                position = "";
                 if (obj.posY - playerObject.speed == playerObject.posY) {
 
                 }
@@ -407,7 +358,6 @@ if (ctx) {
                 }
             }
             else if (obj.posY < playerObject.posY) {
-                position = "Down";
                 if (obj.posY + playerObject.speed == playerObject.posY) {
 
                 }
@@ -416,7 +366,6 @@ if (ctx) {
                 }
             }
             else {
-                position = "";
             }
         }
         else if (chaseSpeed == "slow") {
@@ -437,7 +386,6 @@ if (ctx) {
                 }
             }
             if (obj.posY > playerObject.posY) {
-                position = "";
                 if (obj.posY - 2 == playerObject.posY) {
 
                 }
@@ -446,7 +394,6 @@ if (ctx) {
                 }
             }
             else if (obj.posY < playerObject.posY) {
-                position = "Down";
                 if (obj.posY + 2 == playerObject.posY) {
 
                 }
@@ -455,7 +402,6 @@ if (ctx) {
                 }
             }
             else {
-                position = "";
             }
         }
         else {
@@ -467,44 +413,15 @@ if (ctx) {
             }
             if (obj.posY > playerObject.posY) {
                 currY -= obj.speed;
-                position = "";
             }
             else if (obj.posY < playerObject.posY) {
                 currY += obj.speed;
-                position = "Down";
             }
             else {
-                position = "";
             }
         }
 
         ensureCollision(obj, preX, preY, currX, currY);
-    }
-
-    function normalAiChase() {
-        check = false;
-        clearImage(ai.posX, ai.posY, ai.wantedWidth + ai.speed, ai.wantedHeight);
-        if (ensureAIcollision(ai)) {
-            ai.speed = 0;
-        }
-        draw(ai);
-        if (ai.face == faceLeft) {
-            ai.posX -= ai.speed;
-        }
-        else if (ai.face == faceRight) {
-            ai.posX += ai.speed;
-        }
-
-        ai.imageX += 80;
-        count++;
-
-        if (count > 4) {
-            ai.imageX = 325;
-            count = 1;
-        }
-        setTimeout(function () {
-            check = true;
-        }, 70);
     }
 
     function ensureAIcollision(obj) {
