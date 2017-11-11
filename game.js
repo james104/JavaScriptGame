@@ -49,16 +49,12 @@ if (ctx) {
     //--- 3 start of global_function ---//
     var check = true;
     function callIntervalFunction(){
-       
+        playerAction();
         if (stage == 1) {
             stage1Ai();
-        }
-        playerAction();
-        if(ai.face == faceLeft){
-            drawInCanvas(image, ai.walkLeftXy["x"+ai.walkAnimate], ai.walkLeftXy["y"+ai.walkAnimate], ai);
-        }else if(ai.face == faceRight){
-            drawInCanvas(image, ai.walkRightXy["x"+ai.walkAnimate], ai.walkRightXy["y"+ai.walkAnimate], ai);
-        }
+        }        
+        drawInCanvas(playerImage, playerObject.imageX, playerObject.imageY, playerObject);
+        
     }
     this.image = new Image();
     this.image.src = "assets/spriteSheet.png";
@@ -72,29 +68,6 @@ if (ctx) {
         ctx.clearRect(posX, posY, wantedWidth, wantedHeight);
     }
 
-    //player object
-    function playerObject() {
-        this.name = "keyLovers";
-        this.type = "player";
-        this.hp = 100;
-        this.mp = 100;
-        this.speed = 5;
-        this.posX = 100;
-        this.posY = 400;
-        this.imageWidth = 80;
-        this.imageHeight = 80;
-        this.wantedWidth = 80;
-        this.wantedHeight = 80;
-        this.face = faceRight;
-        this.shortAttackLaunched = false;
-        //animate = animation count, repeat = after few times change animation
-        this.walkAnimate = 1;
-        this.walkRepeat = 0;
-        this.attackAnimte = 1;
-        this.attackRepeat = 0;
-    }
-    playerObject = new playerObject();
-
     function aiObject(imageX, imageY, imageWidth, imageHeight, posX, posY, wantedWidth, wantedHeight, speed) {
         this.imageX = imageX;
         this.imageY = imageY;
@@ -107,30 +80,31 @@ if (ctx) {
         this.speed = speed;
         this.face = faceLeft;
 
-        this.shortAttackLaunched = false;
+        this.attackLaunched = false;
         this.walkAnimate = 1; //picture number
         this.walkRepeat = 0; //duration to change walkAnimate (number of loop)
         this.attackAnimte = 1; 
         this.attackRepeat = 0;
         this.walkLeftXy = [];
         this.walkRightXy = [];
-        this.attackLeftXy = [];
-        this.attackRightXy = [];
+        this.shortAttackLeftXy = [];
+        this.shortAttackRightXy = [];
+        this.longAttackLeftXy = [];
+        this.longAttackRightXy = [];
     }
     
     ai = new aiObject(325, 80, 80, 80, 900, 400, 100, 100, playerObject.speed);
 
     count = 1;
-    attackFinished = true;
-    ai = new aiObject(325, 80, 80, 80, 900, 400, 80, 80, playerObject.speed);
-    ai.attackLeftXy["x1"] = 0, ai.attackLeftXy["y1"] = 160,
-    ai.attackLeftXy["x2"] = 80, ai.attackLeftXy["y2"] = 160,
-    ai.attackLeftXy["x3"] = 160, ai.attackLeftXy["y3"] = 160,
-    ai.attackLeftXy["x4"] = 240, ai.attackLeftXy["y4"] = 160;
-    ai.attackRightXy["x1"] = 400, ai.attackRightXy["y1"] = 0,
-    ai.attackRightXy["x2"] = 480, ai.attackRightXy["y2"] = 0,
-    ai.attackRightXy["x3"] = 560, ai.attackRightXy["y3"] = 0,
-    ai.attackRightXy["x4"] = 640, ai.attackRightXy["y4"] = 0;
+    attackFinished = true;    
+    ai.shortAttackLeftXy["x1"] = 0, ai.shortAttackLeftXy["y1"] = 160,
+    ai.shortAttackLeftXy["x2"] = 80, ai.shortAttackLeftXy["y2"] = 160,
+    ai.shortAttackLeftXy["x3"] = 160, ai.shortAttackLeftXy["y3"] = 160,
+    ai.shortAttackLeftXy["x4"] = 240, ai.shortAttackLeftXy["y4"] = 160;
+    ai.shortAttackRightXy["x1"] = 400, ai.shortAttackRightXy["y1"] = 0,
+    ai.shortAttackRightXy["x2"] = 480, ai.shortAttackRightXy["y2"] = 0,
+    ai.shortAttackRightXy["x3"] = 560, ai.shortAttackRightXy["y3"] = 0,
+    ai.shortAttackRightXy["x4"] = 640, ai.shortAttackRightXy["y4"] = 0;
     
     ai.walkLeftXy["x1"] = 570, ai.walkLeftXy["y1"] = 80,
     ai.walkLeftXy["x2"] = 490, ai.walkLeftXy["y2"] = 80,
@@ -141,16 +115,21 @@ if (ctx) {
     ai.walkRightXy["x3"] = 240, ai.walkRightXy["y3"] = 0,
     ai.walkRightXy["x4"] = 320, ai.walkRightXy["y4"] = 0;
 
-    //setInterval(function(){
-    //    aiAttackCall(image,ai.attackLeftXy,ai.attackRightXy,ai);
-    //},1000);
-    
-
+    ai.longAttackLeftXy["x1"] = 410, ai.longAttackLeftXy["y1"] = 160,
+    ai.longAttackLeftXy["x2"] = 490, ai.longAttackLeftXy["y2"] = 160,
+    ai.longAttackLeftXy["x3"] = 570, ai.longAttackLeftXy["y3"] = 160,
+    ai.longAttackLeftXy["x4"] = 650, ai.longAttackLeftXy["y4"] = 160;
+    ai.longAttackRightXy["x1"] = 0, ai.longAttackRightXy["y1"] = 80,
+    ai.longAttackRightXy["x2"] = 80, ai.longAttackRightXy["y2"] = 80,
+    ai.longAttackRightXy["x3"] = 160, ai.longAttackRightXy["y3"] = 80,
+    ai.longAttackRightXy["x4"] = 240, ai.longAttackRightXy["y4"] = 80;
+ 
     chaseSpeed = "";
     chaseType = "";
     distance = "";
     
     function stage1Ai() {
+        clearImage(ai.posX, ai.posY, ai.wantedWidth, ai.wantedHeight);
         //if (ensurePlayerCollision(ai)) {
         //    console.log("yes");
         //}
@@ -162,25 +141,29 @@ if (ctx) {
 
         // Randomly perform either 1) or 2) attack (every randomly 1-4s).
         //1: Faster, Chase (random within 2-4s), after that, Must perform short attack.
-        //2: same speed, keep distance and Long attack (chase horizontally)
-        if (attackType == 1) {
-            attackFinished = false;
-            chaseSpeed = "normal";
-            chaseType = "basicChase";
-        }
-        else if (attackType == 2) {
-            attackFinished = false;
-            chaseSpeed = "slow";
-            chaseType = "horizontalChase";
+        //2: same speed, keep distance and Long attack (chase horizontally)        
+        if(!ai.attackLaunched){
+            if (attackType == 1) {
+                attackFinished = false;
+                chaseSpeed = "normal";
+                chaseType = "basicChase";
+            }
+            else if (attackType == 2) {
+                attackFinished = false;
+                chaseSpeed = "slow";
+                chaseType = "horizontalChase";
+            }
+    
+            aiChase(chaseSpeed, chaseType);
         }
 
-        aiChase(chaseSpeed, chaseType);
-        
+        draw(ai);
     }
 
     function ensurePlayerCollision(obj) {
         //fuzzy sets
     }
+
     faceCountR = 0;
     faceCountL = 0;
     function setFace(obj) {
@@ -207,15 +190,96 @@ if (ctx) {
     position = "";
     
     function aiAttackCall (image,attackLeftXy,attackRightXy,aiObject){
-        ai.shortAttackLaunched = true;
+        ai.attackLaunched = true;
         attackAnimation(image, attackLeftXy, attackRightXy, aiObject);
         //user timeout to enable ai attack again
         setTimeout(function () {
-            ai.shortAttackLaunched = false;
+            ai.attackLaunched = false;
         }, 400);
     }
     
+    function emissionObject (aiObject, animateArrXy){        
+        this.imageWidth = 40;
+        this.imageHeight = 30;
+        this.wantedWidth = 40;
+        this.wantedHeight = 30;
+        this.posX = aiObject.posX - this.wantedWidth;
+        this.posY = aiObject.posY + (aiObject.wantedHeight / 2);
+        this.speed = 20;
+        this.face = aiObject.face;
+        this.animateArrXy = animateArrXy;
+        this.animate = 1;
+        this.repeat = 0;        
+        if(this.face == faceRight){
+            this.posX += aiObject.wantedWidth + this.wantedWidth;            
+        }
+        emissionAnimation(playerImage,this);
+    }
+
+    function checkEmissionCollision(emissionObject, playerObject, intervalNo){
+        if(emissionObject.posX < 0 - emissionObject.wantedWidth || emissionObject.posX > 1500){
+            if(emissionObject.face == faceLeft){
+                clearPreviousImage(emissionObject.posX, emissionObject.posY, emissionObject.wantedWidth + 20, emissionObject.wantedHeight);
+            }else if(emissionObject.face == faceRight){
+                clearPreviousImage(emissionObject.posX - 20, emissionObject.posY, emissionObject.wantedWidth, emissionObject.wantedHeight);                
+            }
+            clearInterval(intervalNo);
+        }
+        else{
+            if(emissionObject.face == faceLeft && playerObject.posX + playerObject.wantedWidth > emissionObject.posX && playerObject.posY < emissionObject.posY + emissionObject.wantedHeight && playerObject.posY + playerObject.wantedHeight > emissionObject.posY){
+                reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+                clearPreviousImage(emissionObject.posX, emissionObject.posY, emissionObject.wantedWidth + 20, emissionObject.wantedHeight);
+                clearInterval(intervalNo);
+            }else if(emissionObject.face == faceRight && playerObject.posX < emissionObject.posX && playerObject.posY < emissionObject.posY + emissionObject.wantedHeight && playerObject.posY + playerObject.wantedHeight > emissionObject.posY){
+                reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+                clearPreviousImage(emissionObject.posX - 20, emissionObject.posY, emissionObject.wantedWidth, emissionObject.wantedHeight);
+                clearInterval(intervalNo);
+            }
+        }
+    }
+
+    function emissionAnimation(image,emissionObject){
+        //random to prevent same name of interval 
+        var intervalNo = Math.floor(Math.random() * 100) + 1;
+        
+        intervalNo = setInterval(function(){            
+            if(emissionObject.face == faceLeft){
+                clearPreviousImage(emissionObject.posX, emissionObject.posY, emissionObject.wantedWidth + 20, emissionObject.wantedHeight);
+            }else if(emissionObject.face == faceRight){
+                clearPreviousImage(emissionObject.posX - 20, emissionObject.posY, emissionObject.wantedWidth, emissionObject.wantedHeight);                
+            }
+            emissionObject.repeat++;
+            if (emissionObject.repeat == 1) {
+                if(emissionObject.animate == 4){
+                    emissionObject.animate = 0;
+                }
+                emissionObject.animate++;
+                emissionObject.repeat = 0;
+            }
+            drawInCanvas(image, emissionObject.animateArrXy["x" + emissionObject.animate], emissionObject.animateArrXy["y" + emissionObject.animate], emissionObject);
+            if(emissionObject.face == faceLeft){
+                emissionObject.posX -= emissionObject.speed;
+            }else if(emissionObject.face == faceRight){
+                emissionObject.posX += emissionObject.speed;
+            }
+            checkEmissionCollision(emissionObject, playerObject, intervalNo);
+        },50);
+    }
+
+    var emissionAnimateArrXy = [];
+    emissionAnimateArrXy["x1"] = 0, emissionAnimateArrXy["y1"] = 870,
+    emissionAnimateArrXy["x2"] = 40, emissionAnimateArrXy["y2"] = 870,
+    emissionAnimateArrXy["x3"] = 80, emissionAnimateArrXy["y3"] = 870,
+    emissionAnimateArrXy["x4"] = 120, emissionAnimateArrXy["y4"] = 870;
+
+    setInterval(function(){
+        aiAttackCall(image, ai.longAttackLeftXy, ai.longAttackRightXy, ai);
+        aiEmission = new emissionObject(ai, emissionAnimateArrXy);
+    },1000);
+
+
     function aiChase(chaseSpeed, chaseType) {
+        
         if (chaseSpeed == "fast") {
             ai.speed = playerObject.speed * 2;
         }
@@ -226,6 +290,17 @@ if (ctx) {
             ai.speed = playerObject.speed - 2;
         }
         check = false;
+        
+        if(!ai.attackLaunched){
+            if (chaseType == "basicChase") {
+                chase(ai);
+            }
+            else if (chaseType == "horizontalChase") {
+                verticalChase(ai);
+            }
+            walkAnimation(image, ai.walkLeftXy, ai.walkRightXy, ai);    
+        }
+        
         //if (ai.face == faceRight) {
         //    if (position == "Down") {
         //        clearImage(ai.posX - ai.speed, ai.posY - ai.speed, ai.wantedWidth, ai.wantedHeight + ai.speed);
@@ -241,20 +316,12 @@ if (ctx) {
         //    else {
         //        clearImage(ai.posX, ai.posY, ai.wantedWidth + ai.speed, ai.wantedHeight + ai.speed);
         //    }  
-        //}
-        clearImage(ai.posX, ai.posY, ai.wantedWidth, ai.wantedHeight);
+        //}        
         //if (ensureAIcollision(ai)) {
         //    ai.speed = 0;
         //}
-        
-        if (chaseType == "basicChase") {
-            chase(ai);
-        }
-        else if (chaseType == "horizontalChase") {
-            verticalChase(ai);
-        }
-        walkAnimation(image, ai.walkLeftXy, ai.walkRightXy, ai);
-        console.log(ai.posX, ai.posY, playerObject.posX, playerObject.posY);
+
+        //console.log(ai.posX, ai.posY, playerObject.posX, playerObject.posY);
         //draw(ai);
         //ai.imageX += 80;
         //count++;
@@ -449,10 +516,7 @@ if (ctx) {
     }
     
     function drawInCanvas(image, imageX, imageY, object){
-        //if (stage == 1) {
-        //    stage1Ai();
-        //}
-        ctx.drawImage(image, imageX, imageY, object.imageWidth, object.imageHeight, object.posX, object.posY, object.imageWidth, object.imageHeight);
+        ctx.drawImage(image, imageX, imageY, object.imageWidth, object.imageHeight, object.posX, object.posY, object.wantedWidth, object.wantedHeight);
     }
     
     function clearPreviousImage(posX, posY, wantedWidth, wantedHeight) {
@@ -479,6 +543,7 @@ if (ctx) {
         }else if(object.face == faceRight){
             walkXyArr = walkRightXy;
         }
+        object.imageX = walkXyArr["x"+object.walkAnimate], object.imageY = walkXyArr["y"+object.walkAnimate];        
         drawInCanvas(image, walkXyArr["x"+object.walkAnimate], walkXyArr["y"+object.walkAnimate], object);
     }
 
@@ -508,6 +573,7 @@ if (ctx) {
                //reset for next attack animation
                object.attackRepeat = 0;
             }                     
+            object.imageX = attackXyArr["x" + object.attackAnimte], object.imageY = attackXyArr["y" + object.attackAnimte];
             drawInCanvas(image, attackXyArr["x" + object.attackAnimte], attackXyArr["y" + object.attackAnimte], object);
         },15);
     }
@@ -588,7 +654,7 @@ if (ctx) {
         clearPreviousImage(x, y, spriteStatusW + 40, spriteStatusH);
 
         orignMp = spriteStatusArr[object.name].fullMp;
-        object.mp -= consumption
+        object.mp -= consumption;
         currMp = object.mp;
         mpPercentage = currMp / orignMp;
 
@@ -606,81 +672,84 @@ if (ctx) {
         console.log("consumption: " + consumption);
     }
 
-    //start for test reduce hp & mp
-    // test1 = {name:"test1",hp:100,mp:100};
-    // drawSpriteStatus(test1);
-    // test2 = {name:"test2",hp:100,mp:100};
-    // drawSpriteStatus(test2);
-    // test3 = {name:"test3",hp:100,mp:100};
-    // drawSpriteStatus(test3);    
-    // test4 = {name:"test4",hp:100,mp:100};
-    // drawSpriteStatus(test4);
+    if(false){
+        //start for test reduce hp & mp
+        // test1 = {name:"test1",hp:100,mp:100};
+        // drawSpriteStatus(test1);
+        // test2 = {name:"test2",hp:100,mp:100};
+        // drawSpriteStatus(test2);
+        // test3 = {name:"test3",hp:100,mp:100};
+        // drawSpriteStatus(test3);    
+        // test4 = {name:"test4",hp:100,mp:100};
+        // drawSpriteStatus(test4);
+        
+        //setTimeout(function(){
+        //    reduceHp(playerObject,33);
+        //    reduceMp(test3,20);
+        //},1000);
+        //setTimeout(function(){
+        //    reduceHp(test4,29);
+        //    reduceMp(playerObject,46);
+        //},2000);
+        //setTimeout(function(){
+        //    reduceHp(test1,33);
+        //    reduceMp(test4,20);
+        //},3000);
+        //setTimeout(function(){
+        //    reduceHp(test2,33);
+        //    reduceMp(test3,20);
+        //},4000);
+        //setTimeout(function(){
+        //    reduceHp(test3,29);
+        //    reduceMp(playerObject,46);
+        //},5000);
+        //setTimeout(function(){
+        //    reduceHp(test2,33);
+        //    reduceMp(test1,20);
+        //},6000);
+        //  setTimeout(function(){
+        //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+        //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+        //  },1000);
+        //  setTimeout(function(){
+        //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+        //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+        //  },2000);
+        //  setTimeout(function(){
+        //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+        //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+        //  },3000);
+        //  setTimeout(function(){
+        //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+        //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+        //  },4000);
+        //  setTimeout(function(){
+        //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+        //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+        //  },5000);
+        //  setTimeout(function(){
+        //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+        //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+        //  },6000);
+        //  setTimeout(function(){
+        //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+        //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+        //  },7000);
+        //  setTimeout(function(){
+        //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+        //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+        //  },8000);
+        //  setTimeout(function(){
+        //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+        //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+        //  },9000);
+        //  setTimeout(function(){
+        //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+        //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+        //  },10000);
+        //end for test reduce hp & mp
+    }
     
-    //setTimeout(function(){
-    //    reduceHp(playerObject,33);
-    //    reduceMp(test3,20);
-    //},1000);
-    //setTimeout(function(){
-    //    reduceHp(test4,29);
-    //    reduceMp(playerObject,46);
-    //},2000);
-    //setTimeout(function(){
-    //    reduceHp(test1,33);
-    //    reduceMp(test4,20);
-    //},3000);
-    //setTimeout(function(){
-    //    reduceHp(test2,33);
-    //    reduceMp(test3,20);
-    //},4000);
-    //setTimeout(function(){
-    //    reduceHp(test3,29);
-    //    reduceMp(playerObject,46);
-    //},5000);
-    //setTimeout(function(){
-    //    reduceHp(test2,33);
-    //    reduceMp(test1,20);
-    //},6000);
-  //  setTimeout(function(){
-  //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-  //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
-  //  },1000);
-  //  setTimeout(function(){
-  //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-  //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
-  //  },2000);
-  //  setTimeout(function(){
-  //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-  //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
-  //  },3000);
-  //  setTimeout(function(){
-  //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-  //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
-  //  },4000);
-  //  setTimeout(function(){
-  //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-  //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
-  //  },5000);
-  //  setTimeout(function(){
-  //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-  //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
-  //  },6000);
-  //  setTimeout(function(){
-  //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-  //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
-  //  },7000);
-  //  setTimeout(function(){
-  //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-  //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
-  //  },8000);
-  //  setTimeout(function(){
-  //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-  //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
-  //  },9000);
-  //  setTimeout(function(){
-  //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-  //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
-  //  },10000);
-    //end for test reduce hp & mp
 
     //--- 3 end of global_function ---//
 //     
@@ -689,9 +758,30 @@ if (ctx) {
 // 
 //     
     //--- 4 start of player_function ---//
-
-
     
+    //player object
+    function playerObject() {
+        this.name = "keyLovers";
+        this.type = "player";
+        this.hp = 100;
+        this.mp = 100;
+        this.speed = 5;
+        this.posX = 100;
+        this.posY = 400;
+        this.imageWidth = 80;
+        this.imageHeight = 80;
+        this.wantedWidth = 80;
+        this.wantedHeight = 80;
+        this.face = faceRight;
+        this.shortAttackLaunched = false;
+        //animate = animation count, repeat = after few times change animation
+        this.walkAnimate = 1;
+        this.walkRepeat = 0;
+        this.attackAnimte = 1;
+        this.attackRepeat = 0;
+    }
+    playerObject = new playerObject();
+
     drawSpriteStatus(playerObject);
     
     var keyStatus = [];
@@ -803,8 +893,10 @@ if (ctx) {
             //walkAnimate = 1, walkRepeat = 0;
             //playerAttackAnimte = 1, playerAttackRepeat = 0;
             if (playerObject.face == faceLeft) {
+                playerObject.imageX = playerImageLeftStandX, playerObject.imageY = playerImageLeftStandY;
                 drawInCanvas(playerImage, playerImageLeftStandX, playerImageLeftStandY, playerObject);
             } else if (playerObject.face == faceRight) {
+                playerObject.imageX = playerImageRightStandX, playerObject.imageY = playerImageRightStandY;
                 drawInCanvas(playerImage, playerImageRightStandX, playerImageRightStandY, playerObject);
             }
         }
