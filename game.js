@@ -116,11 +116,7 @@ if (ctx) {
         this.attackLeftXy = [];
         this.attackRightXy = [];
     }
-    
-    ai = new aiObject(325, 80, 80, 80, 900, 400, 100, 100, playerObject.speed);
 
-    count = 1;
-    attackFinished = true;
     ai = new aiObject(325, 80, 80, 80, 900, 400, 80, 80, playerObject.speed);
     ai.attackLeftXy["x1"] = 0, ai.attackLeftXy["y1"] = 160,
     ai.attackLeftXy["x2"] = 80, ai.attackLeftXy["y2"] = 160,
@@ -144,7 +140,7 @@ if (ctx) {
     //    aiAttackCall(image,ai.attackLeftXy,ai.attackRightXy,ai);
     //},1000);
     
-
+    attackFinished = true;
     chaseSpeed = "";
     chaseType = "";
     distance = "";
@@ -172,7 +168,6 @@ if (ctx) {
             chaseSpeed = "slow";
             chaseType = "horizontalChase";
         }
-
         aiChase(chaseSpeed, chaseType);
         
     }
