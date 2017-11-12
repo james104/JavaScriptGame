@@ -17,7 +17,7 @@ canvasElement.height = "700";
 canvasElement.style.background = "url(img/newBackground.bmp)";
 canvasElement.style.backgroundSize = "cover";
 var ctx = canvasElement.getContext && canvasElement.getContext('2d');
-var stage = 5;
+var stage = 1;
 
 //--- 1 end of canvas ---//
 
@@ -27,7 +27,7 @@ if (ctx) {
 
 
     //img/gameImage.gif here for testing
-    var gameImage = "assets/spriteSheet.png";
+    var gameImage = "assets/spriteSheetNew.png";
     var playerType = "player";
     var faceLeft = "left", faceRight = "right";
     var gameSpriteNo = 0;
@@ -64,7 +64,7 @@ if (ctx) {
         draw(playerObject);
     }
     this.image = new Image();
-    this.image.src = "assets/spriteSheet.png";
+    this.image.src = "assets/spriteSheetNew.png";
     this.image.onload = init;
 
     function draw(obj) {
@@ -165,13 +165,28 @@ if (ctx) {
                 chaseType = "horizontalChase";
             }
     
-            aiChase("slow", chaseType);
+            aiChase(chaseSpeed, chaseType, ai);
         }
-        draw(ai);
+        //draw(ai);
     }
 
     function findDistanceBetweenPlayerAndAi (aiObj) {
-        distance = Math.sqrt(Math.pow((aiObj.posX - playerObject.posX), 2) + Math.pow((aiObj.posY - playerObject.posY), 2));
+        var distance;
+        if(playerObject.posX == aiObj.posX){
+            if(playerObject.posY > aiObj.posY){
+                distance = playerObject.posY - aiObj.posY;
+            }else{
+                distance = aiObj.posY - playerObject.posY;
+            }
+        }else if(playerObject.posY == aiObj.posY){
+            if(playerObject.posX > aiObj.posX){
+                distance = playerObject.posX - aiObj.posX;
+            }else{
+                distance = aiObj.posX - playerObject.posX;
+            }
+        }else{
+            distance = Math.sqrt(Math.pow((aiObj.posX - playerObject.posX), 2) + Math.pow((aiObj.posY - playerObject.posY), 2));
+        }
         return Math.round(distance);
     }
 
@@ -207,11 +222,11 @@ if (ctx) {
     
     //short or long attack
     function aiAttackCall (image,attackLeftXy,attackRightXy,aiObject){
-        ai.attackLaunched = true;
+        aiObject.attackLaunched = true;
         attackAnimation(image, attackLeftXy, attackRightXy, aiObject);
         //user timeout to enable ai attack again
         setTimeout(function () {
-            ai.attackLaunched = false;
+            aiObject.attackLaunched = false;
         }, 400);
     }
 
@@ -227,26 +242,26 @@ if (ctx) {
     // },1000);
 
 
-    function aiChase(chaseSpeed, chaseType) {
+    function aiChase(chaseSpeed, chaseType, aiObject) {
         
         if (chaseSpeed == "fast") {
-            ai.speed = playerObject.speed * 2;
+            aiObject.speed = playerObject.speed * 2;
         }
         else if (chaseSpeed == "normal") {
-            ai.speed = playerObject.speed;
+            aiObject.speed = playerObject.speed;
         }
         else if (chaseSpeed == "slow") {
-            ai.speed = playerObject.speed - 2;
+            aiObject.speed = playerObject.speed - 2;
         }
         
-        if(!ai.attackLaunched){
+        if(!aiObject.attackLaunched){
             if (chaseType == "basicChase") {
-                chase(ai);
+                chase(aiObject);
             }
             else if (chaseType == "horizontalChase") {
-                verticalChase(ai);
+                verticalChase(aiObject);
             }
-            walkAnimation(image, ai.walkLeftXy, ai.walkRightXy, ai);    
+            walkAnimation(image, aiObject.walkLeftXy, aiObject.walkRightXy, aiObject);    
         }
 
     }
@@ -377,22 +392,7 @@ if (ctx) {
     }
 
     function playerApporach(aiObject) {
-        var distance;
-        if(playerObject.posX == aiObject.posX){
-            if(playerObject.posY > aiObject.posY){
-                distance = playerObject.posY - aiObject.posY;
-            }else{
-                distance = aiObject.posY - playerObject.posY;
-            }
-        }else if(playerObject.posY == aiObject.posY){
-            if(playerObject.posX > aiObject.posX){
-                distance = playerObject.posX - aiObject.posX;
-            }else{
-                distance = aiObject.posX - playerObject.posX;
-            }
-        }else{
-           
-        }
+        var distance = findDistanceBetweenPlayerAndAi(aiObject);
         if(distance <= 200){
             return true;
         }
@@ -931,8 +931,6 @@ if (ctx) {
 //     
     //--- 7 start of stage 1 ---//
 
-    //stage1Ai(ai);
-
     //ai long attack
     // setInterval(function(){
     //     aiAttackCall(image, aiDog.longAttackLeftXy, aiDog.longAttackRightXy, aiDog);
@@ -983,6 +981,7 @@ if (ctx) {
                 aiObject.imageX = aiDog.standXy["rightX"], aiObject.imageY = aiDog.standXy["rightY"];
             }
         }
+        console.log(aiObject.imageX+","+aiObject.imageY);
         draw(aiObject);
     }
 
