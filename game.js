@@ -86,6 +86,10 @@ if (ctx) {
         this.wantedHeight = wantedHeight;
         this.speed = speed;
         this.face = faceLeft;
+        this.hp = 100;
+        this.mp = 100;
+
+        this.attackFinished = true;
 
         this.attackLaunched = false;
         this.walkAnimate = 1; //picture number
@@ -102,70 +106,69 @@ if (ctx) {
         this.emissionAnimateXy = [];
     }
     
-    ai = new aiObject(325, 80, 80, 80, 900, 400, 80, 80, playerObject.speed);
-    ai.shortAttackLeftXy["x1"] = 0, ai.shortAttackLeftXy["y1"] = 160,
-    ai.shortAttackLeftXy["x2"] = 80, ai.shortAttackLeftXy["y2"] = 160,
-    ai.shortAttackLeftXy["x3"] = 160, ai.shortAttackLeftXy["y3"] = 160,
-    ai.shortAttackLeftXy["x4"] = 240, ai.shortAttackLeftXy["y4"] = 160;
-    ai.shortAttackRightXy["x1"] = 400, ai.shortAttackRightXy["y1"] = 0,
-    ai.shortAttackRightXy["x2"] = 480, ai.shortAttackRightXy["y2"] = 0,
-    ai.shortAttackRightXy["x3"] = 560, ai.shortAttackRightXy["y3"] = 0,
-    ai.shortAttackRightXy["x4"] = 640, ai.shortAttackRightXy["y4"] = 0;
+    ai5 = new aiObject(325, 80, 80, 80, 900, 400, 80, 80, playerObject.speed);
+    ai5.shortAttackLeftXy["x1"] = 0, ai5.shortAttackLeftXy["y1"] = 160,
+    ai5.shortAttackLeftXy["x2"] = 80, ai5.shortAttackLeftXy["y2"] = 160,
+    ai5.shortAttackLeftXy["x3"] = 160, ai5.shortAttackLeftXy["y3"] = 160,
+    ai5.shortAttackLeftXy["x4"] = 240, ai5.shortAttackLeftXy["y4"] = 160;
+    ai5.shortAttackRightXy["x1"] = 400, ai5.shortAttackRightXy["y1"] = 0,
+    ai5.shortAttackRightXy["x2"] = 480, ai5.shortAttackRightXy["y2"] = 0,
+    ai5.shortAttackRightXy["x3"] = 560, ai5.shortAttackRightXy["y3"] = 0,
+    ai5.shortAttackRightXy["x4"] = 640, ai5.shortAttackRightXy["y4"] = 0;
     
-    ai.walkLeftXy["x1"] = 570, ai.walkLeftXy["y1"] = 80,
-    ai.walkLeftXy["x2"] = 490, ai.walkLeftXy["y2"] = 80,
-    ai.walkLeftXy["x3"] = 410, ai.walkLeftXy["y3"] = 80,    
-    ai.walkLeftXy["x4"] = 330, ai.walkLeftXy["y4"] = 80;
-    ai.walkRightXy["x1"] = 80, ai.walkRightXy["y1"] = 0,
-    ai.walkRightXy["x2"] = 160, ai.walkRightXy["y2"] = 0,
-    ai.walkRightXy["x3"] = 240, ai.walkRightXy["y3"] = 0,
-    ai.walkRightXy["x4"] = 320, ai.walkRightXy["y4"] = 0;
+    ai5.walkLeftXy["x1"] = 570, ai5.walkLeftXy["y1"] = 80,
+    ai5.walkLeftXy["x2"] = 490, ai5.walkLeftXy["y2"] = 80,
+    ai5.walkLeftXy["x3"] = 410, ai5.walkLeftXy["y3"] = 80,
+    ai5.walkLeftXy["x4"] = 330, ai5.walkLeftXy["y4"] = 80;
+    ai5.walkRightXy["x1"] = 80, ai5.walkRightXy["y1"] = 0,
+    ai5.walkRightXy["x2"] = 160, ai5.walkRightXy["y2"] = 0,
+    ai5.walkRightXy["x3"] = 240, ai5.walkRightXy["y3"] = 0,
+    ai5.walkRightXy["x4"] = 320, ai5.walkRightXy["y4"] = 0;
 
-    ai.longAttackLeftXy["x1"] = 410, ai.longAttackLeftXy["y1"] = 160,
-    ai.longAttackLeftXy["x2"] = 490, ai.longAttackLeftXy["y2"] = 160,
-    ai.longAttackLeftXy["x3"] = 570, ai.longAttackLeftXy["y3"] = 160,
-    ai.longAttackLeftXy["x4"] = 650, ai.longAttackLeftXy["y4"] = 160;
-    ai.longAttackRightXy["x1"] = 0, ai.longAttackRightXy["y1"] = 80,
-    ai.longAttackRightXy["x2"] = 80, ai.longAttackRightXy["y2"] = 80,
-    ai.longAttackRightXy["x3"] = 160, ai.longAttackRightXy["y3"] = 80,
-    ai.longAttackRightXy["x4"] = 240, ai.longAttackRightXy["y4"] = 80;
+    ai5.longAttackLeftXy["x1"] = 410, ai5.longAttackLeftXy["y1"] = 160,
+    ai5.longAttackLeftXy["x2"] = 490, ai5.longAttackLeftXy["y2"] = 160,
+    ai5.longAttackLeftXy["x3"] = 570, ai5.longAttackLeftXy["y3"] = 160,
+    ai5.longAttackLeftXy["x4"] = 650, ai5.longAttackLeftXy["y4"] = 160;
+    ai5.longAttackRightXy["x1"] = 0, ai5.longAttackRightXy["y1"] = 80,
+    ai5.longAttackRightXy["x2"] = 80, ai5.longAttackRightXy["y2"] = 80,
+    ai5.longAttackRightXy["x3"] = 160, ai5.longAttackRightXy["y3"] = 80,
+    ai5.longAttackRightXy["x4"] = 240, ai5.longAttackRightXy["y4"] = 80;
  
-    ai.emissionAnimateXy["x1"] = 0, ai.emissionAnimateXy["y1"] = 870,
-    ai.emissionAnimateXy["x2"] = 40, ai.emissionAnimateXy["y2"] = 870,
-    ai.emissionAnimateXy["x3"] = 80, ai.emissionAnimateXy["y3"] = 870,
-    ai.emissionAnimateXy["x4"] = 120, ai.emissionAnimateXy["y4"] = 870;
+    ai5.emissionAnimateXy["x1"] = 0, ai5.emissionAnimateXy["y1"] = 870,
+    ai5.emissionAnimateXy["x2"] = 40, ai5.emissionAnimateXy["y2"] = 870,
+    ai5.emissionAnimateXy["x3"] = 80, ai5.emissionAnimateXy["y3"] = 870,
+    ai5.emissionAnimateXy["x4"] = 120, ai5.emissionAnimateXy["y4"] = 870;
 
-    attackFinished = true;
     chaseSpeed = "";
     chaseType = "";
     
     function stage5Ai() {
-        clearImage(ai.posX, ai.posY, ai.wantedWidth, ai.wantedHeight);
+        clearImage(ai5.posX, ai5.posY, ai5.wantedWidth, ai5.wantedHeight);
         //if (ensurePlayerCollision(ai)) {
         //    console.log("yes");
         //}
-        setFace(ai);
+        setFace(ai5);
         //random number from 1 to 2
-        if (attackFinished) {
+        if (ai5.attackFinished) {
             attackType = Math.floor(Math.random() * 2 + 1);
         }
 
         // Randomly perform either 1) or 2) attack (every randomly 1-4s).
         //1: Faster, Chase (random within 2-4s), after that, Must perform short attack.
         //2: same speed, keep distance and Long attack (chase horizontally)        
-        if(!ai.attackLaunched){
+        if (!ai5.attackLaunched) {
             if (attackType == 1) {
-                attackFinished = false;
+                ai5.attackFinished = false;
                 chaseSpeed = "normal";
                 chaseType = "basicChase";
             }
             else if (attackType == 2) {
-                attackFinished = false;
+                ai5.attackFinished = false;
                 chaseSpeed = "slow";
                 chaseType = "horizontalChase";
             }
     
-            aiChase(chaseSpeed, chaseType, ai);
+            aiChase(chaseSpeed, chaseType, ai5);
         }
         //draw(ai);
     }
@@ -956,7 +959,7 @@ if (ctx) {
         setFace(aiObject);
 
         if(playerApporach(aiObject)){
-            attackFinished = false;
+            aiObject.attackFinished = false;
             chaseType = "basicChase";
             chaseSpeed = "slow";
             aiChase(chaseSpeed, chaseType, aiObject);
