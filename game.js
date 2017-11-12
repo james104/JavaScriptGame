@@ -16,7 +16,7 @@ canvasElement.height = "700";
 canvasElement.style.background = "url(img/newBackground.bmp)";
 canvasElement.style.backgroundSize = "cover";
 var ctx = canvasElement.getContext && canvasElement.getContext('2d');
-var stage = 1;
+var stage = 5;
 
 //--- 1 end of canvas ---//
 
@@ -49,7 +49,7 @@ if (ctx) {
     //--- 3 start of global_function ---//
     function callIntervalFunction(){
         playerAction();
-        if (stage == 1) {
+        if (stage == 5) {
             stage5Ai();
         }
         drawInCanvas(playerImage, playerObject.imageX, playerObject.imageY, playerObject);
