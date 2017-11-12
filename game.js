@@ -50,17 +50,15 @@ if (ctx) {
     //--- 3 start of global_function ---//
     function callIntervalFunction(){
         playerAction();
-        if (stage == 1) {
-            stage1Ai(aiDog);
-        }
+        // if (stage == 1) {
+        //     stage1Ai(aiDog);
+        // }
 
-        //stage1Ai_old(ai);
-        
+        stage5Ai(ai);
 
-
-        if (stage == 1) {
-            draw(aiDog);
-        }
+        // if (stage == 1) {
+        //     draw(aiDog);
+        // }
         draw(playerObject);
     }
     this.image = new Image();
@@ -134,13 +132,24 @@ if (ctx) {
     ai.emissionAnimateXy["x3"] = 80, ai.emissionAnimateXy["y3"] = 870,
     ai.emissionAnimateXy["x4"] = 120, ai.emissionAnimateXy["y4"] = 870;
 
+    //ai long attack
+    // setInterval(function(){
+    //     aiAttackCall(image, ai.longAttackLeftXy, ai.longAttackRightXy, ai);
+    //     aiEmission = new emissionObject(ai);
+    // },2000);
+
+    //ai short attack
+    // setInterval(function(){
+    //     aiAttackCall(image, ai.shortAttackLeftXy, ai.shortAttackRightXy, ai);
+    // },1000);
+
     attackFinished = true;
     chaseSpeed = "";
     chaseType = "";
     distance = "";
     
     var attackType;
-    function stage1Ai_old(aiObject) {
+    function stage5Ai(aiObject) {
         clearImage(aiObject.posX, aiObject.posY, aiObject.wantedWidth, aiObject.wantedHeight);
         //if (ensurePlayerCollision(ai)) {
         //    console.log("yes");
@@ -914,9 +923,9 @@ if (ctx) {
     // },2000);
 
     //ai short attack
-    setInterval(function(){
-        aiAttackCall(image, aiDog.shortAttackLeftXy, aiDog.shortAttackRightXy, aiDog);
-    },1000);
+    // setInterval(function(){
+    //     aiAttackCall(image, aiDog.shortAttackLeftXy, aiDog.shortAttackRightXy, aiDog);
+    // },1000);
 
     function stage1Initial(){
         aiDog = new aiObject(415, 2835, 65, 65, 900, 400, 65, 65, 1);
@@ -942,7 +951,8 @@ if (ctx) {
     function stage1Ai(aiObject) {
         clearImage(aiObject.posX, aiObject.posY, aiObject.wantedWidth, aiObject.wantedHeight);
         setFace(aiObject);        
-        if(!aiObject.attackLaunched && playerNear(aiObject)){
+        // && playerNear(aiObject)
+        if(!aiObject.attackLaunched){
             attackFinished = false;
             chaseType = "basicChase";
             chaseSpeed = "slow";
