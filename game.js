@@ -17,7 +17,7 @@ canvasElement.height = "700";
 canvasElement.style.background = "url(img/newBackground.bmp)";
 canvasElement.style.backgroundSize = "cover";
 var ctx = canvasElement.getContext && canvasElement.getContext('2d');
-var stage = 1;
+var stage = 5;
 
 //--- 1 end of canvas ---//
 
@@ -172,21 +172,7 @@ if (ctx) {
 
     function findDistanceBetweenPlayerAndAi (aiObj) {
         var distance;
-        if(playerObject.posX == aiObj.posX){
-            if(playerObject.posY > aiObj.posY){
-                distance = playerObject.posY - aiObj.posY;
-            }else{
-                distance = aiObj.posY - playerObject.posY;
-            }
-        }else if(playerObject.posY == aiObj.posY){
-            if(playerObject.posX > aiObj.posX){
-                distance = playerObject.posX - aiObj.posX;
-            }else{
-                distance = aiObj.posX - playerObject.posX;
-            }
-        }else{
-            distance = Math.sqrt(Math.pow((aiObj.posX - playerObject.posX), 2) + Math.pow((aiObj.posY - playerObject.posY), 2));
-        }
+        distance = Math.sqrt(Math.pow((aiObj.posX - playerObject.posX), 2) + Math.pow((aiObj.posY - playerObject.posY), 2));
         return Math.round(distance);
     }
 
