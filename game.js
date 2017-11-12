@@ -90,6 +90,7 @@ if (ctx) {
         this.shortAttackRightXy = [];
         this.longAttackLeftXy = [];
         this.longAttackRightXy = [];
+        this.emissionAnimateXy = [];
     }
     
     ai = new aiObject(325, 80, 80, 80, 900, 400, 80, 80, playerObject.speed);
@@ -120,6 +121,11 @@ if (ctx) {
     ai.longAttackRightXy["x3"] = 160, ai.longAttackRightXy["y3"] = 80,
     ai.longAttackRightXy["x4"] = 240, ai.longAttackRightXy["y4"] = 80;
  
+    ai.emissionAnimateXy["x1"] = 0, ai.emissionAnimateXy["y1"] = 870,
+    ai.emissionAnimateXy["x2"] = 40, ai.emissionAnimateXy["y2"] = 870,
+    ai.emissionAnimateXy["x3"] = 80, ai.emissionAnimateXy["y3"] = 870,
+    ai.emissionAnimateXy["x4"] = 120, ai.emissionAnimateXy["y4"] = 870;
+
     attackFinished = true;
     chaseSpeed = "";
     chaseType = "";
@@ -151,7 +157,7 @@ if (ctx) {
                 chaseType = "horizontalChase";
             }
     
-            aiChase(chaseSpeed, chaseType);
+            aiChase("slow", chaseType);
         }
         draw(ai);
     }
@@ -184,6 +190,7 @@ if (ctx) {
         }
     }
     
+    //short or long attack
     function aiAttackCall (image,attackLeftXy,attackRightXy,aiObject){
         ai.attackLaunched = true;
         attackAnimation(image, attackLeftXy, attackRightXy, aiObject);
@@ -192,85 +199,17 @@ if (ctx) {
             ai.attackLaunched = false;
         }, 400);
     }
-    
-    function emissionObject (aiObject, animateArrXy){        
-        this.imageWidth = 40;
-        this.imageHeight = 30;
-        this.wantedWidth = 40;
-        this.wantedHeight = 30;
-        this.posX = aiObject.posX - this.wantedWidth;
-        this.posY = aiObject.posY + (aiObject.wantedHeight / 2);
-        this.speed = 20;
-        this.face = aiObject.face;
-        this.animateArrXy = animateArrXy;
-        this.animate = 1;
-        this.repeat = 0;        
-        if(this.face == faceRight){
-            this.posX += aiObject.wantedWidth + this.wantedWidth;            
-        }
-        emissionAnimation(playerImage,this);
-    }
 
-    function checkEmissionCollision(emissionObject, playerObject, intervalNo){
-        if(emissionObject.posX < 0 - emissionObject.wantedWidth || emissionObject.posX > 1500){
-            if(emissionObject.face == faceLeft){
-                clearPreviousImage(emissionObject.posX, emissionObject.posY, emissionObject.wantedWidth + 20, emissionObject.wantedHeight);
-            }else if(emissionObject.face == faceRight){
-                clearPreviousImage(emissionObject.posX - 20, emissionObject.posY, emissionObject.wantedWidth, emissionObject.wantedHeight);                
-            }
-            clearInterval(intervalNo);
-        }
-        else{
-            if(emissionObject.face == faceLeft && playerObject.posX + playerObject.wantedWidth > emissionObject.posX && playerObject.posY < emissionObject.posY + emissionObject.wantedHeight && playerObject.posY + playerObject.wantedHeight > emissionObject.posY){
-                reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-                clearPreviousImage(emissionObject.posX, emissionObject.posY, emissionObject.wantedWidth + 20, emissionObject.wantedHeight);
-                clearInterval(intervalNo);
-            }else if(emissionObject.face == faceRight && playerObject.posX < emissionObject.posX && playerObject.posY < emissionObject.posY + emissionObject.wantedHeight && playerObject.posY + playerObject.wantedHeight > emissionObject.posY){
-                reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-                clearPreviousImage(emissionObject.posX - 20, emissionObject.posY, emissionObject.wantedWidth, emissionObject.wantedHeight);
-                clearInterval(intervalNo);
-            }
-        }
-    }
+    //ai long attack
+    // setInterval(function(){
+    //     aiAttackCall(image, ai.longAttackLeftXy, ai.longAttackRightXy, ai);
+    //     aiEmission = new emissionObject(ai, ai.emissionAnimateXy);
+    // },2000);
 
-    function emissionAnimation(image,emissionObject){
-        //random to prevent same name of interval 
-        var intervalNo = Math.floor(Math.random() * 100) + 1;
-        
-        intervalNo = setInterval(function(){            
-            if(emissionObject.face == faceLeft){
-                clearPreviousImage(emissionObject.posX, emissionObject.posY, emissionObject.wantedWidth + 20, emissionObject.wantedHeight);
-            }else if(emissionObject.face == faceRight){
-                clearPreviousImage(emissionObject.posX - 20, emissionObject.posY, emissionObject.wantedWidth, emissionObject.wantedHeight);                
-            }
-            emissionObject.repeat++;
-            if (emissionObject.repeat == 1) {
-                if(emissionObject.animate == 4){
-                    emissionObject.animate = 0;
-                }
-                emissionObject.animate++;
-                emissionObject.repeat = 0;
-            }
-            drawInCanvas(image, emissionObject.animateArrXy["x" + emissionObject.animate], emissionObject.animateArrXy["y" + emissionObject.animate], emissionObject);
-            if(emissionObject.face == faceLeft){
-                emissionObject.posX -= emissionObject.speed;
-            }else if(emissionObject.face == faceRight){
-                emissionObject.posX += emissionObject.speed;
-            }
-            checkEmissionCollision(emissionObject, playerObject, intervalNo);
-        },50);
-    }
-
-    var emissionAnimateArrXy = [];
-    emissionAnimateArrXy["x1"] = 0, emissionAnimateArrXy["y1"] = 870,
-    emissionAnimateArrXy["x2"] = 40, emissionAnimateArrXy["y2"] = 870,
-    emissionAnimateArrXy["x3"] = 80, emissionAnimateArrXy["y3"] = 870,
-    emissionAnimateArrXy["x4"] = 120, emissionAnimateArrXy["y4"] = 870;
-
-    setInterval(function(){
-        aiAttackCall(image, ai.longAttackLeftXy, ai.longAttackRightXy, ai);
-        aiEmission = new emissionObject(ai, emissionAnimateArrXy);
-    },1000);
+    //ai short attack
+    // setInterval(function(){
+    //     aiAttackCall(image, ai.shortAttackLeftXy, ai.shortAttackRightXy, ai);
+    // },1000);
 
 
     function aiChase(chaseSpeed, chaseType) {
@@ -491,6 +430,74 @@ if (ctx) {
             object.imageX = attackXyArr["x" + object.attackAnimte], object.imageY = attackXyArr["y" + object.attackAnimte];
             drawInCanvas(image, attackXyArr["x" + object.attackAnimte], attackXyArr["y" + object.attackAnimte], object);
         },15);
+    }
+
+    function emissionObject (aiObject, animateArrXy){        
+        this.imageWidth = 40;
+        this.imageHeight = 30;
+        this.wantedWidth = 40;
+        this.wantedHeight = 30;
+        this.posX = aiObject.posX - this.wantedWidth;
+        this.posY = aiObject.posY + (aiObject.wantedHeight / 2);
+        this.speed = 20;
+        this.face = aiObject.face;
+        this.animateArrXy = animateArrXy;
+        this.animate = 1;
+        this.repeat = 0;        
+        if(this.face == faceRight){
+            this.posX += aiObject.wantedWidth + this.wantedWidth;            
+        }
+        emissionAnimation(playerImage,this);
+    }    
+
+    function emissionAnimation(image,emissionObject){
+        //random to prevent same name of interval 
+        var intervalNo = Math.floor(Math.random() * 100) + 1;
+        
+        intervalNo = setInterval(function(){            
+            if(emissionObject.face == faceLeft){
+                clearPreviousImage(emissionObject.posX, emissionObject.posY, emissionObject.wantedWidth + 20, emissionObject.wantedHeight);
+            }else if(emissionObject.face == faceRight){
+                clearPreviousImage(emissionObject.posX - 20, emissionObject.posY, emissionObject.wantedWidth, emissionObject.wantedHeight);                
+            }
+            emissionObject.repeat++;
+            if (emissionObject.repeat == 1) {
+                if(emissionObject.animate == 4){
+                    emissionObject.animate = 0;
+                }
+                emissionObject.animate++;
+                emissionObject.repeat = 0;
+            }
+            drawInCanvas(image, emissionObject.animateArrXy["x" + emissionObject.animate], emissionObject.animateArrXy["y" + emissionObject.animate], emissionObject);
+            if(emissionObject.face == faceLeft){
+                emissionObject.posX -= emissionObject.speed;
+            }else if(emissionObject.face == faceRight){
+                emissionObject.posX += emissionObject.speed;
+            }
+            checkEmissionCollision(emissionObject, playerObject, intervalNo);
+        },50);
+    }
+
+    function checkEmissionCollision(emissionObject, playerObject, intervalNo){
+        if(emissionObject.posX < 0 - emissionObject.wantedWidth || emissionObject.posX > 1500){
+            if(emissionObject.face == faceLeft){
+                clearPreviousImage(emissionObject.posX, emissionObject.posY, emissionObject.wantedWidth + 20, emissionObject.wantedHeight);
+            }else if(emissionObject.face == faceRight){
+                clearPreviousImage(emissionObject.posX - 20, emissionObject.posY, emissionObject.wantedWidth, emissionObject.wantedHeight);                
+            }
+            clearInterval(intervalNo);
+        }
+        else{
+            if(emissionObject.face == faceLeft && playerObject.posX + playerObject.wantedWidth > emissionObject.posX && playerObject.posY < emissionObject.posY + emissionObject.wantedHeight && playerObject.posY + playerObject.wantedHeight > emissionObject.posY){
+                reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+                clearPreviousImage(emissionObject.posX, emissionObject.posY, emissionObject.wantedWidth + 20, emissionObject.wantedHeight);
+                clearInterval(intervalNo);
+            }else if(emissionObject.face == faceRight && playerObject.posX < emissionObject.posX && playerObject.posY < emissionObject.posY + emissionObject.wantedHeight && playerObject.posY + playerObject.wantedHeight > emissionObject.posY){
+                reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+                clearPreviousImage(emissionObject.posX - 20, emissionObject.posY, emissionObject.wantedWidth, emissionObject.wantedHeight);
+                clearInterval(intervalNo);
+            }
+        }
     }
 
     function ensureCollision(obj, preX, preY, currX, currY) {        
