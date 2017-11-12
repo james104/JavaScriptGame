@@ -17,7 +17,7 @@ canvasElement.height = "700";
 canvasElement.style.background = "url(img/newBackground.bmp)";
 canvasElement.style.backgroundSize = "cover";
 var ctx = canvasElement.getContext && canvasElement.getContext('2d');
-var stage = 5;
+var stage = 1;
 
 //--- 1 end of canvas ---//
 
@@ -32,7 +32,7 @@ if (ctx) {
     var faceLeft = "left", faceRight = "right";
     var gameSpriteNo = 0;
     var textColor = "white", hpColor = "red", mpColor = "blue";
-    var spriteHpX = 150, spriteHpY = 20, 
+    var spriteHpX = 150, spriteHpY = 20,
         spriteMpX = spriteHpX, spriteMpY = spriteHpY + 20,
         spriteStatusW = 200, spriteStatusH = 15,
         spriteHpTextX = spriteHpX + spriteStatusW, spriteHpTextY = spriteHpY + 15,
@@ -42,13 +42,13 @@ if (ctx) {
     ctx.fillStyle = textColor;
 
     //--- 2 end of global_variable ---//
-// 
-//     
-// 
-// 
-// 
+    // 
+    //     
+    // 
+    // 
+    // 
     //--- 3 start of global_function ---//
-    function callIntervalFunction(){
+    function callIntervalFunction() {
         playerAction();
         if (stage == 1) {
             stage1Ai(aiDog);
@@ -90,7 +90,7 @@ if (ctx) {
         this.attackLaunched = false;
         this.walkAnimate = 1; //picture number
         this.walkRepeat = 0; //duration to change walkAnimate (number of loop)
-        this.attackAnimte = 1; 
+        this.attackAnimte = 1;
         this.attackRepeat = 0;
         this.standXy = [];
         this.walkLeftXy = [];
@@ -101,44 +101,44 @@ if (ctx) {
         this.longAttackRightXy = [];
         this.emissionAnimateXy = [];
     }
-    
+
     ai = new aiObject(325, 80, 80, 80, 900, 400, 80, 80, playerObject.speed);
     ai.shortAttackLeftXy["x1"] = 0, ai.shortAttackLeftXy["y1"] = 160,
-    ai.shortAttackLeftXy["x2"] = 80, ai.shortAttackLeftXy["y2"] = 160,
-    ai.shortAttackLeftXy["x3"] = 160, ai.shortAttackLeftXy["y3"] = 160,
-    ai.shortAttackLeftXy["x4"] = 240, ai.shortAttackLeftXy["y4"] = 160;
+        ai.shortAttackLeftXy["x2"] = 80, ai.shortAttackLeftXy["y2"] = 160,
+        ai.shortAttackLeftXy["x3"] = 160, ai.shortAttackLeftXy["y3"] = 160,
+        ai.shortAttackLeftXy["x4"] = 240, ai.shortAttackLeftXy["y4"] = 160;
     ai.shortAttackRightXy["x1"] = 400, ai.shortAttackRightXy["y1"] = 0,
-    ai.shortAttackRightXy["x2"] = 480, ai.shortAttackRightXy["y2"] = 0,
-    ai.shortAttackRightXy["x3"] = 560, ai.shortAttackRightXy["y3"] = 0,
-    ai.shortAttackRightXy["x4"] = 640, ai.shortAttackRightXy["y4"] = 0;
-    
+        ai.shortAttackRightXy["x2"] = 480, ai.shortAttackRightXy["y2"] = 0,
+        ai.shortAttackRightXy["x3"] = 560, ai.shortAttackRightXy["y3"] = 0,
+        ai.shortAttackRightXy["x4"] = 640, ai.shortAttackRightXy["y4"] = 0;
+
     ai.walkLeftXy["x1"] = 570, ai.walkLeftXy["y1"] = 80,
-    ai.walkLeftXy["x2"] = 490, ai.walkLeftXy["y2"] = 80,
-    ai.walkLeftXy["x3"] = 410, ai.walkLeftXy["y3"] = 80,    
-    ai.walkLeftXy["x4"] = 330, ai.walkLeftXy["y4"] = 80;
+        ai.walkLeftXy["x2"] = 490, ai.walkLeftXy["y2"] = 80,
+        ai.walkLeftXy["x3"] = 410, ai.walkLeftXy["y3"] = 80,
+        ai.walkLeftXy["x4"] = 330, ai.walkLeftXy["y4"] = 80;
     ai.walkRightXy["x1"] = 80, ai.walkRightXy["y1"] = 0,
-    ai.walkRightXy["x2"] = 160, ai.walkRightXy["y2"] = 0,
-    ai.walkRightXy["x3"] = 240, ai.walkRightXy["y3"] = 0,
-    ai.walkRightXy["x4"] = 320, ai.walkRightXy["y4"] = 0;
+        ai.walkRightXy["x2"] = 160, ai.walkRightXy["y2"] = 0,
+        ai.walkRightXy["x3"] = 240, ai.walkRightXy["y3"] = 0,
+        ai.walkRightXy["x4"] = 320, ai.walkRightXy["y4"] = 0;
 
     ai.longAttackLeftXy["x1"] = 410, ai.longAttackLeftXy["y1"] = 160,
-    ai.longAttackLeftXy["x2"] = 490, ai.longAttackLeftXy["y2"] = 160,
-    ai.longAttackLeftXy["x3"] = 570, ai.longAttackLeftXy["y3"] = 160,
-    ai.longAttackLeftXy["x4"] = 650, ai.longAttackLeftXy["y4"] = 160;
+        ai.longAttackLeftXy["x2"] = 490, ai.longAttackLeftXy["y2"] = 160,
+        ai.longAttackLeftXy["x3"] = 570, ai.longAttackLeftXy["y3"] = 160,
+        ai.longAttackLeftXy["x4"] = 650, ai.longAttackLeftXy["y4"] = 160;
     ai.longAttackRightXy["x1"] = 0, ai.longAttackRightXy["y1"] = 80,
-    ai.longAttackRightXy["x2"] = 80, ai.longAttackRightXy["y2"] = 80,
-    ai.longAttackRightXy["x3"] = 160, ai.longAttackRightXy["y3"] = 80,
-    ai.longAttackRightXy["x4"] = 240, ai.longAttackRightXy["y4"] = 80;
- 
+        ai.longAttackRightXy["x2"] = 80, ai.longAttackRightXy["y2"] = 80,
+        ai.longAttackRightXy["x3"] = 160, ai.longAttackRightXy["y3"] = 80,
+        ai.longAttackRightXy["x4"] = 240, ai.longAttackRightXy["y4"] = 80;
+
     ai.emissionAnimateXy["x1"] = 0, ai.emissionAnimateXy["y1"] = 870,
-    ai.emissionAnimateXy["x2"] = 40, ai.emissionAnimateXy["y2"] = 870,
-    ai.emissionAnimateXy["x3"] = 80, ai.emissionAnimateXy["y3"] = 870,
-    ai.emissionAnimateXy["x4"] = 120, ai.emissionAnimateXy["y4"] = 870;
+        ai.emissionAnimateXy["x2"] = 40, ai.emissionAnimateXy["y2"] = 870,
+        ai.emissionAnimateXy["x3"] = 80, ai.emissionAnimateXy["y3"] = 870,
+        ai.emissionAnimateXy["x4"] = 120, ai.emissionAnimateXy["y4"] = 870;
 
     attackFinished = true;
     chaseSpeed = "";
     chaseType = "";
-    
+
     function stage5Ai() {
         clearImage(ai.posX, ai.posY, ai.wantedWidth, ai.wantedHeight);
         //if (ensurePlayerCollision(ai)) {
@@ -153,7 +153,7 @@ if (ctx) {
         // Randomly perform either 1) or 2) attack (every randomly 1-4s).
         //1: Faster, Chase (random within 2-4s), after that, Must perform short attack.
         //2: same speed, keep distance and Long attack (chase horizontally)        
-        if(!ai.attackLaunched){
+        if (!ai.attackLaunched) {
             if (attackType == 1) {
                 attackFinished = false;
                 chaseSpeed = "normal";
@@ -164,13 +164,13 @@ if (ctx) {
                 chaseSpeed = "slow";
                 chaseType = "horizontalChase";
             }
-    
+
             aiChase(chaseSpeed, chaseType, ai);
         }
         //draw(ai);
     }
 
-    function findDistanceBetweenPlayerAndAi (aiObj) {
+    function findDistanceBetweenPlayerAndAi(aiObj) {
         var distance;
         distance = Math.sqrt(Math.pow((aiObj.posX - playerObject.posX), 2) + Math.pow((aiObj.posY - playerObject.posY), 2));
         return Math.round(distance);
@@ -205,15 +205,15 @@ if (ctx) {
             }
         }
     }
-    
+
     //short or long attack
-    function aiAttackCall (image,attackLeftXy,attackRightXy,aiObject){
+    function aiAttackCall(image, attackLeftXy, attackRightXy, aiObject) {
         aiObject.attackLaunched = true;
         attackAnimation(image, attackLeftXy, attackRightXy, aiObject);
         //user timeout to enable ai attack again
         setTimeout(function () {
             aiObject.attackLaunched = false;
-        }, 400);
+        }, 1000);
     }
 
     //ai long attack
@@ -229,7 +229,7 @@ if (ctx) {
 
 
     function aiChase(chaseSpeed, chaseType, aiObject) {
-        
+
         if (chaseSpeed == "fast") {
             aiObject.speed = playerObject.speed * 2;
         }
@@ -239,15 +239,18 @@ if (ctx) {
         else if (chaseSpeed == "slow") {
             aiObject.speed = playerObject.speed - 2;
         }
-        
-        if(!aiObject.attackLaunched){
+
+        if (!aiObject.attackLaunched) {
             if (chaseType == "basicChase") {
                 chase(aiObject);
             }
             else if (chaseType == "horizontalChase") {
                 verticalChase(aiObject);
             }
-            walkAnimation(image, aiObject.walkLeftXy, aiObject.walkRightXy, aiObject);    
+            else if (chaseType == "returnOriginPos") {
+                returnOriginPos(aiObject);
+            }
+            walkAnimation(image, aiObject.walkLeftXy, aiObject.walkRightXy, aiObject);
         }
 
     }
@@ -377,12 +380,24 @@ if (ctx) {
         ensureCollision(obj, preX, preY, currX, currY);
     }
 
-    function playerApporach(aiObject) {
-        var distance = findDistanceBetweenPlayerAndAi(aiObject);
-        if(distance <= 200){
-            return true;
+    function returnOriginPos(aiObject) {
+        preX = aiObject.posX;
+        preY = aiObject.posY;
+        currX = aiObject.posX;
+        currY = aiObject.posY;
+        if (aiObject.posX > aiObject.originPosX) {
+            currX -= aiObject.speed;
         }
-        return false;
+        else if (aiObject.posX < aiObject.originPosX) {
+            currX += aiObject.speed;
+        }
+        if (aiObject.posY > aiObject.originPosY) {
+            currY -= aiObject.speed;
+        }
+        else if (aiObject.posY < aiObject.originPosY) {
+            currY += aiObject.speed;
+        }
+        ensureCollision(aiObject, preX, preY, currX, currY);
     }
 
     // function ensureAIcollision(obj) {
@@ -392,21 +407,21 @@ if (ctx) {
     //     }
     //     return false;
     // }
-    
-    function drawInCanvas(image, imageX, imageY, object){
+
+    function drawInCanvas(image, imageX, imageY, object) {
         ctx.drawImage(image, imageX, imageY, object.imageWidth, object.imageHeight, object.posX, object.posY, object.wantedWidth, object.wantedHeight);
     }
-    
+
     function clearPreviousImage(posX, posY, wantedWidth, wantedHeight) {
         ctx.clearRect(posX, posY, wantedWidth, wantedHeight);
     }
-    
+
     function walkAnimation(image, walkLeftXy, walkRightXy, object) {
         //add 1 for each move
         object.walkRepeat++;
         if (object.walkRepeat == 5) {
             //reset walkAnimate
-            if(object.walkAnimate == 4){
+            if (object.walkAnimate == 4) {
                 object.walkAnimate = 0;
             }
             //add 1 for count the walk animation
@@ -416,58 +431,47 @@ if (ctx) {
         }
         //check facing left/right for walk animation
         var walkXyArr;
-        if(object.face == faceLeft){
+        if (object.face == faceLeft) {
             walkXyArr = walkLeftXy;
-        }else if(object.face == faceRight){
+        } else if (object.face == faceRight) {
             walkXyArr = walkRightXy;
         }
-        object.imageX = walkXyArr["x"+object.walkAnimate], object.imageY = walkXyArr["y"+object.walkAnimate];        
-        drawInCanvas(image, walkXyArr["x"+object.walkAnimate], walkXyArr["y"+object.walkAnimate], object);
+        object.imageX = walkXyArr["x" + object.walkAnimate], object.imageY = walkXyArr["y" + object.walkAnimate];
+        drawInCanvas(image, walkXyArr["x" + object.walkAnimate], walkXyArr["y" + object.walkAnimate], object);
     }
 
     function attackAnimation(image, attackLeftXy, attackRightXy, object) {
         //check facing left/right for attack animation   
         var attackXyArr;
-        if(object.face == faceLeft){
+        if (object.face == faceLeft) {
             attackXyArr = attackLeftXy;
-        }else if(object.face == faceRight){
+        } else if (object.face == faceRight) {
             attackXyArr = attackRightXy;
         }
         //draw one first to prevent sparkle
         drawInCanvas(image, attackXyArr["x" + object.attackAnimte], attackXyArr["y" + object.attackAnimte], object);
 
         //use interval to ensure finish whole animation
-        var interval = setInterval(function(){
+        var interval = setInterval(function () {
             //add 1 for each move
             object.attackRepeat++;
             if (object.attackRepeat == 5) {
-               //reset attackAnimte
-               if(object.attackAnimte == 4){
-                   object.attackAnimte = 0;
-                   clearInterval(interval);
-               }
-               //add 1 for count the attack animation
-               object.attackAnimte++;
-               //reset for next attack animation
-               object.attackRepeat = 0;
-            }                     
+                //reset attackAnimte
+                if (object.attackAnimte == 4) {
+                    object.attackAnimte = 0;
+                    clearInterval(interval);
+                }
+                //add 1 for count the attack animation
+                object.attackAnimte++;
+                //reset for next attack animation
+                object.attackRepeat = 0;
+            }
             object.imageX = attackXyArr["x" + object.attackAnimte], object.imageY = attackXyArr["y" + object.attackAnimte];
             drawInCanvas(image, attackXyArr["x" + object.attackAnimte], attackXyArr["y" + object.attackAnimte], object);
-        },15);
+        }, 15);
     }
 
-    function keyObject(posX, poxY){
-        this.posX = posX;
-        this.poxY = poxY;
-        this.imageX = 345;
-        this.imageY = 865;
-        this.imageWidth = 35;
-        this.imageHeight = 35;
-        this.wantedWidth = 35;
-        this.wantedHeight = 35;        
-    }
-
-    function emissionObject (aiObject){        
+    function emissionObject(aiObject) {
         this.imageWidth = 40;
         this.imageHeight = 30;
         this.wantedWidth = 40;
@@ -478,56 +482,56 @@ if (ctx) {
         this.face = aiObject.face;
         this.animateArrXy = aiObject.emissionAnimateXy;
         this.animate = 1;
-        this.repeat = 0;        
-        if(this.face == faceRight){
-            this.posX += aiObject.wantedWidth + this.wantedWidth;            
+        this.repeat = 0;
+        if (this.face == faceRight) {
+            this.posX += aiObject.wantedWidth + this.wantedWidth;
         }
-        emissionAnimation(playerImage,this);
-    }    
+        emissionAnimation(playerImage, this);
+    }
 
-    function emissionAnimation(image,emissionObject){
+    function emissionAnimation(image, emissionObject) {
         //random to prevent same name of interval 
         var intervalNo = Math.floor(Math.random() * 100) + 1;
-        
-        intervalNo = setInterval(function(){            
-            if(emissionObject.face == faceLeft){
+
+        intervalNo = setInterval(function () {
+            if (emissionObject.face == faceLeft) {
                 clearPreviousImage(emissionObject.posX, emissionObject.posY, emissionObject.wantedWidth + 20, emissionObject.wantedHeight);
-            }else if(emissionObject.face == faceRight){
-                clearPreviousImage(emissionObject.posX - 20, emissionObject.posY, emissionObject.wantedWidth, emissionObject.wantedHeight);                
+            } else if (emissionObject.face == faceRight) {
+                clearPreviousImage(emissionObject.posX - 20, emissionObject.posY, emissionObject.wantedWidth, emissionObject.wantedHeight);
             }
             emissionObject.repeat++;
             if (emissionObject.repeat == 1) {
-                if(emissionObject.animate == 4){
+                if (emissionObject.animate == 4) {
                     emissionObject.animate = 0;
                 }
                 emissionObject.animate++;
                 emissionObject.repeat = 0;
             }
             drawInCanvas(image, emissionObject.animateArrXy["x" + emissionObject.animate], emissionObject.animateArrXy["y" + emissionObject.animate], emissionObject);
-            if(emissionObject.face == faceLeft){
+            if (emissionObject.face == faceLeft) {
                 emissionObject.posX -= emissionObject.speed;
-            }else if(emissionObject.face == faceRight){
+            } else if (emissionObject.face == faceRight) {
                 emissionObject.posX += emissionObject.speed;
             }
             checkEmissionCollision(emissionObject, playerObject, intervalNo);
-        },50);
+        }, 50);
     }
 
-    function checkEmissionCollision(emissionObject, playerObject, intervalNo){
-        if(emissionObject.posX < 0 - emissionObject.wantedWidth || emissionObject.posX > 1500){
-            if(emissionObject.face == faceLeft){
+    function checkEmissionCollision(emissionObject, playerObject, intervalNo) {
+        if (emissionObject.posX < 0 - emissionObject.wantedWidth || emissionObject.posX > 1500) {
+            if (emissionObject.face == faceLeft) {
                 clearPreviousImage(emissionObject.posX, emissionObject.posY, emissionObject.wantedWidth + 20, emissionObject.wantedHeight);
-            }else if(emissionObject.face == faceRight){
-                clearPreviousImage(emissionObject.posX - 20, emissionObject.posY, emissionObject.wantedWidth, emissionObject.wantedHeight);                
+            } else if (emissionObject.face == faceRight) {
+                clearPreviousImage(emissionObject.posX - 20, emissionObject.posY, emissionObject.wantedWidth, emissionObject.wantedHeight);
             }
             clearInterval(intervalNo);
         }
-        else{
-            if(emissionObject.face == faceLeft && playerObject.posX + playerObject.wantedWidth > emissionObject.posX && playerObject.posY < emissionObject.posY + emissionObject.wantedHeight && playerObject.posY + playerObject.wantedHeight > emissionObject.posY){
+        else {
+            if (emissionObject.face == faceLeft && playerObject.posX + playerObject.wantedWidth > emissionObject.posX && playerObject.posY < emissionObject.posY + emissionObject.wantedHeight && playerObject.posY + playerObject.wantedHeight > emissionObject.posY) {
                 reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
                 clearPreviousImage(emissionObject.posX, emissionObject.posY, emissionObject.wantedWidth + 20, emissionObject.wantedHeight);
                 clearInterval(intervalNo);
-            }else if(emissionObject.face == faceRight && playerObject.posX < emissionObject.posX && playerObject.posY < emissionObject.posY + emissionObject.wantedHeight && playerObject.posY + playerObject.wantedHeight > emissionObject.posY){
+            } else if (emissionObject.face == faceRight && playerObject.posX < emissionObject.posX && playerObject.posY < emissionObject.posY + emissionObject.wantedHeight && playerObject.posY + playerObject.wantedHeight > emissionObject.posY) {
                 reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
                 clearPreviousImage(emissionObject.posX - 20, emissionObject.posY, emissionObject.wantedWidth, emissionObject.wantedHeight);
                 clearInterval(intervalNo);
@@ -535,7 +539,7 @@ if (ctx) {
         }
     }
 
-    function ensureCollision(obj, preX, preY, currX, currY) {        
+    function ensureCollision(obj, preX, preY, currX, currY) {
         if (currX <= 0 || currX + obj.wantedWidth >= 1500) {
             obj.posX = preX;
         }
@@ -550,13 +554,25 @@ if (ctx) {
         }
     }
 
-    function drawSpriteStatus(object){
+    function objectCollision(playerObject, object) {
+        //fix here
+        if (playerObject.face == faceLeft && playerObject.posX > object.posX + object.wantedWidth && playerObject.posY < object.posY + object.wantedHeight && playerObject.posY + playerObject.wantedHeight > object.posY) {
+            clearPreviousImage(object.posX, object.posY, object.wantedWidth, object.wantedHeight);
+            return true;
+        } else if (playerObject.face == faceRight && playerObject.posX + playerObject.wantedWidth > object.posX && playerObject.posY < object.posY + object.wantedHeight && playerObject.posY + playerObject.wantedHeight > object.posY) {
+            clearPreviousImage(object.posX, object.posY, object.wantedWidth, object.wantedHeight);
+            return true;
+        }
+        return false;
+    }
+
+    function drawSpriteStatus(object) {
         gameSpriteNo++;
-        spriteStatusArr[object.name] = {fullHp : object.hp, hpX : spriteHpX, hpY : spriteHpY, fullMp : object.mp, mpX : spriteMpX, mpY : spriteMpY};
-        
+        spriteStatusArr[object.name] = { fullHp: object.hp, hpX: spriteHpX, hpY: spriteHpY, fullMp: object.mp, mpX: spriteMpX, mpY: spriteMpY };
+
         //for hp bar
         ctx.fillStyle = hpColor;
-        ctx.fillRect(spriteHpX, spriteHpY, spriteStatusW, spriteStatusH);        
+        ctx.fillRect(spriteHpX, spriteHpY, spriteStatusW, spriteStatusH);
 
         // //for mp bar
         ctx.fillStyle = mpColor;
@@ -566,20 +582,20 @@ if (ctx) {
         ctx.fillText(object.hp, spriteHpTextX, spriteHpTextY);
         ctx.fillText(object.mp, spriteMpTextX, spriteMpTextY);
 
-        if(gameSpriteNo % 4 == 0){
-            spriteHpX = 150, spriteHpY = spriteHpY + 50;            
+        if (gameSpriteNo % 4 == 0) {
+            spriteHpX = 150, spriteHpY = spriteHpY + 50;
         }
-        else{
+        else {
             spriteHpX = spriteHpTextX + 150;
         }
         spriteMpX = spriteHpX, spriteMpY = spriteHpY + 20,
-        spriteHpTextX = spriteHpX + spriteStatusW, spriteHpTextY = spriteHpY + 15,
-        spriteMpTextX = spriteHpTextX, spriteMpTextY = spriteHpTextY + 20;
+            spriteHpTextX = spriteHpX + spriteStatusW, spriteHpTextY = spriteHpY + 15,
+            spriteMpTextX = spriteHpTextX, spriteMpTextY = spriteHpTextY + 20;
     }
 
-    function reduceHp(object, damage){
+    function reduceHp(object, damage) {
         x = spriteStatusArr[object.name].hpX;
-        y = spriteStatusArr[object.name].hpY;        
+        y = spriteStatusArr[object.name].hpY;
         spriteHpTextX = x + spriteStatusW, spriteHpTextY = y + 15;
 
         clearPreviousImage(x, y, spriteStatusW + 40, spriteStatusH);
@@ -588,8 +604,8 @@ if (ctx) {
         object.hp -= damage;
         currHp = object.hp;
         hpPercentage = currHp / orignHp;
-      
-        if(currHp <= 0){
+
+        if (currHp <= 0) {
             currHp = 0;
             hpPercentage = 0;
         }
@@ -603,7 +619,7 @@ if (ctx) {
         console.log("damage: " + damage);
     }
 
-    function reduceMp(object, consumption){
+    function reduceMp(object, consumption) {
         x = spriteStatusArr[object.name].mpX;
         y = spriteStatusArr[object.name].mpY;
         spriteMpTextX = x + spriteStatusW, spriteMpTextY = y + 15;
@@ -615,7 +631,7 @@ if (ctx) {
         currMp = object.mp;
         mpPercentage = currMp / orignMp;
 
-        if(currMp <= 0){
+        if (currMp <= 0) {
             currMp = 0;
             mpPercentage = 0;
         }
@@ -629,7 +645,7 @@ if (ctx) {
         console.log("consumption: " + consumption);
     }
 
-    if(false){
+    if (false) {
         //start for test reduce hp & mp
         // test1 = {name:"test1",hp:100,mp:100};
         // drawSpriteStatus(test1);
@@ -639,7 +655,7 @@ if (ctx) {
         // drawSpriteStatus(test3);    
         // test4 = {name:"test4",hp:100,mp:100};
         // drawSpriteStatus(test4);
-        
+
         //setTimeout(function(){
         //    reduceHp(playerObject,33);
         //    reduceMp(test3,20);
@@ -706,16 +722,16 @@ if (ctx) {
         //  },10000);
         //end for test reduce hp & mp
     }
-    
+
 
     //--- 3 end of global_function ---//
-//     
-//     
-//     
-// 
-//     
+    //     
+    //     
+    //     
+    // 
+    //     
     //--- 4 start of player_function ---//
-    
+
     //player object
     function playerObject() {
         this.name = "keyLovers";
@@ -736,22 +752,23 @@ if (ctx) {
         this.walkRepeat = 0;
         this.attackAnimte = 1;
         this.attackRepeat = 0;
+        this.keyGet = false;
     }
     playerObject = new playerObject();
 
     drawSpriteStatus(playerObject);
-    
+
     var keyStatus = [];
 
     //player image position face left (L)
     var playerImageLeftStandX = 330, playerImageLeftStandY = 323;//stand
     var playerWalkLeftXy = []; //walk animation
-        playerWalkLeftXy["x1"] = 410, playerWalkLeftXy["y1"] = 323,
+    playerWalkLeftXy["x1"] = 410, playerWalkLeftXy["y1"] = 323,
         playerWalkLeftXy["x2"] = 490, playerWalkLeftXy["y2"] = 323,
         playerWalkLeftXy["x3"] = 570, playerWalkLeftXy["y3"] = 323,
         playerWalkLeftXy["x4"] = 0, playerWalkLeftXy["y4"] = 403;
     var playerAttackLeftXy = []; //attack animation
-        playerAttackLeftXy["x1"] = 83, playerAttackLeftXy["y1"] = 403,
+    playerAttackLeftXy["x1"] = 83, playerAttackLeftXy["y1"] = 403,
         playerAttackLeftXy["x2"] = 163, playerAttackLeftXy["y2"] = 403,
         playerAttackLeftXy["x3"] = 243, playerAttackLeftXy["y3"] = 403,
         playerAttackLeftXy["x4"] = 323, playerAttackLeftXy["y4"] = 403;
@@ -759,12 +776,12 @@ if (ctx) {
     //player image position face right (R)
     var playerImageRightStandX = 0, playerImageRightStandY = 242;//stand
     var playerWalkRightXy = [];//walk animation
-        playerWalkRightXy["x1"] = 80, playerWalkRightXy["y1"] = 242,
+    playerWalkRightXy["x1"] = 80, playerWalkRightXy["y1"] = 242,
         playerWalkRightXy["x2"] = 160, playerWalkRightXy["y2"] = 242,
         playerWalkRightXy["x3"] = 240, playerWalkRightXy["y3"] = 242,
         playerWalkRightXy["x4"] = 320, playerWalkRightXy["y4"] = 242;
     var playerAttackRightXy = []; //attack animation
-        playerAttackRightXy["x1"] = 400, playerAttackRightXy["y1"] = 242,
+    playerAttackRightXy["x1"] = 400, playerAttackRightXy["y1"] = 242,
         playerAttackRightXy["x2"] = 480, playerAttackRightXy["y2"] = 242,
         playerAttackRightXy["x3"] = 560, playerAttackRightXy["y3"] = 242,
         playerAttackRightXy["x4"] = 640, playerAttackRightXy["y4"] = 242;
@@ -774,38 +791,38 @@ if (ctx) {
     playerImage.id = "playerImage";
     playerImage.src = gameImage;
     playerImage.onload = drawInCanvas(playerImage, playerImageRightStandX, playerImageRightStandY, playerObject);
-    
+
     //record player input
     document.onkeydown = function (key) {
         //key.returnValue = false;
-        if(key.keyCode != 90 || keyStatus[90] != false){
+        if (key.keyCode != 90 || keyStatus[90] != false) {
             keyStatus[key.keyCode] = true;
         }
     };
-    
+
     //remove player input
     document.onkeyup = function (key) {
         delete keyStatus[key.keyCode];
     };
-            
+
     //define all player action in here
     function playerAction() {
         clearPreviousImage(playerObject.posX, playerObject.posY, playerObject.imageWidth, playerObject.imageHeight);
-       
+
         if (keyStatus[90] && !playerObject.shortAttackLaunched) {//Z(attack)
             playerObject.shortAttackLaunched = true;
             attackAnimation(playerImage, playerAttackLeftXy, playerAttackRightXy, playerObject);
-            
+
             //user timeout to enable player attack
             setTimeout(function () {
                 playerObject.shortAttackLaunched = false;
                 if (keyStatus[90] != undefined) {
                     keyStatus[90] = false;
-                }                
+                }
             }, 400);
             return true;
         }
-        
+
         if (playerObject.shortAttackLaunched) {
             var attackXyArr;
             if (playerObject.face == faceLeft) {
@@ -814,7 +831,7 @@ if (ctx) {
                 attackXyArr = playerAttackRightXy;
             }
             drawInCanvas(playerImage, attackXyArr["x" + playerObject.attackAnimte], attackXyArr["y" + playerObject.attackAnimte], playerObject);
-        } 
+        }
         else {
             //check player movement only for arrow key
             if (keyStatus[37] || keyStatus[38] || keyStatus[39] || keyStatus[40]) {
@@ -825,25 +842,25 @@ if (ctx) {
                 //assign new postion and dicide facing
                 if (keyStatus[37]) {//left           
                     //playerObject.x -= playerObject.speed;
-                    currX = currX -  playerObject.speed;
+                    currX = currX - playerObject.speed;
                     playerObject.face = faceLeft;
                 }
                 if (keyStatus[38]) {//up
                     //playerObject.y -= playerObject.speed;
-                    currY = currY -  playerObject.speed;
+                    currY = currY - playerObject.speed;
                 }
                 if (keyStatus[39]) {//right
                     //playerObject.x += playerObject.speed;
-                    currX = currX +  playerObject.speed;
+                    currX = currX + playerObject.speed;
                     playerObject.face = faceRight;
                 }
                 if (keyStatus[40]) {//down
                     //playerObject.y += playerObject.speed;
-                    currY = currY +  playerObject.speed;
+                    currY = currY + playerObject.speed;
                 }
                 ensureCollision(playerObject, preX, preY, currX, currY);
-                walkAnimation(playerImage, playerWalkLeftXy, playerWalkRightXy, playerObject);   
-                return true;         
+                walkAnimation(playerImage, playerWalkLeftXy, playerWalkRightXy, playerObject);
+                return true;
             }
 
             //when no movement or action draw player standing image
@@ -858,13 +875,13 @@ if (ctx) {
             }
         }
     }
-    
+
     //--- 4 end of player_function ---//
-//     
-//     
-// 
-// 
-//     
+    //     
+    //     
+    // 
+    // 
+    //     
     //--- 5 start of start_function ---//
 
     function init() {
@@ -876,18 +893,18 @@ if (ctx) {
     }
 
     //--- 5 end of start_function ---//
-// 
-// 
-// 
-// 
-//     
+    // 
+    // 
+    // 
+    // 
+    //     
     //--- 6 start of game_data ---//
 
-    
-    
+
+
     var timerMin = 0, timerSec = 0;
     var timerX = 10, timerY = 35, timerW = 100, timerH = 100;
-    
+
     function timerFunction() {
         timerSec += 1;
         if (timerSec == 60) {
@@ -904,17 +921,17 @@ if (ctx) {
         } else {
             var lessThanTenMin = "";
         }
-        clearPreviousImage(0,0,100,35);
+        clearPreviousImage(0, 0, 100, 35);
         ctx.fillStyle = textColor;
         ctx.fillText(lessThanTenMin + timerMin + ":" + lessThanTenSec + timerSec, timerX, timerY);
     }
-    
+
     //--- 6 end of game_data ---//
-// 
-// 
-// 
-// 
-//     
+    // 
+    // 
+    // 
+    // 
+    //     
     //--- 7 start of stage 1 ---//
 
     //ai long attack
@@ -928,46 +945,73 @@ if (ctx) {
     //     aiAttackCall(image, aiDog.shortAttackLeftXy, aiDog.shortAttackRightXy, aiDog);
     // },1000);
 
-    function stage1Initial(){
+    function keyObject(posX, posY) {
+        this.imageX = 345;
+        this.imageY = 865;
+        this.imageWidth = 35;
+        this.imageHeight = 35;
+        this.posX = posX;
+        this.posY = posY;
+        this.wantedWidth = 35;
+        this.wantedHeight = 35;
+    }
+
+    function stage1Initial() {
         aiDog = new aiObject(415, 2835, 65, 65, 900, 250, 65, 65, 1);
-        aiDog.originPosX = 900, aiDog.originPosX = 250;
+        aiDog.originPosX = 900, aiDog.originPosY = 250;
         aiDog.standXy["leftX"] = 415, aiDog.standXy["leftY"] = 2835;
         aiDog.standXy["rightX"] = 15, aiDog.standXy["rightY"] = 2670;
         aiDog.walkLeftXy["x1"] = 315, aiDog.walkLeftXy["y1"] = 2835,
-        aiDog.walkLeftXy["x2"] = 215, aiDog.walkLeftXy["y2"] = 2835,
-        aiDog.walkLeftXy["x3"] = 115, aiDog.walkLeftXy["y3"] = 2835,
-        aiDog.walkLeftXy["x4"] = 15, aiDog.walkLeftXy["y4"] = 2835;
+            aiDog.walkLeftXy["x2"] = 215, aiDog.walkLeftXy["y2"] = 2835,
+            aiDog.walkLeftXy["x3"] = 115, aiDog.walkLeftXy["y3"] = 2835,
+            aiDog.walkLeftXy["x4"] = 15, aiDog.walkLeftXy["y4"] = 2835;
         aiDog.walkRightXy["x1"] = 115, aiDog.walkRightXy["y1"] = 2670,
-        aiDog.walkRightXy["x2"] = 215, aiDog.walkRightXy["y2"] = 2670,
-        aiDog.walkRightXy["x3"] = 315, aiDog.walkRightXy["y3"] = 2670,
-        aiDog.walkRightXy["x4"] = 415, aiDog.walkRightXy["y4"] = 2670;
+            aiDog.walkRightXy["x2"] = 215, aiDog.walkRightXy["y2"] = 2670,
+            aiDog.walkRightXy["x3"] = 315, aiDog.walkRightXy["y3"] = 2670,
+            aiDog.walkRightXy["x4"] = 415, aiDog.walkRightXy["y4"] = 2670;
         aiDog.shortAttackLeftXy["x1"] = 415, aiDog.shortAttackLeftXy["y1"] = 2920,
-        aiDog.shortAttackLeftXy["x2"] = 315, aiDog.shortAttackLeftXy["y2"] = 2920,
-        aiDog.shortAttackLeftXy["x3"] = 215, aiDog.shortAttackLeftXy["y3"] = 2920,
-        aiDog.shortAttackLeftXy["x4"] = 115, aiDog.shortAttackLeftXy["y4"] = 2920;
+            aiDog.shortAttackLeftXy["x2"] = 315, aiDog.shortAttackLeftXy["y2"] = 2920,
+            aiDog.shortAttackLeftXy["x3"] = 215, aiDog.shortAttackLeftXy["y3"] = 2920,
+            aiDog.shortAttackLeftXy["x4"] = 115, aiDog.shortAttackLeftXy["y4"] = 2920;
         aiDog.shortAttackRightXy["x1"] = 15, aiDog.shortAttackRightXy["y1"] = 2750,
-        aiDog.shortAttackRightXy["x2"] = 115, aiDog.shortAttackRightXy["y2"] = 2750,
-        aiDog.shortAttackRightXy["x3"] = 215, aiDog.shortAttackRightXy["y3"] = 2750,
-        aiDog.shortAttackRightXy["x4"] = 315, aiDog.shortAttackRightXy["y4"] = 2750;
+            aiDog.shortAttackRightXy["x2"] = 115, aiDog.shortAttackRightXy["y2"] = 2750,
+            aiDog.shortAttackRightXy["x3"] = 215, aiDog.shortAttackRightXy["y3"] = 2750,
+            aiDog.shortAttackRightXy["x4"] = 315, aiDog.shortAttackRightXy["y4"] = 2750;
+
+        keyObject = new keyObject(aiDog.posX + 100, aiDog.posY + 25);
+        keyInterval = setInterval(function () {
+            if (objectCollision(playerObject, keyObject)) {
+                playerObject.keyGet = true;
+                clearInterval(keyInterval);
+            } else {
+                draw(keyObject);
+            }
+        }, 20);
     }
 
     function stage1Ai(aiObject) {
         clearImage(aiObject.posX, aiObject.posY, aiObject.wantedWidth, aiObject.wantedHeight);
         setFace(aiObject);
-
-        if(playerApporach(aiObject)){
+        if (findDistanceBetweenPlayerAndAi(aiObject) <= 50) {
+            if(!aiObject.attackLaunched){
+                aiAttackCall(playerImage, aiObject.shortAttackLeftXy, aiObject.shortAttackRightXy, aiObject);                
+            }
+        } else if (findDistanceBetweenPlayerAndAi(aiObject) <= 200) {
             attackFinished = false;
             chaseType = "basicChase";
             chaseSpeed = "slow";
             aiChase(chaseSpeed, chaseType, aiObject);
-        }else{
-            if(aiObject.face = faceLeft){
+        } else if (aiObject.posX != aiObject.originPosX || aiObject.posY != aiObject.originPosY) {
+            chaseType = "returnOriginPos";
+            chaseSpeed = "slow";
+            aiChase(chaseSpeed, chaseType, aiObject);
+        } else {
+            if (aiObject.face == faceLeft) {
                 aiObject.imageX = aiDog.standXy["leftX"], aiObject.imageY = aiDog.standXy["leftY"];
-            }else{
+            } else {
                 aiObject.imageX = aiDog.standXy["rightX"], aiObject.imageY = aiDog.standXy["rightY"];
             }
         }
-        console.log(aiObject.imageX+","+aiObject.imageY);
         draw(aiObject);
     }
 
