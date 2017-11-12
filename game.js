@@ -129,7 +129,6 @@ if (ctx) {
     attackFinished = true;
     chaseSpeed = "";
     chaseType = "";
-    distance = "";
     
     function stage1Ai() {
         clearImage(ai.posX, ai.posY, ai.wantedWidth, ai.wantedHeight);
@@ -162,8 +161,15 @@ if (ctx) {
         draw(ai);
     }
 
-    function ensurePlayerCollision(obj) {
+    function findDistanceBetweenPlayerAndAi (aiObj) {
+        distance = Math.sqrt(Math.pow((aiObj.posX - playerObject.posX), 2) + Math.pow((aiObj.posY - playerObject.posY), 2));
+        return Math.round(distance);
+    }
+
+    //w: 1500; h: 700
+    function distanceFuzzySets(obj) {
         //fuzzy sets
+
     }
 
     faceCountR = 0;
@@ -361,13 +367,13 @@ if (ctx) {
         ensureCollision(obj, preX, preY, currX, currY);
     }
 
-    function ensureAIcollision(obj) {
-        if (obj.posX <= 0 || obj.posX + obj.imageWidth >= 1500 ||
-            obj.posY <= 225 || obj.posY + obj.imageWidth >= 700) {
-            return true;
-        }
-        return false;
-    }
+    //function ensureAIcollision(obj) {
+    //    if (obj.posX <= 0 || obj.posX + obj.imageWidth >= 1500 ||
+    //        obj.posY <= 225 || obj.posY + obj.imageWidth >= 700) {
+    //        return true;
+    //    }
+    //    return false;
+    //}
     
     function drawInCanvas(image, imageX, imageY, object){
         ctx.drawImage(image, imageX, imageY, object.imageWidth, object.imageHeight, object.posX, object.posY, object.wantedWidth, object.wantedHeight);
