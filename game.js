@@ -146,7 +146,6 @@ if (ctx) {
     attackFinished = true;
     chaseSpeed = "";
     chaseType = "";
-    distance = "";
     
     var attackType;
     function stage5Ai(aiObject) {
@@ -180,8 +179,15 @@ if (ctx) {
         draw(aiObject);
     }
 
-    function ensurePlayerCollision(obj) {
+    function findDistanceBetweenPlayerAndAi (aiObj) {
+        distance = Math.sqrt(Math.pow((aiObj.posX - playerObject.posX), 2) + Math.pow((aiObj.posY - playerObject.posY), 2));
+        return Math.round(distance);
+    }
+
+    //w: 1500; h: 700
+    function distanceFuzzySets(obj) {
         //fuzzy sets
+
     }
 
     faceCountR = 0;
@@ -367,6 +373,7 @@ if (ctx) {
         ensureCollision(obj, preX, preY, currX, currY);
     }
 
+<<<<<<< HEAD
     function playerNear(aiObject) {
         var distance;
         if(playerObject.posX == aiObject.posX){
@@ -389,6 +396,15 @@ if (ctx) {
     //     }
     //     return false;
     // }
+=======
+    //function ensureAIcollision(obj) {
+    //    if (obj.posX <= 0 || obj.posX + obj.imageWidth >= 1500 ||
+    //        obj.posY <= 225 || obj.posY + obj.imageWidth >= 700) {
+    //        return true;
+    //    }
+    //    return false;
+    //}
+>>>>>>> feature/01-character-movement-and-background-side-scroll
     
     function drawInCanvas(image, object){
         ctx.drawImage(image, object.imageX, object.imageY, object.imageWidth, object.imageHeight, object.posX, object.posY, object.wantedWidth, object.wantedHeight);
