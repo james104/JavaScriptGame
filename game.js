@@ -51,7 +51,7 @@ if (ctx) {
     function callIntervalFunction() {
         playerAction();
         if (stage == 1) {
-            stage1Ai(aiDog);
+            stage1Ai(aiDog, keyObject);
         }
 
         if (stage == 5) {
@@ -194,7 +194,6 @@ if (ctx) {
                 faceCountR++;
             }
         }
-
         else if (playerObject.posX < obj.posX) {
             faceCountR = 0;
             obj.face = faceLeft;
@@ -554,14 +553,61 @@ if (ctx) {
         }
     }
 
-    function objectCollision(playerObject, object) {
-        //fix here
-        if (playerObject.face == faceLeft && playerObject.posX > object.posX + object.wantedWidth && playerObject.posY < object.posY + object.wantedHeight && playerObject.posY + playerObject.wantedHeight > object.posY) {
-            clearPreviousImage(object.posX, object.posY, object.wantedWidth, object.wantedHeight);
-            return true;
-        } else if (playerObject.face == faceRight && playerObject.posX + playerObject.wantedWidth > object.posX && playerObject.posY < object.posY + object.wantedHeight && playerObject.posY + playerObject.wantedHeight > object.posY) {
-            clearPreviousImage(object.posX, object.posY, object.wantedWidth, object.wantedHeight);
-            return true;
+    function boundingBoxCollision(playerObject, object) {
+        var point = [];
+        point["x1"] = playerObject.posX, point["y1"] = playerObject.posY;
+        point["x2"] = playerObject.posX, point["y2"] = playerObject.posY + playerObject.wantedHeight;
+        point["x3"] = playerObject.posX + playerObject.wantedWidth, point["y3"] = playerObject.posY;
+        point["x4"] = playerObject.posX + playerObject.wantedWidth, point["y4"] = playerObject.posY + playerObject.wantedHeight;
+
+        //add middle point checking for object smaller than playerObject
+        point["x5"] = playerObject.posX + Math.round(playerObject.wantedWidth / 2), point["y5"] = playerObject.posY;
+        point["x6"] = playerObject.posX + Math.round(playerObject.wantedWidth / 2), point["y6"] = playerObject.posY + playerObject.wantedHeight;
+        point["x7"] = playerObject.posX, point["y7"] = playerObject.posY + Math.round(playerObject.wantedHeight / 2);
+        point["x8"] = playerObject.posX + playerObject.wantedWidth, point["y8"] = playerObject.posY + Math.round(playerObject.wantedHeight / 2);
+
+        for (i = 1; i < 9; i++) {
+            if (point["x" + i] > object.posX && point["x" + i] < object.posX + object.wantedWidth &&
+                point["y" + i] > object.posY && point["y" + i] < object.posY + object.wantedHeight) {
+                clearPreviousImage(object.posX, object.posY, object.wantedWidth, object.wantedHeight);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function shortAttackObject(wantedWidth, wantedHeight) {
+        this.wantedWidth = wantedWidth;
+        this.wantedHeight = wantedHeight;
+    }
+
+    function updateShortAttackObject(shortAttackObject, newLeftPosX, newLeftPosY, newRightPosX, newRightPosY) {
+        shortAttackObject.leftPosX = newLeftPosX;
+        shortAttackObject.leftPosY = newLeftPosY;
+        shortAttackObject.rightPosX = newRightPosX;
+        shortAttackObject.rightPosY = newRightPosY;
+    }
+
+    function shortAttackCollision(launchObject, targetObject) {
+        var point = [], posX, posY, wantedWidth, wantedHeight;
+        wantedWidth = launchObject.shortAttackObject.wantedWidth;
+        wantedHeight = launchObject.shortAttackObject.wantedHeight;
+
+        if (launchObject.face == faceLeft) {
+            posX = launchObject.shortAttackObject.leftPosX, posY = launchObject.shortAttackObject.leftPosY;
+        } else {
+            posX = launchObject.shortAttackObject.rightPosX, posY = launchObject.shortAttackObject.rightPosY;
+        }
+        point["x1"] = posX, point["y1"] = posY;
+        point["x2"] = posX, point["y2"] = posY + wantedHeight;
+        point["x3"] = posX + wantedWidth, point["y3"] = posY;
+        point["x4"] = posX + wantedWidth, point["y4"] = posY + wantedHeight;
+
+        for (i = 1; i < 5; i++) {
+            if (point["x" + i] > targetObject.posX && point["x" + i] < targetObject.posX + targetObject.wantedWidth &&
+                point["y" + i] > targetObject.posY && point["y" + i] < targetObject.posY + targetObject.wantedHeight) {
+                return true;
+            }
         }
         return false;
     }
@@ -645,83 +691,8 @@ if (ctx) {
         console.log("consumption: " + consumption);
     }
 
-    if (false) {
-        //start for test reduce hp & mp
-        // test1 = {name:"test1",hp:100,mp:100};
-        // drawSpriteStatus(test1);
-        // test2 = {name:"test2",hp:100,mp:100};
-        // drawSpriteStatus(test2);
-        // test3 = {name:"test3",hp:100,mp:100};
-        // drawSpriteStatus(test3);    
-        // test4 = {name:"test4",hp:100,mp:100};
-        // drawSpriteStatus(test4);
-
-        //setTimeout(function(){
-        //    reduceHp(playerObject,33);
-        //    reduceMp(test3,20);
-        //},1000);
-        //setTimeout(function(){
-        //    reduceHp(test4,29);
-        //    reduceMp(playerObject,46);
-        //},2000);
-        //setTimeout(function(){
-        //    reduceHp(test1,33);
-        //    reduceMp(test4,20);
-        //},3000);
-        //setTimeout(function(){
-        //    reduceHp(test2,33);
-        //    reduceMp(test3,20);
-        //},4000);
-        //setTimeout(function(){
-        //    reduceHp(test3,29);
-        //    reduceMp(playerObject,46);
-        //},5000);
-        //setTimeout(function(){
-        //    reduceHp(test2,33);
-        //    reduceMp(test1,20);
-        //},6000);
-        //  setTimeout(function(){
-        //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-        //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
-        //  },1000);
-        //  setTimeout(function(){
-        //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-        //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
-        //  },2000);
-        //  setTimeout(function(){
-        //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-        //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
-        //  },3000);
-        //  setTimeout(function(){
-        //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-        //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
-        //  },4000);
-        //  setTimeout(function(){
-        //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-        //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
-        //  },5000);
-        //  setTimeout(function(){
-        //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-        //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
-        //  },6000);
-        //  setTimeout(function(){
-        //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-        //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
-        //  },7000);
-        //  setTimeout(function(){
-        //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-        //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
-        //  },8000);
-        //  setTimeout(function(){
-        //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-        //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
-        //  },9000);
-        //  setTimeout(function(){
-        //      reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-        //      reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
-        //  },10000);
-        //end for test reduce hp & mp
-    }
+    // reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+    // reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
 
 
     //--- 3 end of global_function ---//
@@ -739,6 +710,7 @@ if (ctx) {
         this.hp = 100;
         this.mp = 100;
         this.speed = 5;
+        this.originSpeed = this.speed;
         this.posX = 100;
         this.posY = 400;
         this.imageWidth = 80;
@@ -753,6 +725,7 @@ if (ctx) {
         this.attackAnimte = 1;
         this.attackRepeat = 0;
         this.keyGet = false;
+        this.shortAttackObject = new shortAttackObject(35, 20);
     }
     playerObject = new playerObject();
 
@@ -812,6 +785,12 @@ if (ctx) {
         if (keyStatus[90] && !playerObject.shortAttackLaunched) {//Z(attack)
             playerObject.shortAttackLaunched = true;
             attackAnimation(playerImage, playerAttackLeftXy, playerAttackRightXy, playerObject);
+
+            //set small bounding box based on image attack animate 160 445 535 285
+            updateShortAttackObject(playerObject.shortAttackObject, playerObject.posX, playerObject.posY + 42, playerObject.posX + 55, playerObject.posY + 43);
+            if(shortAttackCollision(playerObject, aiDog)){
+                reduceHp(aiDog, Math.floor(Math.random() * 10) + 1);
+            }
 
             //user timeout to enable player attack
             setTimeout(function () {
@@ -957,30 +936,42 @@ if (ctx) {
     }
 
     function stage1Initial() {
-        aiDog = new aiObject(415, 2835, 65, 65, 900, 250, 65, 65, 1);
+        aiDog = new aiObject(415, 2835, 65, 65, 900, 250, 65, 65, 3);
         aiDog.originPosX = 900, aiDog.originPosY = 250;
+        aiDog.originSpeed = aiDog.speed;
         aiDog.standXy["leftX"] = 415, aiDog.standXy["leftY"] = 2835;
         aiDog.standXy["rightX"] = 15, aiDog.standXy["rightY"] = 2670;
+
         aiDog.walkLeftXy["x1"] = 315, aiDog.walkLeftXy["y1"] = 2835,
             aiDog.walkLeftXy["x2"] = 215, aiDog.walkLeftXy["y2"] = 2835,
             aiDog.walkLeftXy["x3"] = 115, aiDog.walkLeftXy["y3"] = 2835,
             aiDog.walkLeftXy["x4"] = 15, aiDog.walkLeftXy["y4"] = 2835;
+
         aiDog.walkRightXy["x1"] = 115, aiDog.walkRightXy["y1"] = 2670,
             aiDog.walkRightXy["x2"] = 215, aiDog.walkRightXy["y2"] = 2670,
             aiDog.walkRightXy["x3"] = 315, aiDog.walkRightXy["y3"] = 2670,
             aiDog.walkRightXy["x4"] = 415, aiDog.walkRightXy["y4"] = 2670;
+
         aiDog.shortAttackLeftXy["x1"] = 415, aiDog.shortAttackLeftXy["y1"] = 2920,
             aiDog.shortAttackLeftXy["x2"] = 315, aiDog.shortAttackLeftXy["y2"] = 2920,
             aiDog.shortAttackLeftXy["x3"] = 215, aiDog.shortAttackLeftXy["y3"] = 2920,
             aiDog.shortAttackLeftXy["x4"] = 115, aiDog.shortAttackLeftXy["y4"] = 2920;
+
         aiDog.shortAttackRightXy["x1"] = 15, aiDog.shortAttackRightXy["y1"] = 2750,
             aiDog.shortAttackRightXy["x2"] = 115, aiDog.shortAttackRightXy["y2"] = 2750,
             aiDog.shortAttackRightXy["x3"] = 215, aiDog.shortAttackRightXy["y3"] = 2750,
             aiDog.shortAttackRightXy["x4"] = 315, aiDog.shortAttackRightXy["y4"] = 2750;
 
+        //set the wanted width and height first
+        aiDog.shortAttackObject = new shortAttackObject(15, 15);
+
+        aiDog.hp = 50;
+        aiDog.mp = 0;
+        drawSpriteStatus(aiDog);
+
         keyObject = new keyObject(aiDog.posX + 100, aiDog.posY + 25);
         keyInterval = setInterval(function () {
-            if (objectCollision(playerObject, keyObject)) {
+            if (boundingBoxCollision(playerObject, keyObject)) {
                 playerObject.keyGet = true;
                 clearInterval(keyInterval);
             } else {
@@ -989,28 +980,45 @@ if (ctx) {
         }, 20);
     }
 
-    function stage1Ai(aiObject) {
+    function stage1Ai(aiObject, keyObject) {
         clearImage(aiObject.posX, aiObject.posY, aiObject.wantedWidth, aiObject.wantedHeight);
         setFace(aiObject);
-        if (findDistanceBetweenPlayerAndAi(aiObject) <= 50) {
-            if(!aiObject.attackLaunched){
-                aiAttackCall(playerImage, aiObject.shortAttackLeftXy, aiObject.shortAttackRightXy, aiObject);                
+
+        //here have some problem
+        if (boundingBoxCollision(playerObject, aiObject)) {
+            playerObject.speed = 0;
+            aiObject.speed = 0;
+        } else {
+            playerObject.speed = playerObject.originSpeed;
+            aiObject.speed = aiObject.originSpeed;
+        }
+
+        if (findDistanceBetweenPlayerAndAi(aiObject) <= 100) {
+            if (!aiObject.attackLaunched) {
+                aiAttackCall(playerImage, aiObject.shortAttackLeftXy, aiObject.shortAttackRightXy, aiObject);
+                
+                //set small bounding box based on image attack animate 315 2955 160 2790
+                updateShortAttackObject(aiDog.shortAttackObject, aiDog.posX, aiDog.posY + 35, aiDog.posX + 45, aiDog.posY + 40);
+                if(shortAttackCollision(aiDog, playerObject)){
+                    reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+                }
             }
-        } else if (findDistanceBetweenPlayerAndAi(aiObject) <= 200) {
-            attackFinished = false;
+        } else if (findDistanceBetweenPlayerAndAi(keyObject) > 400) {
+            if (aiDog.posX >= aiDog.originPosX - aiDog.speed && aiDog.posX <= aiDog.originPosX + aiDog.speed && aiDog.posY >= aiDog.originPosY - aiDog.speed && aiDog.posY <= aiDog.originPosY + aiDog.speed) {
+                if (aiObject.face == faceLeft) {
+                    aiObject.imageX = aiDog.standXy["leftX"], aiObject.imageY = aiDog.standXy["leftY"];
+                } else {
+                    aiObject.imageX = aiDog.standXy["rightX"], aiObject.imageY = aiDog.standXy["rightY"];
+                }
+            } else {
+                chaseType = "returnOriginPos";
+                chaseSpeed = "slow";
+                aiChase(chaseSpeed, chaseType, aiObject);
+            }
+        } else if (findDistanceBetweenPlayerAndAi(aiObject) <= 400) {
             chaseType = "basicChase";
             chaseSpeed = "slow";
             aiChase(chaseSpeed, chaseType, aiObject);
-        } else if (aiObject.posX != aiObject.originPosX || aiObject.posY != aiObject.originPosY) {
-            chaseType = "returnOriginPos";
-            chaseSpeed = "slow";
-            aiChase(chaseSpeed, chaseType, aiObject);
-        } else {
-            if (aiObject.face == faceLeft) {
-                aiObject.imageX = aiDog.standXy["leftX"], aiObject.imageY = aiDog.standXy["leftY"];
-            } else {
-                aiObject.imageX = aiDog.standXy["rightX"], aiObject.imageY = aiDog.standXy["rightY"];
-            }
         }
         draw(aiObject);
     }
