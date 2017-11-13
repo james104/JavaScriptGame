@@ -106,7 +106,10 @@ if (ctx) {
         this.emissionAnimateXy = [];
     }
     
-    ai5 = new aiObject(325, 80, 80, 80, 900, 400, 80, 80, playerObject.speed);
+    ai5 = new aiObject(325, 80, 80, 80, 900, 400, 100, 100, playerObject.speed);
+    var currAction = "";
+    var action = ["basicChase", "shortAttack", "longAttack"];
+
     ai5.shortAttackLeftXy["x1"] = 0, ai5.shortAttackLeftXy["y1"] = 160,
     ai5.shortAttackLeftXy["x2"] = 80, ai5.shortAttackLeftXy["y2"] = 160,
     ai5.shortAttackLeftXy["x3"] = 160, ai5.shortAttackLeftXy["y3"] = 160,
@@ -141,7 +144,7 @@ if (ctx) {
 
     chaseSpeed = "";
     chaseType = "";
-    
+
     function stage5Ai() {
         clearImage(ai5.posX, ai5.posY, ai5.wantedWidth, ai5.wantedHeight);
         //if (ensurePlayerCollision(ai)) {
@@ -180,9 +183,101 @@ if (ctx) {
     }
 
     //w: 1500; h: 700
-    function distanceFuzzySets(obj) {
-        //fuzzy sets
+    //playre w: 80; h: 80
+    //ai w: 100; h: 100
+    function distanceFuzzySets(x) {
+        var value;
+        var finalResult = [];
 
+        //very near
+        var x0 = 80.0, x1 = 160.0;
+        if (x <= x0)
+            value = 1.0;
+        else if (x > x0 && x < x1)
+            value = (-x / (x1 - x0)) + (x1 / (x1 - x0));
+        else
+            value = 0.0;
+        finalResult.push(value);
+
+        //near
+        var x2 = 240.0; x3 = 320.0;
+        if (x <= x0)
+            value = 0.0;
+        else if (x > x0 && x < x1)
+            value = (x / (x1 - x0)) - (x0 / (x1 - x0));
+        else if (x >= x1 && x <= x2)
+            value = 1.0;
+        else if (x > x2 && x < x3)
+            value = (-x / (x3 - x2)) + (x3 / (x3 - x2));
+        else
+            value = 0.0
+        finalResult.push(value);
+
+        //far
+        x0 = 240.0; x1 = 320.0; x2 = 400.0; x3 = 480.0;
+        if (x <= x0)
+            value = 0.0;
+        else if (x > x0 && x < x1)
+            value = (x / (x1 - x0)) - (x0 / (x1 - x0));
+        else if (x >= x1 && x <= x2)
+            value = 1.0;
+        else if (x > x2 && x < x3)
+            value = (-x / (x3 - x2)) + (x3 / (x3 - x2));
+        else
+            value = 0.0
+        finalResult.push(value);
+
+        //very far
+        x0 = 400.0; x1 = 480.0;
+        if (x <= x0)
+            value = 0.0;
+        else if (x > x0 && x < x1)
+            value = (x / (x1 - x0)) - (x0 / (x1 - x0));
+        else
+            value = 1.0;
+        finalResult.push(value);
+
+        return finalResult;
+    }
+
+    function hpFuzzySets(x) {
+        var value;
+        var finalResult = [];
+
+        //dying
+        var x0 = 20.0, x1 = 40.0, x2 = 60.0, x3 = 80.0;
+        if (x <= x0)
+            value = 1.0;
+        else if (x > x0 && x < x1)
+            value = (-x / (x1 - x0)) + (x1 / (x1 - x0));
+        else
+            value = 0.0;
+        finalResult.push(value);
+
+        //injured
+        if (x <= x0)
+            value = 0.0;
+        else if (x > x0 && x < x1)
+            value = (x / (x1 - x0)) - (x0 / (x1 - x0));
+        else if (x >= x1 && x <= x2)
+            value = 1.0;
+        else if (x > x2 && x < x3)
+            value = (-x / (x3 - x2)) + (x3 / (x3 - x2));
+        else
+            value = 0.0
+        finalResult.push(value);
+
+        //healthy
+        x0 = 60.0; x1 = 80.0;
+        if (x <= x0)
+            value = 0.0;
+        else if (x > x0 && x < x1)
+            value = (x / (x1 - x0)) - (x0 / (x1 - x0));
+        else
+            value = 1.0;
+        finalResult.push(value);
+
+        return finalResult;
     }
 
     faceCountR = 0;
