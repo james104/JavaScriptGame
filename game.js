@@ -7,6 +7,10 @@
 //5.start_function
 //6.game_data
 //7.stage 1
+//8. stage 2
+//9. stage 3
+//10. stage 4
+//11. stage 5
 //------------------------------------------------//
 
 //--- 1 start of canvas ---//
@@ -17,7 +21,7 @@ canvasElement.height = "700";
 canvasElement.style.background = "url(img/newBackground.bmp)";
 canvasElement.style.backgroundSize = "cover";
 var ctx = canvasElement.getContext && canvasElement.getContext('2d');
-var stage = 1;
+var stage = 4;
 
 //--- 1 end of canvas ---//
 
@@ -51,13 +55,18 @@ if (ctx) {
     function callIntervalFunction() {
         playerAction();
         if (stage == 1) {
-            stage1Ai(aiDog, keyObject);
-        }
+            stage1Ai(aiDog, keyObject1);
+        } else if (stage == 2) {
 
-        if (stage == 5) {
+        } else if (stage == 3) {
+
+        } else if (stage == 4) {
+            stage4Ai(aiObjectArr, keyObject4);
+        } else if (stage == 5) {
             stage5Ai();
         }
 
+        //for draw one more time to prevent sparkle 
         if (stage == 1) {
             draw(aiDog);
         }
@@ -212,7 +221,7 @@ if (ctx) {
         //user timeout to enable ai attack again
         setTimeout(function () {
             aiObject.attackLaunched = false;
-        }, 1000);
+        }, 1500);
     }
 
     //ai long attack
@@ -470,21 +479,31 @@ if (ctx) {
         }, 15);
     }
 
-    function emissionObject(aiObject) {
+    function emissionObject(aiObject, emissionType = "horizontal") {
         this.imageWidth = 40;
         this.imageHeight = 30;
         this.wantedWidth = 40;
         this.wantedHeight = 30;
-        this.posX = aiObject.posX - this.wantedWidth;
-        this.posY = aiObject.posY + (aiObject.wantedHeight / 2);
         this.speed = 20;
         this.face = aiObject.face;
         this.animateArrXy = aiObject.emissionAnimateXy;
         this.animate = 1;
         this.repeat = 0;
-        if (this.face == faceRight) {
-            this.posX += aiObject.wantedWidth + this.wantedWidth;
+        this.emissionType = emissionType;
+        if (this.emissionType == "horizontal") {
+            this.posX = aiObject.posX - this.wantedWidth;
+            this.posY = aiObject.posY + (aiObject.wantedHeight / 2);
+            if (this.face == faceRight) {
+                this.posX += aiObject.wantedWidth + this.wantedWidth;
+            }
+        } else if (this.emissionType == "vertical") {
+            this.posX = aiObject.posX + (this.wantedWidth / 2);
+            this.posY = aiObject.posY + aiObject.wantedHeight;
+        } else if (this.emissionType == "") {
+
         }
+
+
         emissionAnimation(playerImage, this);
     }
 
@@ -493,11 +512,18 @@ if (ctx) {
         var intervalNo = Math.floor(Math.random() * 100) + 1;
 
         intervalNo = setInterval(function () {
-            if (emissionObject.face == faceLeft) {
-                clearPreviousImage(emissionObject.posX, emissionObject.posY, emissionObject.wantedWidth + 20, emissionObject.wantedHeight);
-            } else if (emissionObject.face == faceRight) {
-                clearPreviousImage(emissionObject.posX - 20, emissionObject.posY, emissionObject.wantedWidth, emissionObject.wantedHeight);
+            if (emissionObject.emissionType == "horizontal") {
+                if (emissionObject.face == faceLeft) {
+                    clearPreviousImage(emissionObject.posX, emissionObject.posY, emissionObject.wantedWidth + 20, emissionObject.wantedHeight);
+                } else if (emissionObject.face == faceRight) {
+                    clearPreviousImage(emissionObject.posX - 20, emissionObject.posY, emissionObject.wantedWidth, emissionObject.wantedHeight);
+                }
+            } else if (emissionObject.emissionType == "vertical") {
+                clearPreviousImage(emissionObject.posX, emissionObject.posY - 20, emissionObject.wantedWidth, emissionObject.wantedHeight);
+            } else if (emissionObject.emissionType == "") {
+
             }
+
             emissionObject.repeat++;
             if (emissionObject.repeat == 1) {
                 if (emissionObject.animate == 4) {
@@ -507,10 +533,17 @@ if (ctx) {
                 emissionObject.repeat = 0;
             }
             drawInCanvas(image, emissionObject.animateArrXy["x" + emissionObject.animate], emissionObject.animateArrXy["y" + emissionObject.animate], emissionObject);
-            if (emissionObject.face == faceLeft) {
-                emissionObject.posX -= emissionObject.speed;
-            } else if (emissionObject.face == faceRight) {
-                emissionObject.posX += emissionObject.speed;
+
+            if (emissionObject.emissionType == "horizontal") {
+                if (emissionObject.face == faceLeft) {
+                    emissionObject.posX -= emissionObject.speed;
+                } else if (emissionObject.face == faceRight) {
+                    emissionObject.posX += emissionObject.speed;
+                }
+            } else if (emissionObject.emissionType == "vertical") {
+                emissionObject.posY += emissionObject.speed;
+            } else if (emissionObject.emissionType == "") {
+
             }
             checkEmissionCollision(emissionObject, playerObject, intervalNo);
         }, 50);
@@ -526,13 +559,19 @@ if (ctx) {
             clearInterval(intervalNo);
         }
         else {
-            if (emissionObject.face == faceLeft && playerObject.posX + playerObject.wantedWidth > emissionObject.posX && playerObject.posY < emissionObject.posY + emissionObject.wantedHeight && playerObject.posY + playerObject.wantedHeight > emissionObject.posY) {
+            if (boundingBoxCollision(playerObject, emissionObject)) {
                 reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-                clearPreviousImage(emissionObject.posX, emissionObject.posY, emissionObject.wantedWidth + 20, emissionObject.wantedHeight);
-                clearInterval(intervalNo);
-            } else if (emissionObject.face == faceRight && playerObject.posX < emissionObject.posX && playerObject.posY < emissionObject.posY + emissionObject.wantedHeight && playerObject.posY + playerObject.wantedHeight > emissionObject.posY) {
-                reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-                clearPreviousImage(emissionObject.posX - 20, emissionObject.posY, emissionObject.wantedWidth, emissionObject.wantedHeight);
+                if (emissionObject.emissionType == "horizontal") {
+                    if (emissionObject.face == faceLeft) {
+                        clearPreviousImage(emissionObject.posX, emissionObject.posY, emissionObject.wantedWidth + 20, emissionObject.wantedHeight);
+                    } else if (emissionObject.face == faceRight) {
+                        clearPreviousImage(emissionObject.posX - 20, emissionObject.posY, emissionObject.wantedWidth, emissionObject.wantedHeight);
+                    }
+                } else if (emissionObject.emissionType == "vertical") {
+                    clearPreviousImage(emissionObject.posX, emissionObject.posY - 20, emissionObject.wantedWidth, emissionObject.wantedHeight);
+                } else if (emissionObject.emissionType == "") {
+
+                }
                 clearInterval(intervalNo);
             }
         }
@@ -555,16 +594,17 @@ if (ctx) {
 
     function boundingBoxCollision(playerObject, object) {
         var point = [];
-        point["x1"] = playerObject.posX, point["y1"] = playerObject.posY;
-        point["x2"] = playerObject.posX, point["y2"] = playerObject.posY + playerObject.wantedHeight;
-        point["x3"] = playerObject.posX + playerObject.wantedWidth, point["y3"] = playerObject.posY;
-        point["x4"] = playerObject.posX + playerObject.wantedWidth, point["y4"] = playerObject.posY + playerObject.wantedHeight;
+        var posX = playerObject.posX, posY = playerObject.posY;
+        point["x1"] = posX, point["y1"] = posY;
+        point["x2"] = posX, point["y2"] = posY + playerObject.wantedHeight;
+        point["x3"] = posX + playerObject.wantedWidth, point["y3"] = posY;
+        point["x4"] = posX + playerObject.wantedWidth, point["y4"] = posY + playerObject.wantedHeight;
 
         //add middle point checking for object smaller than playerObject
-        point["x5"] = playerObject.posX + Math.round(playerObject.wantedWidth / 2), point["y5"] = playerObject.posY;
-        point["x6"] = playerObject.posX + Math.round(playerObject.wantedWidth / 2), point["y6"] = playerObject.posY + playerObject.wantedHeight;
-        point["x7"] = playerObject.posX, point["y7"] = playerObject.posY + Math.round(playerObject.wantedHeight / 2);
-        point["x8"] = playerObject.posX + playerObject.wantedWidth, point["y8"] = playerObject.posY + Math.round(playerObject.wantedHeight / 2);
+        point["x5"] = posX + Math.round(playerObject.wantedWidth / 2), point["y5"] = playerObject.posY;
+        point["x6"] = posX + Math.round(playerObject.wantedWidth / 2), point["y6"] = playerObject.posY + playerObject.wantedHeight;
+        point["x7"] = posX, point["y7"] = playerObject.posY + Math.round(playerObject.wantedHeight / 2);
+        point["x8"] = posX + playerObject.wantedWidth, point["y8"] = playerObject.posY + Math.round(playerObject.wantedHeight / 2);
 
         for (i = 1; i < 9; i++) {
             if (point["x" + i] > object.posX && point["x" + i] < object.posX + object.wantedWidth &&
@@ -694,6 +734,16 @@ if (ctx) {
     // reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
     // reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
 
+    function keyObject(posX, posY) {
+        this.imageX = 345;
+        this.imageY = 865;
+        this.imageWidth = 35;
+        this.imageHeight = 35;
+        this.posX = posX;
+        this.posY = posY;
+        this.wantedWidth = 35;
+        this.wantedHeight = 35;
+    }
 
     //--- 3 end of global_function ---//
     //     
@@ -788,7 +838,8 @@ if (ctx) {
 
             //set small bounding box based on image attack animate 160 445 535 285
             updateShortAttackObject(playerObject.shortAttackObject, playerObject.posX, playerObject.posY + 42, playerObject.posX + 55, playerObject.posY + 43);
-            if(shortAttackCollision(playerObject, aiDog)){
+
+            if (stage == 1 && shortAttackCollision(playerObject, aiDog)) {
                 reduceHp(aiDog, Math.floor(Math.random() * 10) + 1);
             }
 
@@ -866,7 +917,22 @@ if (ctx) {
     function init() {
         var gameStatus = "start";
         setInterval(timerFunction, 1000);
-        stage1Initial();
+        switch (stage) {
+            case 1:
+                stage1Initial();
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                stage4Initial();
+                break;
+            case 5:
+                break;
+            default:
+                break;
+        }
         //player status and function
         setInterval(callIntervalFunction, 20);
     }
@@ -924,17 +990,6 @@ if (ctx) {
     //     aiAttackCall(image, aiDog.shortAttackLeftXy, aiDog.shortAttackRightXy, aiDog);
     // },1000);
 
-    function keyObject(posX, posY) {
-        this.imageX = 345;
-        this.imageY = 865;
-        this.imageWidth = 35;
-        this.imageHeight = 35;
-        this.posX = posX;
-        this.posY = posY;
-        this.wantedWidth = 35;
-        this.wantedHeight = 35;
-    }
-
     function stage1Initial() {
         aiDog = new aiObject(415, 2835, 65, 65, 900, 250, 65, 65, 3);
         aiDog.originPosX = 900, aiDog.originPosY = 250;
@@ -969,21 +1024,21 @@ if (ctx) {
         aiDog.mp = 0;
         drawSpriteStatus(aiDog);
 
-        keyObject = new keyObject(aiDog.posX + 100, aiDog.posY + 25);
+        keyObject1 = new keyObject(aiDog.posX + 100, aiDog.posY + 25);
         keyInterval = setInterval(function () {
-            if (boundingBoxCollision(playerObject, keyObject)) {
+            if (boundingBoxCollision(playerObject, keyObject1)) {
                 playerObject.keyGet = true;
                 clearInterval(keyInterval);
             } else {
-                draw(keyObject);
+                draw(keyObject1);
             }
         }, 20);
     }
 
-    function stage1Ai(aiObject, keyObject) {
+    function stage1Ai(aiObject, keyObject1) {
         clearImage(aiObject.posX, aiObject.posY, aiObject.wantedWidth, aiObject.wantedHeight);
         setFace(aiObject);
-
+        console.log(playerObject.speed + " " + aiObject.speed);
         //here have some problem
         if (boundingBoxCollision(playerObject, aiObject)) {
             playerObject.speed = 0;
@@ -993,17 +1048,17 @@ if (ctx) {
             aiObject.speed = aiObject.originSpeed;
         }
 
-        if (findDistanceBetweenPlayerAndAi(aiObject) <= 100) {
+        if (findDistanceBetweenPlayerAndAi(aiObject) <= 50) {
             if (!aiObject.attackLaunched) {
                 aiAttackCall(playerImage, aiObject.shortAttackLeftXy, aiObject.shortAttackRightXy, aiObject);
-                
+
                 //set small bounding box based on image attack animate 315 2955 160 2790
                 updateShortAttackObject(aiDog.shortAttackObject, aiDog.posX, aiDog.posY + 35, aiDog.posX + 45, aiDog.posY + 40);
-                if(shortAttackCollision(aiDog, playerObject)){
+                if (shortAttackCollision(aiDog, playerObject)) {
                     reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
                 }
             }
-        } else if (findDistanceBetweenPlayerAndAi(keyObject) > 400) {
+        } else if (findDistanceBetweenPlayerAndAi(keyObject1) > 400) {
             if (aiDog.posX >= aiDog.originPosX - aiDog.speed && aiDog.posX <= aiDog.originPosX + aiDog.speed && aiDog.posY >= aiDog.originPosY - aiDog.speed && aiDog.posY <= aiDog.originPosY + aiDog.speed) {
                 if (aiObject.face == faceLeft) {
                     aiObject.imageX = aiDog.standXy["leftX"], aiObject.imageY = aiDog.standXy["leftY"];
@@ -1024,4 +1079,225 @@ if (ctx) {
     }
 
     //--- 7 end of stage 1 ---//
+    // 
+    // 
+    // 
+    // 
+    //
+    //--- 8 start of stage 2 ---//
+
+    //--- 8 end of stage 2 ---//
+    // 
+    // 
+    // 
+    // 
+    //     
+    //--- 9 start of stage 3 ---//
+
+    //--- 9 end of stage 3 ---//
+    // 
+    // 
+    // 
+    // 
+    //     
+    //--- 10 start of stage 4 ---//
+
+
+    function stage4Initial() {
+        //in background
+        aiNinja = new aiObject(0, 0, 75, 82, 500, 100, 75, 82, 0);
+        aiNinja.standXy["leftX"] = 78, aiNinja.standXy["leftY"] = 243;
+        aiNinja.standXy["rightX"] = 0, aiNinja.standXy["rightY"] = 0;
+        aiNinja.longAttackLeftXy["x1"] = 410, aiNinja.longAttackLeftXy["y1"] = 160,
+            aiNinja.longAttackLeftXy["x2"] = 490, aiNinja.longAttackLeftXy["y2"] = 160,
+            aiNinja.longAttackLeftXy["x3"] = 570, aiNinja.longAttackLeftXy["y3"] = 160,
+            aiNinja.longAttackLeftXy["x4"] = 650, aiNinja.longAttackLeftXy["y4"] = 160;
+        aiNinja.longAttackRightXy["x1"] = 0, aiNinja.longAttackRightXy["y1"] = 80,
+            aiNinja.longAttackRightXy["x2"] = 80, aiNinja.longAttackRightXy["y2"] = 80,
+            aiNinja.longAttackRightXy["x3"] = 160, aiNinja.longAttackRightXy["y3"] = 80,
+            aiNinja.longAttackRightXy["x4"] = 240, aiNinja.longAttackRightXy["y4"] = 80;
+        aiNinja.emissionAnimateXy["x1"] = 0, aiNinja.emissionAnimateXy["y1"] = 870,
+            aiNinja.emissionAnimateXy["x2"] = 40, aiNinja.emissionAnimateXy["y2"] = 870,
+            aiNinja.emissionAnimateXy["x3"] = 80, aiNinja.emissionAnimateXy["y3"] = 870,
+            aiNinja.emissionAnimateXy["x4"] = 120, aiNinja.emissionAnimateXy["y4"] = 870;
+
+        aiNinja2 = new aiObject(0, 0, 75, 82, 1250, 70, 75, 82, 0);
+        aiNinja2.standXy["leftX"] = 78, aiNinja2.standXy["leftY"] = 243;
+        aiNinja2.standXy["rightX"] = 0, aiNinja2.standXy["rightY"] = 0;
+        aiNinja2.longAttackLeftXy["x1"] = 410, aiNinja2.longAttackLeftXy["y1"] = 160,
+            aiNinja2.longAttackLeftXy["x2"] = 490, aiNinja2.longAttackLeftXy["y2"] = 160,
+            aiNinja2.longAttackLeftXy["x3"] = 570, aiNinja2.longAttackLeftXy["y3"] = 160,
+            aiNinja2.longAttackLeftXy["x4"] = 650, aiNinja2.longAttackLeftXy["y4"] = 160;
+        aiNinja2.longAttackRightXy["x1"] = 0, aiNinja2.longAttackRightXy["y1"] = 80,
+            aiNinja2.longAttackRightXy["x2"] = 80, aiNinja2.longAttackRightXy["y2"] = 80,
+            aiNinja2.longAttackRightXy["x3"] = 160, aiNinja2.longAttackRightXy["y3"] = 80,
+            aiNinja2.longAttackRightXy["x4"] = 240, aiNinja2.longAttackRightXy["y4"] = 80;
+        aiNinja2.emissionAnimateXy["x1"] = 0, aiNinja2.emissionAnimateXy["y1"] = 870,
+            aiNinja2.emissionAnimateXy["x2"] = 40, aiNinja2.emissionAnimateXy["y2"] = 870,
+            aiNinja2.emissionAnimateXy["x3"] = 80, aiNinja2.emissionAnimateXy["y3"] = 870,
+            aiNinja2.emissionAnimateXy["x4"] = 120, aiNinja2.emissionAnimateXy["y4"] = 870;
+
+        //in field
+        aiNinja3 = new aiObject(0, 0, 75, 82, 1400, 200, 75, 82, 0);
+        aiNinja3.standXy["leftX"] = 78, aiNinja3.standXy["leftY"] = 243;
+        aiNinja3.standXy["rightX"] = 0, aiNinja3.standXy["rightY"] = 0;
+        aiNinja3.longAttackLeftXy["x1"] = 410, aiNinja3.longAttackLeftXy["y1"] = 160,
+            aiNinja3.longAttackLeftXy["x2"] = 490, aiNinja3.longAttackLeftXy["y2"] = 160,
+            aiNinja3.longAttackLeftXy["x3"] = 570, aiNinja3.longAttackLeftXy["y3"] = 160,
+            aiNinja3.longAttackLeftXy["x4"] = 650, aiNinja3.longAttackLeftXy["y4"] = 160;
+        aiNinja3.longAttackRightXy["x1"] = 0, aiNinja3.longAttackRightXy["y1"] = 80,
+            aiNinja3.longAttackRightXy["x2"] = 80, aiNinja3.longAttackRightXy["y2"] = 80,
+            aiNinja3.longAttackRightXy["x3"] = 160, aiNinja3.longAttackRightXy["y3"] = 80,
+            aiNinja3.longAttackRightXy["x4"] = 240, aiNinja3.longAttackRightXy["y4"] = 80;
+        aiNinja3.emissionAnimateXy["x1"] = 0, aiNinja3.emissionAnimateXy["y1"] = 870,
+            aiNinja3.emissionAnimateXy["x2"] = 40, aiNinja3.emissionAnimateXy["y2"] = 870,
+            aiNinja3.emissionAnimateXy["x3"] = 80, aiNinja3.emissionAnimateXy["y3"] = 870,
+            aiNinja3.emissionAnimateXy["x4"] = 120, aiNinja3.emissionAnimateXy["y4"] = 870;
+
+        aiNinja4 = new aiObject(0, 0, 75, 82, 1400, 300, 75, 82, 0);
+        aiNinja4.standXy["leftX"] = 78, aiNinja4.standXy["leftY"] = 243;
+        aiNinja4.standXy["rightX"] = 0, aiNinja4.standXy["rightY"] = 0;
+        aiNinja4.longAttackLeftXy["x1"] = 410, aiNinja4.longAttackLeftXy["y1"] = 160,
+            aiNinja4.longAttackLeftXy["x2"] = 490, aiNinja4.longAttackLeftXy["y2"] = 160,
+            aiNinja4.longAttackLeftXy["x3"] = 570, aiNinja4.longAttackLeftXy["y3"] = 160,
+            aiNinja4.longAttackLeftXy["x4"] = 650, aiNinja4.longAttackLeftXy["y4"] = 160;
+        aiNinja4.longAttackRightXy["x1"] = 0, aiNinja4.longAttackRightXy["y1"] = 80,
+            aiNinja4.longAttackRightXy["x2"] = 80, aiNinja4.longAttackRightXy["y2"] = 80,
+            aiNinja4.longAttackRightXy["x3"] = 160, aiNinja4.longAttackRightXy["y3"] = 80,
+            aiNinja4.longAttackRightXy["x4"] = 240, aiNinja4.longAttackRightXy["y4"] = 80;
+        aiNinja4.emissionAnimateXy["x1"] = 0, aiNinja4.emissionAnimateXy["y1"] = 870,
+            aiNinja4.emissionAnimateXy["x2"] = 40, aiNinja4.emissionAnimateXy["y2"] = 870,
+            aiNinja4.emissionAnimateXy["x3"] = 80, aiNinja4.emissionAnimateXy["y3"] = 870,
+            aiNinja4.emissionAnimateXy["x4"] = 120, aiNinja4.emissionAnimateXy["y4"] = 870;
+
+        aiNinja5 = new aiObject(0, 0, 75, 82, 1400, 400, 75, 82, 0);
+        aiNinja5.standXy["leftX"] = 78, aiNinja5.standXy["leftY"] = 243;
+        aiNinja5.standXy["rightX"] = 0, aiNinja5.standXy["rightY"] = 0;
+        aiNinja5.longAttackLeftXy["x1"] = 410, aiNinja5.longAttackLeftXy["y1"] = 160,
+            aiNinja5.longAttackLeftXy["x2"] = 490, aiNinja5.longAttackLeftXy["y2"] = 160,
+            aiNinja5.longAttackLeftXy["x3"] = 570, aiNinja5.longAttackLeftXy["y3"] = 160,
+            aiNinja5.longAttackLeftXy["x4"] = 650, aiNinja5.longAttackLeftXy["y4"] = 160;
+        aiNinja5.longAttackRightXy["x1"] = 0, aiNinja5.longAttackRightXy["y1"] = 80,
+            aiNinja5.longAttackRightXy["x2"] = 80, aiNinja5.longAttackRightXy["y2"] = 80,
+            aiNinja5.longAttackRightXy["x3"] = 160, aiNinja5.longAttackRightXy["y3"] = 80,
+            aiNinja5.longAttackRightXy["x4"] = 240, aiNinja5.longAttackRightXy["y4"] = 80;
+        aiNinja5.emissionAnimateXy["x1"] = 0, aiNinja5.emissionAnimateXy["y1"] = 870,
+            aiNinja5.emissionAnimateXy["x2"] = 40, aiNinja5.emissionAnimateXy["y2"] = 870,
+            aiNinja5.emissionAnimateXy["x3"] = 80, aiNinja5.emissionAnimateXy["y3"] = 870,
+            aiNinja5.emissionAnimateXy["x4"] = 120, aiNinja5.emissionAnimateXy["y4"] = 870;
+
+        aiNinja6 = new aiObject(0, 0, 75, 82, 1400, 500, 75, 82, 0);
+        aiNinja6.standXy["leftX"] = 78, aiNinja6.standXy["leftY"] = 243;
+        aiNinja6.standXy["rightX"] = 0, aiNinja6.standXy["rightY"] = 0;
+        aiNinja6.longAttackLeftXy["x1"] = 410, aiNinja6.longAttackLeftXy["y1"] = 160,
+            aiNinja6.longAttackLeftXy["x2"] = 490, aiNinja6.longAttackLeftXy["y2"] = 160,
+            aiNinja6.longAttackLeftXy["x3"] = 570, aiNinja6.longAttackLeftXy["y3"] = 160,
+            aiNinja6.longAttackLeftXy["x4"] = 650, aiNinja6.longAttackLeftXy["y4"] = 160;
+        aiNinja6.longAttackRightXy["x1"] = 0, aiNinja6.longAttackRightXy["y1"] = 80,
+            aiNinja6.longAttackRightXy["x2"] = 80, aiNinja6.longAttackRightXy["y2"] = 80,
+            aiNinja6.longAttackRightXy["x3"] = 160, aiNinja6.longAttackRightXy["y3"] = 80,
+            aiNinja6.longAttackRightXy["x4"] = 240, aiNinja6.longAttackRightXy["y4"] = 80;
+        aiNinja6.emissionAnimateXy["x1"] = 0, aiNinja6.emissionAnimateXy["y1"] = 870,
+            aiNinja6.emissionAnimateXy["x2"] = 40, aiNinja6.emissionAnimateXy["y2"] = 870,
+            aiNinja6.emissionAnimateXy["x3"] = 80, aiNinja6.emissionAnimateXy["y3"] = 870,
+            aiNinja6.emissionAnimateXy["x4"] = 120, aiNinja6.emissionAnimateXy["y4"] = 870;
+
+        aiNinja7 = new aiObject(0, 0, 75, 82, 1400, 600, 75, 82, 0);
+        aiNinja7.standXy["leftX"] = 78, aiNinja7.standXy["leftY"] = 243;
+        aiNinja7.standXy["rightX"] = 0, aiNinja7.standXy["rightY"] = 0;
+        aiNinja7.longAttackLeftXy["x1"] = 410, aiNinja7.longAttackLeftXy["y1"] = 160,
+            aiNinja7.longAttackLeftXy["x2"] = 490, aiNinja7.longAttackLeftXy["y2"] = 160,
+            aiNinja7.longAttackLeftXy["x3"] = 570, aiNinja7.longAttackLeftXy["y3"] = 160,
+            aiNinja7.longAttackLeftXy["x4"] = 650, aiNinja7.longAttackLeftXy["y4"] = 160;
+        aiNinja7.longAttackRightXy["x1"] = 0, aiNinja7.longAttackRightXy["y1"] = 80,
+            aiNinja7.longAttackRightXy["x2"] = 80, aiNinja7.longAttackRightXy["y2"] = 80,
+            aiNinja7.longAttackRightXy["x3"] = 160, aiNinja7.longAttackRightXy["y3"] = 80,
+            aiNinja7.longAttackRightXy["x4"] = 240, aiNinja7.longAttackRightXy["y4"] = 80;
+        aiNinja7.emissionAnimateXy["x1"] = 0, aiNinja7.emissionAnimateXy["y1"] = 870,
+            aiNinja7.emissionAnimateXy["x2"] = 40, aiNinja7.emissionAnimateXy["y2"] = 870,
+            aiNinja7.emissionAnimateXy["x3"] = 80, aiNinja7.emissionAnimateXy["y3"] = 870,
+            aiNinja7.emissionAnimateXy["x4"] = 120, aiNinja7.emissionAnimateXy["y4"] = 870;
+
+        aiObjectArr = [aiNinja, aiNinja2, aiNinja3, aiNinja4, aiNinja5, aiNinja6, aiNinja7];
+
+
+        keyObject4 = new keyObject(1200, 450);
+        keyInterval = setInterval(function () {
+            if (boundingBoxCollision(playerObject, keyObject4)) {
+                playerObject.keyGet = true;
+                clearInterval(keyInterval);
+            } else {
+                draw(keyObject4);
+            }
+        }, 20);
+    }
+
+    function stage4Ai(aiObjectArr, keyObject4) {
+        aiObjectArr.forEach(function (object, index) {
+            clearImage(object.posX, object.posY, object.wantedWidth, object.wantedHeight);
+            setFace(object);
+            draw(object);
+
+            if (!aiNinja.attackLaunched) {
+                aiAttackCall(playerImage, aiNinja.longAttackLeftXy, aiNinja.longAttackRightXy, aiNinja);
+                aiEmission = new emissionObject(aiNinja, "vertical");
+                aiAttackCall(playerImage, aiNinja.longAttackLeftXy, aiNinja.longAttackRightXy, aiNinja);
+                aiEmission = new emissionObject(aiNinja, "horizontal");
+            }
+            if (!aiNinja2.attackLaunched) {
+                aiAttackCall(playerImage, aiNinja2.longAttackLeftXy, aiNinja2.longAttackRightXy, aiNinja2);
+                aiEmission = new emissionObject(aiNinja2, "vertical");
+                aiAttackCall(playerImage, aiNinja2.longAttackLeftXy, aiNinja2.longAttackRightXy, aiNinja2);
+                aiEmission = new emissionObject(aiNinja2, "horizontal");
+            }
+            if (!aiNinja3.attackLaunched) {
+                aiAttackCall(playerImage, aiNinja3.longAttackLeftXy, aiNinja3.longAttackRightXy, aiNinja3);
+                aiEmission = new emissionObject(aiNinja3, "horizontal");
+            }
+            if (!aiNinja4.attackLaunched) {
+                aiAttackCall(playerImage, aiNinja4.longAttackLeftXy, aiNinja4.longAttackRightXy, aiNinja4);
+                aiEmission = new emissionObject(aiNinja4, "horizontal");
+            }
+            if (!aiNinja5.attackLaunched) {
+                aiAttackCall(playerImage, aiNinja5.longAttackLeftXy, aiNinja5.longAttackRightXy, aiNinja5);
+                aiEmission = new emissionObject(aiNinja5, "horizontal");
+            }
+            if (!aiNinja6.attackLaunched) {
+                aiAttackCall(playerImage, aiNinja6.longAttackLeftXy, aiNinja6.longAttackRightXy, aiNinja6);
+                aiEmission = new emissionObject(aiNinja6, "horizontal");
+            }
+            if (!aiNinja7.attackLaunched) {
+                aiAttackCall(playerImage, aiNinja7.longAttackLeftXy, aiNinja7.longAttackRightXy, aiNinja7);
+                aiEmission = new emissionObject(aiNinja7, "horizontal");
+            }
+        });
+
+        // var ninjaAttackArr = [], i = 0;
+        // while(ninjaAttackArr.length != 4){
+        //     var tempNo = Math.floor(Math.random() * 5) + 3;
+        //     if(!ninjaAttackArr.includes(tempNo)){
+        //         ninjaAttackArr[i] = tempNo;
+        //         i++;
+        //     }
+        // }
+        // ninjaAttackArr.forEach(function (object, index) {
+        //     clearImage(aiObjectArr[object].posX, aiObjectArr[object].posY, aiObjectArr[object].wantedWidth, aiObjectArr[object].wantedHeight);
+        //     setFace(aiObjectArr[object]);
+        //     draw(aiObjectArr[object]);
+        //     if (!aiObjectArr[object].attackLaunched) {
+        //         aiAttackCall(playerImage, aiObjectArr[object].longAttackLeftXy, aiObjectArr[object].longAttackRightXy, aiObjectArr[object]);
+        //         aiEmission = new emissionObject(aiObjectArr[object], "horizontal");
+        //     }
+        // });
+    }
+
+    //--- 10 end of stage 4 ---//
+    // 
+    // 
+    // 
+    // 
+    //     
+    //--- 11 start of stage 5 ---//
+
+    //--- 11 end of stage 5 ---//
 }
