@@ -120,36 +120,36 @@ if (ctx) {
     var action = ["basicChase", "escape", "shortAttack", "longAttack", "drinkMilk"];
 
     ai5.shortAttackLeftXy["x1"] = 0, ai5.shortAttackLeftXy["y1"] = 160,
-    ai5.shortAttackLeftXy["x2"] = 80, ai5.shortAttackLeftXy["y2"] = 160,
-    ai5.shortAttackLeftXy["x3"] = 160, ai5.shortAttackLeftXy["y3"] = 160,
-    ai5.shortAttackLeftXy["x4"] = 240, ai5.shortAttackLeftXy["y4"] = 160;
+        ai5.shortAttackLeftXy["x2"] = 80, ai5.shortAttackLeftXy["y2"] = 160,
+        ai5.shortAttackLeftXy["x3"] = 160, ai5.shortAttackLeftXy["y3"] = 160,
+        ai5.shortAttackLeftXy["x4"] = 240, ai5.shortAttackLeftXy["y4"] = 160;
     ai5.shortAttackRightXy["x1"] = 400, ai5.shortAttackRightXy["y1"] = 0,
-    ai5.shortAttackRightXy["x2"] = 480, ai5.shortAttackRightXy["y2"] = 0,
-    ai5.shortAttackRightXy["x3"] = 560, ai5.shortAttackRightXy["y3"] = 0,
-    ai5.shortAttackRightXy["x4"] = 640, ai5.shortAttackRightXy["y4"] = 0;
+        ai5.shortAttackRightXy["x2"] = 480, ai5.shortAttackRightXy["y2"] = 0,
+        ai5.shortAttackRightXy["x3"] = 560, ai5.shortAttackRightXy["y3"] = 0,
+        ai5.shortAttackRightXy["x4"] = 640, ai5.shortAttackRightXy["y4"] = 0;
 
     ai5.walkLeftXy["x1"] = 570, ai5.walkLeftXy["y1"] = 80,
-    ai5.walkLeftXy["x2"] = 490, ai5.walkLeftXy["y2"] = 80,
-    ai5.walkLeftXy["x3"] = 410, ai5.walkLeftXy["y3"] = 80,
-    ai5.walkLeftXy["x4"] = 330, ai5.walkLeftXy["y4"] = 80;
+        ai5.walkLeftXy["x2"] = 490, ai5.walkLeftXy["y2"] = 80,
+        ai5.walkLeftXy["x3"] = 410, ai5.walkLeftXy["y3"] = 80,
+        ai5.walkLeftXy["x4"] = 330, ai5.walkLeftXy["y4"] = 80;
     ai5.walkRightXy["x1"] = 80, ai5.walkRightXy["y1"] = 0,
-    ai5.walkRightXy["x2"] = 160, ai5.walkRightXy["y2"] = 0,
-    ai5.walkRightXy["x3"] = 240, ai5.walkRightXy["y3"] = 0,
-    ai5.walkRightXy["x4"] = 320, ai5.walkRightXy["y4"] = 0;
+        ai5.walkRightXy["x2"] = 160, ai5.walkRightXy["y2"] = 0,
+        ai5.walkRightXy["x3"] = 240, ai5.walkRightXy["y3"] = 0,
+        ai5.walkRightXy["x4"] = 320, ai5.walkRightXy["y4"] = 0;
 
     ai5.longAttackLeftXy["x1"] = 410, ai5.longAttackLeftXy["y1"] = 160,
-    ai5.longAttackLeftXy["x2"] = 490, ai5.longAttackLeftXy["y2"] = 160,
-    ai5.longAttackLeftXy["x3"] = 570, ai5.longAttackLeftXy["y3"] = 160,
-    ai5.longAttackLeftXy["x4"] = 650, ai5.longAttackLeftXy["y4"] = 160;
+        ai5.longAttackLeftXy["x2"] = 490, ai5.longAttackLeftXy["y2"] = 160,
+        ai5.longAttackLeftXy["x3"] = 570, ai5.longAttackLeftXy["y3"] = 160,
+        ai5.longAttackLeftXy["x4"] = 650, ai5.longAttackLeftXy["y4"] = 160;
     ai5.longAttackRightXy["x1"] = 0, ai5.longAttackRightXy["y1"] = 80,
-    ai5.longAttackRightXy["x2"] = 80, ai5.longAttackRightXy["y2"] = 80,
-    ai5.longAttackRightXy["x3"] = 160, ai5.longAttackRightXy["y3"] = 80,
-    ai5.longAttackRightXy["x4"] = 240, ai5.longAttackRightXy["y4"] = 80;
+        ai5.longAttackRightXy["x2"] = 80, ai5.longAttackRightXy["y2"] = 80,
+        ai5.longAttackRightXy["x3"] = 160, ai5.longAttackRightXy["y3"] = 80,
+        ai5.longAttackRightXy["x4"] = 240, ai5.longAttackRightXy["y4"] = 80;
 
     ai5.emissionAnimateXy["x1"] = 0, ai5.emissionAnimateXy["y1"] = 870,
-    ai5.emissionAnimateXy["x2"] = 40, ai5.emissionAnimateXy["y2"] = 870,
-    ai5.emissionAnimateXy["x3"] = 80, ai5.emissionAnimateXy["y3"] = 870,
-    ai5.emissionAnimateXy["x4"] = 120, ai5.emissionAnimateXy["y4"] = 870;
+        ai5.emissionAnimateXy["x2"] = 40, ai5.emissionAnimateXy["y2"] = 870,
+        ai5.emissionAnimateXy["x3"] = 80, ai5.emissionAnimateXy["y3"] = 870,
+        ai5.emissionAnimateXy["x4"] = 120, ai5.emissionAnimateXy["y4"] = 870;
 
     chaseSpeed = "";
     chaseType = "";
@@ -842,20 +842,19 @@ if (ctx) {
         this.animate = 1;
         this.repeat = 0;
         this.emissionType = emissionType;
-        if (this.emissionType == "horizontal") {
+        if (this.emissionType == "horizontal" || this.emissionType == "line") {
             this.posX = aiObject.posX - this.wantedWidth;
             this.posY = aiObject.posY + (aiObject.wantedHeight / 2);
             if (this.face == faceRight) {
                 this.posX += aiObject.wantedWidth + this.wantedWidth;
             }
+            if (this.emissionType == "line") {
+                this.bAlgorithmLine = new bAlgorithmLine(this.posX, this.posY, playerObject.pox + (playerObject.wantedWidth / 2), playerObject.posY + (playerObject.wantedHeight / 2), this);
+            }
         } else if (this.emissionType == "vertical") {
             this.posX = aiObject.posX + (this.wantedWidth / 2);
             this.posY = aiObject.posY + aiObject.wantedHeight;
-        } else if (this.emissionType == "") {
-
         }
-
-
         emissionAnimation(playerImage, this);
     }
 
@@ -872,7 +871,7 @@ if (ctx) {
                 }
             } else if (emissionObject.emissionType == "vertical") {
                 clearPreviousImage(emissionObject.posX, emissionObject.posY - 20, emissionObject.wantedWidth, emissionObject.wantedHeight);
-            } else if (emissionObject.emissionType == "") {
+            } else if (emissionObject.emissionType == "line") {
 
             }
 
@@ -894,8 +893,19 @@ if (ctx) {
                 }
             } else if (emissionObject.emissionType == "vertical") {
                 emissionObject.posY += emissionObject.speed;
-            } else if (emissionObject.emissionType == "") {
-
+            } else if (emissionObject.emissionType == "line") {
+                if(emissionObject.bAlgorithmLine.steep){
+                    emissionObject.posX = emissionObject.bAlgorithmLine.y;
+                    emissionObject.posY += emissionObject.speed;
+                }else{
+                    emissionObject.posX += emissionObject.speed;
+                    emissionObject.posY = emissionObject.bAlgorithmLine.y;
+                }
+                emissionObject.bAlgorithmLine.error -= emissionObject.bAlgorithmLine.deltaY;
+                if (emissionObject.bAlgorithmLine.error < 0) {
+                    emissionObject.bAlgorithmLine.y += emissionObject.bAlgorithmLine.yStep;
+                    emissionObject.bAlgorithmLine.error += emissionObject.bAlgorithmLine.deltaX;
+                }
             }
             checkEmissionCollision(emissionObject, playerObject, intervalNo);
         }, 50);
@@ -1090,6 +1100,46 @@ if (ctx) {
     }
     // reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
     // reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
+
+    //Bresenham’s algorithm
+    function bAlgorithmLine(x0, y0, x1, y1, emissionObject) {
+        this.steep = (y0 > y1 ? y0 - y1 : y1 - y0) > (x0 > x1 ? x0 - x1 : x1 - x0);
+        this.collisionPosition = emissionObject.face == faceLeft ? 0 : 1500;
+        if (this.steep) {
+            //swap(x0, y0)
+            x0 = x0 + y0;
+            y0 = x0 - y0;
+            x0 = x0 - y0;
+            //swap(x1, y1)
+            x1 = x1 + y1;
+            y1 = x1 - y1;
+            x1 = x1 - y1;
+            this.collisionPosition = 700;
+        }
+        if (x0 > x1) {
+            //swap(x0, x1)
+            x0 = x0 + x1;
+            x1 = x0 - x1;
+            x0 = x0 - x1;
+            //swap(y0, y1)
+            y0 = y0 + y1;
+            y1 = y0 - y1;
+            y0 = y0 - y1;
+        }
+        this.deltaX = x1 - x0;
+        this.deltaY = y0 > y1 ? y0 - y1 : y1 - y0;
+        this.error = this.deltaX / 2;
+        this.yStep = y0 < y1 ? 1 : -1;
+        this.y = y0;
+        // for (i = x0; i < collisionPosition; i++) {
+        //     steep ? console.log(y, i) : console.log(i, y);
+        //     error -= deltaY;
+        //     if (error < 0) {
+        //         y += yStep;
+        //         error += deltaX;
+        //     }
+        // }
+    }
 
     function keyObject(posX, posY) {
         this.imageX = 345;
@@ -1599,13 +1649,13 @@ if (ctx) {
                 aiAttackCall(playerImage, aiNinja.longAttackLeftXy, aiNinja.longAttackRightXy, aiNinja);
                 aiEmission = new emissionObject(aiNinja, "vertical");
                 aiAttackCall(playerImage, aiNinja.longAttackLeftXy, aiNinja.longAttackRightXy, aiNinja);
-                aiEmission = new emissionObject(aiNinja, "horizontal");
+                aiEmission = new emissionObject(aiNinja, "line");
             }
             if (!aiNinja2.attackLaunched) {
                 aiAttackCall(playerImage, aiNinja2.longAttackLeftXy, aiNinja2.longAttackRightXy, aiNinja2);
                 aiEmission = new emissionObject(aiNinja2, "vertical");
                 aiAttackCall(playerImage, aiNinja2.longAttackLeftXy, aiNinja2.longAttackRightXy, aiNinja2);
-                aiEmission = new emissionObject(aiNinja2, "horizontal");
+                aiEmission = new emissionObject(aiNinja2, "line");
             }
             if (!aiNinja3.attackLaunched) {
                 aiAttackCall(playerImage, aiNinja3.longAttackLeftXy, aiNinja3.longAttackRightXy, aiNinja3);
@@ -1645,7 +1695,7 @@ if (ctx) {
         //         aiAttackCall(playerImage, aiObjectArr[object].longAttackLeftXy, aiObjectArr[object].longAttackRightXy, aiObjectArr[object]);
         //         aiEmission = new emissionObject(aiObjectArr[object], "horizontal");
         //     }
-        // });
+        // });       
     }
 
     //--- 10 end of stage 4 ---//
