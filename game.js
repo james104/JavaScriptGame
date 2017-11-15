@@ -183,7 +183,7 @@ if (ctx) {
             aiChase(chaseSpeed, chaseType, ai5);
         }
         //draw(ai);
-        console.log(ai5.posX + " " + ai5.posY);
+        //console.log(playerObject.posX + " " + playerObject.posY + " " + ai5.posX + " " + ai5.posY);
 
         //1.aiAttackCall function is call for short or long attack for ai
         //change the attackLeft and attackRight array for short and long attack
