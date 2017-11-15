@@ -21,7 +21,7 @@ canvasElement.height = "700";
 canvasElement.style.background = "url(img/newBackground.bmp)";
 canvasElement.style.backgroundSize = "cover";
 var ctx = canvasElement.getContext && canvasElement.getContext('2d');
-var stage = 4;
+var stage = 5;
 
 //--- 1 end of canvas ---//
 
@@ -95,6 +95,10 @@ if (ctx) {
         this.wantedHeight = wantedHeight;
         this.speed = speed;
         this.face = faceLeft;
+        this.hp = 100;
+        this.mp = 100;
+
+        this.attackFinished = true;
 
         this.attackLaunched = false;
         this.walkAnimate = 1; //picture number
@@ -111,72 +115,105 @@ if (ctx) {
         this.emissionAnimateXy = [];
     }
 
-    ai = new aiObject(325, 80, 80, 80, 900, 400, 80, 80, playerObject.speed);
-    ai.shortAttackLeftXy["x1"] = 0, ai.shortAttackLeftXy["y1"] = 160,
-        ai.shortAttackLeftXy["x2"] = 80, ai.shortAttackLeftXy["y2"] = 160,
-        ai.shortAttackLeftXy["x3"] = 160, ai.shortAttackLeftXy["y3"] = 160,
-        ai.shortAttackLeftXy["x4"] = 240, ai.shortAttackLeftXy["y4"] = 160;
-    ai.shortAttackRightXy["x1"] = 400, ai.shortAttackRightXy["y1"] = 0,
-        ai.shortAttackRightXy["x2"] = 480, ai.shortAttackRightXy["y2"] = 0,
-        ai.shortAttackRightXy["x3"] = 560, ai.shortAttackRightXy["y3"] = 0,
-        ai.shortAttackRightXy["x4"] = 640, ai.shortAttackRightXy["y4"] = 0;
+    ai5 = new aiObject(325, 80, 80, 80, 900, 400, 100, 100, playerObject.speed);
+    var currAction = "";
+    var action = ["basicChase", "escape", "shortAttack", "longAttack", "drinkMilk"];
 
-    ai.walkLeftXy["x1"] = 570, ai.walkLeftXy["y1"] = 80,
-        ai.walkLeftXy["x2"] = 490, ai.walkLeftXy["y2"] = 80,
-        ai.walkLeftXy["x3"] = 410, ai.walkLeftXy["y3"] = 80,
-        ai.walkLeftXy["x4"] = 330, ai.walkLeftXy["y4"] = 80;
-    ai.walkRightXy["x1"] = 80, ai.walkRightXy["y1"] = 0,
-        ai.walkRightXy["x2"] = 160, ai.walkRightXy["y2"] = 0,
-        ai.walkRightXy["x3"] = 240, ai.walkRightXy["y3"] = 0,
-        ai.walkRightXy["x4"] = 320, ai.walkRightXy["y4"] = 0;
+    ai5.shortAttackLeftXy["x1"] = 0, ai5.shortAttackLeftXy["y1"] = 160,
+        ai5.shortAttackLeftXy["x2"] = 80, ai5.shortAttackLeftXy["y2"] = 160,
+        ai5.shortAttackLeftXy["x3"] = 160, ai5.shortAttackLeftXy["y3"] = 160,
+        ai5.shortAttackLeftXy["x4"] = 240, ai5.shortAttackLeftXy["y4"] = 160;
+    ai5.shortAttackRightXy["x1"] = 400, ai5.shortAttackRightXy["y1"] = 0,
+        ai5.shortAttackRightXy["x2"] = 480, ai5.shortAttackRightXy["y2"] = 0,
+        ai5.shortAttackRightXy["x3"] = 560, ai5.shortAttackRightXy["y3"] = 0,
+        ai5.shortAttackRightXy["x4"] = 640, ai5.shortAttackRightXy["y4"] = 0;
 
-    ai.longAttackLeftXy["x1"] = 410, ai.longAttackLeftXy["y1"] = 160,
-        ai.longAttackLeftXy["x2"] = 490, ai.longAttackLeftXy["y2"] = 160,
-        ai.longAttackLeftXy["x3"] = 570, ai.longAttackLeftXy["y3"] = 160,
-        ai.longAttackLeftXy["x4"] = 650, ai.longAttackLeftXy["y4"] = 160;
-    ai.longAttackRightXy["x1"] = 0, ai.longAttackRightXy["y1"] = 80,
-        ai.longAttackRightXy["x2"] = 80, ai.longAttackRightXy["y2"] = 80,
-        ai.longAttackRightXy["x3"] = 160, ai.longAttackRightXy["y3"] = 80,
-        ai.longAttackRightXy["x4"] = 240, ai.longAttackRightXy["y4"] = 80;
+    ai5.walkLeftXy["x1"] = 570, ai5.walkLeftXy["y1"] = 80,
+        ai5.walkLeftXy["x2"] = 490, ai5.walkLeftXy["y2"] = 80,
+        ai5.walkLeftXy["x3"] = 410, ai5.walkLeftXy["y3"] = 80,
+        ai5.walkLeftXy["x4"] = 330, ai5.walkLeftXy["y4"] = 80;
+    ai5.walkRightXy["x1"] = 80, ai5.walkRightXy["y1"] = 0,
+        ai5.walkRightXy["x2"] = 160, ai5.walkRightXy["y2"] = 0,
+        ai5.walkRightXy["x3"] = 240, ai5.walkRightXy["y3"] = 0,
+        ai5.walkRightXy["x4"] = 320, ai5.walkRightXy["y4"] = 0;
 
-    ai.emissionAnimateXy["x1"] = 0, ai.emissionAnimateXy["y1"] = 870,
-        ai.emissionAnimateXy["x2"] = 40, ai.emissionAnimateXy["y2"] = 870,
-        ai.emissionAnimateXy["x3"] = 80, ai.emissionAnimateXy["y3"] = 870,
-        ai.emissionAnimateXy["x4"] = 120, ai.emissionAnimateXy["y4"] = 870;
+    ai5.longAttackLeftXy["x1"] = 410, ai5.longAttackLeftXy["y1"] = 160,
+        ai5.longAttackLeftXy["x2"] = 490, ai5.longAttackLeftXy["y2"] = 160,
+        ai5.longAttackLeftXy["x3"] = 570, ai5.longAttackLeftXy["y3"] = 160,
+        ai5.longAttackLeftXy["x4"] = 650, ai5.longAttackLeftXy["y4"] = 160;
+    ai5.longAttackRightXy["x1"] = 0, ai5.longAttackRightXy["y1"] = 80,
+        ai5.longAttackRightXy["x2"] = 80, ai5.longAttackRightXy["y2"] = 80,
+        ai5.longAttackRightXy["x3"] = 160, ai5.longAttackRightXy["y3"] = 80,
+        ai5.longAttackRightXy["x4"] = 240, ai5.longAttackRightXy["y4"] = 80;
 
-    attackFinished = true;
+    ai5.emissionAnimateXy["x1"] = 0, ai5.emissionAnimateXy["y1"] = 870,
+        ai5.emissionAnimateXy["x2"] = 40, ai5.emissionAnimateXy["y2"] = 870,
+        ai5.emissionAnimateXy["x3"] = 80, ai5.emissionAnimateXy["y3"] = 870,
+        ai5.emissionAnimateXy["x4"] = 120, ai5.emissionAnimateXy["y4"] = 870;
+
     chaseSpeed = "";
     chaseType = "";
 
     function stage5Ai() {
-        clearImage(ai.posX, ai.posY, ai.wantedWidth, ai.wantedHeight);
+        clearImage(ai5.posX, ai5.posY, ai5.wantedWidth, ai5.wantedHeight);
         //if (ensurePlayerCollision(ai)) {
         //    console.log("yes");
         //}
-        setFace(ai);
+        setFace(ai5);
         //random number from 1 to 2
-        if (attackFinished) {
+        if (ai5.attackFinished) {
             attackType = Math.floor(Math.random() * 2 + 1);
         }
 
         // Randomly perform either 1) or 2) attack (every randomly 1-4s).
         //1: Faster, Chase (random within 2-4s), after that, Must perform short attack.
         //2: same speed, keep distance and Long attack (chase horizontally)        
-        if (!ai.attackLaunched) {
+        if (!ai5.attackLaunched) {
             if (attackType == 1) {
-                attackFinished = false;
+                ai5.attackFinished = false;
                 chaseSpeed = "normal";
                 chaseType = "basicChase";
             }
             else if (attackType == 2) {
-                attackFinished = false;
+                ai5.attackFinished = false;
                 chaseSpeed = "slow";
-                chaseType = "horizontalChase";
+                chaseType = "verticalChase";
             }
 
-            aiChase(chaseSpeed, chaseType, ai);
+            aiChase(chaseSpeed, chaseType, ai5);
         }
         //draw(ai);
+
+
+        //1.aiAttackCall function is call for short or long attack for ai
+        //change the attackLeft and attackRight array for short and long attack
+        //it will run the animation for you
+        //2.emissionObject is to create a long attack object, can apply horizontal or vertical attack for now
+        //set all the status of emissionObject and then run the emissionAnimation
+        //in emissionAnimation, it will also check the collision
+        //checkEmissionCollision if hit the player will reduce player hp
+        //!!! here launch one long attack here !!!
+        // aiAttackCall(playerImage, aiNinja5.longAttackLeftXy, aiNinja5.longAttackRightXy, aiNinja5);
+        // aiEmission = new emissionObject(aiNinja5, "horizontal");
+
+        //1.shortAttackObject create a short attack for ai or player
+        //set the wanted width and height for the attack collision area
+        //2.aiAttackCall function is call for short or long attack for ai
+        //3.updateShortAttackObject set start position x and y for collision when face left and right
+        //set small bounding box based on image attack animate
+        //4.shortAttackCollision pass the launch attack object and target object to check
+        //if return true reduce target object hp
+        //!!! here launch one short attack here !!!
+        // aiNinja5.shortAttackObject = new shortAttackObject(15, 15);
+        // aiAttackCall(playerImage, aiNinja5.shortAttackLeftXy, aiNinja5.shortAttackRightXy, aiNinja5);
+        //
+        // updateShortAttackObject(aiNinja5.shortAttackObject, aiNinja5.posX, aiNinja5.posY + 42, aiNinja5.posX + 55, aiNinja5.posY + 43);
+        // if (shortAttackCollision(aiNinja5, playerObject)) {
+        //     reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+        // }
+
+
+
     }
 
     function findDistanceBetweenPlayerAndAi(aiObj) {
@@ -185,32 +222,347 @@ if (ctx) {
         return Math.round(distance);
     }
 
-    //w: 1500; h: 700
-    function distanceFuzzySets(obj) {
-        //fuzzy sets
+    function drinkMilkFuzzyRules(distanceFuzzySets, hpFuzzySets, mpFuzzySets) {
 
+        var veryNearValue = distanceFuzzySets[0];
+        var nearValue = distanceFuzzySets[1];
+        var farValue = distanceFuzzySets[2];
+        var veryFarValue = distanceFuzzySets[3];
+        var dyingValue = hpFuzzySets[0];
+        var injuredValue = hpFuzzySets[1];
+        var healthyValue = hpFuzzySets[2];
+        var lowMpValue = mpFuzzySets[0];
+        var midMpValue = mpFuzzySets[1];
+        var highMpValue = mpFuzzySets[2];
+
+        //rules
+
+        var fuzzyRule1 = [nearValue, dyingValue, midMpValue];
+        var fuzzyRule2 = [nearValue, dyingValue, highMpValue];
+        var fuzzyRule3 = [farValue, dyingValue, midMpValue];
+        var fuzzyRule4 = [farValue, dyingValue, highMpValue];
+        var fuzzyRule5 = [veryFarValue, dyingValue, midMpValue];
+        var fuzzyRule6 = [veryFarValue, dyingValue, highMpValue];
+
+        //Conjunction
+        var fuzzyAxiomsRule1 = min(fuzzyRule1);
+        var fuzzyAxiomsRule2 = min(fuzzyRule2);
+        var fuzzyAxiomsRule3 = min(fuzzyRule3);
+        var fuzzyAxiomsRule4 = min(fuzzyRule4);
+        var fuzzyAxiomsRule5 = min(fuzzyRule5);
+        var fuzzyAxiomsRule6 = min(fuzzyRule6);
+        var result = [fuzzyAxiomsRule1, fuzzyAxiomsRule2, fuzzyAxiomsRule3,
+            fuzzyAxiomsRule4, fuzzyAxiomsRule5, fuzzyAxiomsRule6];
+        //Disjunction
+        return max(result);
     }
 
-    faceCountR = 0;
-    faceCountL = 0;
+    function escapeFuzzyRules(distanceFuzzySets, hpFuzzySets, mpFuzzySets) {
+
+        var veryNearValue = distanceFuzzySets[0];
+        var nearValue = distanceFuzzySets[1];
+        var farValue = distanceFuzzySets[2];
+        var veryFarValue = distanceFuzzySets[3];
+        var dyingValue = hpFuzzySets[0];
+        var injuredValue = hpFuzzySets[1];
+        var healthyValue = hpFuzzySets[2];
+        var lowMpValue = mpFuzzySets[0];
+        var midMpValue = mpFuzzySets[1];
+        var highMpValue = mpFuzzySets[2];
+
+        //rules
+        var fuzzyRule1 = [veryNearValue, dyingValue, lowMpValue];
+        var fuzzyRule2 = [veryNearValue, dyingValue, midMpValue];
+        var fuzzyRule3 = [veryNearValue, dyingValue, highMpValue];
+        var fuzzyRule4 = [nearValue, dyingValue, lowMpValue];
+        var fuzzyRule5 = [farValue, dyingValue, lowMpValue];
+        var fuzzyRule6 = [veryFarValue, dyingValue, lowMpValue];
+
+        //Conjunction
+        var fuzzyAxiomsRule1 = min(fuzzyRule1);
+        var fuzzyAxiomsRule2 = min(fuzzyRule2);
+        var fuzzyAxiomsRule3 = min(fuzzyRule3);
+        var fuzzyAxiomsRule4 = min(fuzzyRule4);
+        var fuzzyAxiomsRule5 = min(fuzzyRule5);
+        var fuzzyAxiomsRule6 = min(fuzzyRule6);
+        var result = [fuzzyAxiomsRule1, fuzzyAxiomsRule2, fuzzyAxiomsRule3,
+            fuzzyAxiomsRule4, fuzzyAxiomsRule5, fuzzyAxiomsRule6];
+        //Disjunction
+        return max(result);
+    }
+
+    function longAttackFuzzyRules(distanceFuzzySets, hpFuzzySets, mpFuzzySets) {
+
+        var nearValue = distanceFuzzySets[1];
+        var farValue = distanceFuzzySets[2];
+        var veryFarValue = distanceFuzzySets[3];
+        var dyingValue = hpFuzzySets[0];
+        var injuredValue = hpFuzzySets[1];
+        var healthyValue = hpFuzzySets[2];
+        var lowMpValue = mpFuzzySets[0];
+        var midMpValue = mpFuzzySets[1];
+        var highMpValue = mpFuzzySets[2];
+
+        //rules
+        var fuzzyRule1 = [veryFarValue, injuredValue, highMpValue];
+        var fuzzyRule2 = [veryFarValue, injuredValue, midMpValue];
+        var fuzzyRule3 = [veryFarValue, healthyValue, highMpValue];
+        var fuzzyRule4 = [veryFarValue, healthyValue, midMpValue];
+        var fuzzyRule5 = [farValue, healthyValue, highMpValue];
+        var fuzzyRule6 = [farValue, healthyValue, midMpValue];
+        var fuzzyRule7 = [farValue, injuredValue, highMpValue];
+        var fuzzyRule8 = [farValue, injuredValue, midMpValue];
+        //Conjunction
+        var fuzzyAxiomsRule1 = min(fuzzyRule1);
+        var fuzzyAxiomsRule2 = min(fuzzyRule2);
+        var fuzzyAxiomsRule3 = min(fuzzyRule3);
+        var fuzzyAxiomsRule4 = min(fuzzyRule4);
+        var fuzzyAxiomsRule5 = min(fuzzyRule5);
+        var fuzzyAxiomsRule6 = min(fuzzyRule6);
+        var fuzzyAxiomsRule7 = min(fuzzyRule7);
+        var fuzzyAxiomsRule8 = min(fuzzyRule8);
+        var result = [fuzzyAxiomsRule1, fuzzyAxiomsRule2, fuzzyAxiomsRule3,
+            fuzzyAxiomsRule4, fuzzyAxiomsRule5, fuzzyAxiomsRule6,
+            fuzzyAxiomsRule7, fuzzyAxiomsRule8];
+        //Disjunction
+        return max(result);
+    }
+
+    function basicChaseFuzzyRules(distanceFuzzySets, hpFuzzySets, mpFuzzySets) {
+
+        var nearValue = distanceFuzzySets[1];
+        var farValue = distanceFuzzySets[2];
+        var veryFarValue = distanceFuzzySets[3];
+        var dyingValue = hpFuzzySets[0];
+        var injuredValue = hpFuzzySets[1];
+        var healthyValue = hpFuzzySets[2];
+        var lowMpValue = mpFuzzySets[0];
+        var midMpValue = mpFuzzySets[1];
+        var highMpValue = mpFuzzySets[2];
+
+        //rules
+        var fuzzyRule1 = [nearValue, healthyValue, highMpValue];
+        var fuzzyRule2 = [nearValue, healthyValue, midMpValue];
+        var fuzzyRule3 = [nearValue, healthyValue, lowMpValue];
+        var fuzzyRule4 = [nearValue, injuredValue, lowMpValue];
+        var fuzzyRule5 = [nearValue, injuredValue, highMpValue];
+        var fuzzyRule6 = [nearValue, injuredValue, midMpValue];
+        var fuzzyRule7 = [farValue, healthyValue, lowMpValue];
+        var fuzzyRule8 = [farValue, injuredValue, lowMpValue];
+        var fuzzyRule9 = [veryFarValue, injuredValue, lowMpValue];
+        var fuzzyRule10 = [veryFarValue, healthyValue, lowMpValue]
+
+        //Conjunction
+        var fuzzyAxiomsRule1 = min(fuzzyRule1);
+        var fuzzyAxiomsRule2 = min(fuzzyRule2);
+        var fuzzyAxiomsRule3 = min(fuzzyRule3);
+        var fuzzyAxiomsRule4 = min(fuzzyRule4);
+        var fuzzyAxiomsRule5 = min(fuzzyRule5);
+        var fuzzyAxiomsRule6 = min(fuzzyRule6);
+        var fuzzyAxiomsRule7 = min(fuzzyRule7);
+        var fuzzyAxiomsRule8 = min(fuzzyRule8);
+        var fuzzyAxiomsRule9 = min(fuzzyRule9);
+        var fuzzyAxiomsRule10 = min(fuzzyRule10);
+        var result = [fuzzyAxiomsRule1, fuzzyAxiomsRule2, fuzzyAxiomsRule3,
+            fuzzyAxiomsRule4, fuzzyAxiomsRule5, fuzzyAxiomsRule6,
+            fuzzyAxiomsRule7, fuzzyAxiomsRule8, fuzzyAxiomsRule9,
+            fuzzyAxiomsRule10];
+        //Disjunction
+        return max(result);
+    }
+
+    function shortAttackFuzzyRules(distanceFuzzySets, hpFuzzySets, mpFuzzySets) {
+
+        var veryNearValue = distanceFuzzySets[0];
+        var dyingValue = hpFuzzySets[0];
+        var injuredValue = hpFuzzySets[1];
+        var healthyValue = hpFuzzySets[2];
+        var lowMpValue = mpFuzzySets[0];
+        var midMpValue = mpFuzzySets[1];
+        var highMpValue = mpFuzzySets[2];
+
+        //rules
+        var fuzzyRule1 = [veryNearValue, injuredValue, highMpValue];
+        var fuzzyRule2 = [veryNearValue, injuredValue, midMpValue];
+        var fuzzyRule3 = [veryNearValue, injuredValue, lowMpValue];
+        var fuzzyRule4 = [veryNearValue, healthyValue, highMpValue];
+        var fuzzyRule5 = [veryNearValue, healthyValue, midMpValue];
+        var fuzzyRule6 = [veryNearValue, healthyValue, lowMpValue];
+        //Conjunction
+        var fuzzyAxiomsRule1 = min(fuzzyRule1);
+        var fuzzyAxiomsRule2 = min(fuzzyRule2);
+        var fuzzyAxiomsRule3 = min(fuzzyRule3);
+        var fuzzyAxiomsRule4 = min(fuzzyRule4);
+        var fuzzyAxiomsRule5 = min(fuzzyRule5);
+        var fuzzyAxiomsRule6 = min(fuzzyRule6);
+        var result = [fuzzyAxiomsRule1, fuzzyAxiomsRule2, fuzzyAxiomsRule3,
+            fuzzyAxiomsRule4, fuzzyAxiomsRule5, fuzzyAxiomsRule6];
+        //Disjunction
+        return max(result);
+    }
+
+    function min(valueList) {
+        var minValue = valueList[0];
+        for (var i = 0; i < x.length; i++) {
+            if (valueList[i] < minValue)
+                minValue = valueList[i];
+        }
+        return minValue;
+    }
+
+    function max(valueList) {
+        var maxValue = valueList[0];
+        for (var i = 0; i < x.length; i++) {
+            if (valueList[i] > maxValue)
+                maxValue = valueList[i];
+        }
+        return maxValue;
+    }
+
+    //w: 1500; h: 700
+    //playre w: 80; h: 80
+    //ai w: 100; h: 100
+    function distanceFuzzySets(x) {
+        var value;
+        var finalResult = [];
+
+        //very near
+        var x0 = 80.0, x1 = 160.0;
+        if (x <= x0)
+            value = 1.0;
+        else if (x > x0 && x < x1)
+            value = (-x / (x1 - x0)) + (x1 / (x1 - x0));
+        else
+            value = 0.0;
+        finalResult.push(value);
+
+        //near
+        var x2 = 240.0; x3 = 320.0;
+        if (x <= x0)
+            value = 0.0;
+        else if (x > x0 && x < x1)
+            value = (x / (x1 - x0)) - (x0 / (x1 - x0));
+        else if (x >= x1 && x <= x2)
+            value = 1.0;
+        else if (x > x2 && x < x3)
+            value = (-x / (x3 - x2)) + (x3 / (x3 - x2));
+        else
+            value = 0.0
+        finalResult.push(value);
+
+        //far
+        x0 = 240.0; x1 = 320.0; x2 = 400.0; x3 = 480.0;
+        if (x <= x0)
+            value = 0.0;
+        else if (x > x0 && x < x1)
+            value = (x / (x1 - x0)) - (x0 / (x1 - x0));
+        else if (x >= x1 && x <= x2)
+            value = 1.0;
+        else if (x > x2 && x < x3)
+            value = (-x / (x3 - x2)) + (x3 / (x3 - x2));
+        else
+            value = 0.0
+        finalResult.push(value);
+
+        //very far
+        x0 = 400.0; x1 = 480.0;
+        if (x <= x0)
+            value = 0.0;
+        else if (x > x0 && x < x1)
+            value = (x / (x1 - x0)) - (x0 / (x1 - x0));
+        else
+            value = 1.0;
+        finalResult.push(value);
+
+        return finalResult;
+    }
+
+    function hpFuzzySets(x) {
+        var value;
+        var finalResult = [];
+
+        //dying
+        var x0 = 20.0, x1 = 40.0, x2 = 60.0, x3 = 80.0;
+        if (x <= x0)
+            value = 1.0;
+        else if (x > x0 && x < x1)
+            value = (-x / (x1 - x0)) + (x1 / (x1 - x0));
+        else
+            value = 0.0;
+        finalResult.push(value);
+
+        //injured
+        if (x <= x0)
+            value = 0.0;
+        else if (x > x0 && x < x1)
+            value = (x / (x1 - x0)) - (x0 / (x1 - x0));
+        else if (x >= x1 && x <= x2)
+            value = 1.0;
+        else if (x > x2 && x < x3)
+            value = (-x / (x3 - x2)) + (x3 / (x3 - x2));
+        else
+            value = 0.0
+        finalResult.push(value);
+
+        //healthy
+        x0 = 60.0; x1 = 80.0;
+        if (x <= x0)
+            value = 0.0;
+        else if (x > x0 && x < x1)
+            value = (x / (x1 - x0)) - (x0 / (x1 - x0));
+        else
+            value = 1.0;
+        finalResult.push(value);
+
+        return finalResult;
+    }
+
+    function mpFuzzySets(x) {
+        var value;
+        var finalResult = [];
+
+        //low
+        var x0 = 20.0, x1 = 40.0, x2 = 60.0, x3 = 80.0;
+        if (x <= x0)
+            value = 1.0;
+        else if (x > x0 && x < x1)
+            value = (-x / (x1 - x0)) + (x1 / (x1 - x0));
+        else
+            value = 0.0;
+        finalResult.push(value);
+
+        //middle
+        if (x <= x0)
+            value = 0.0;
+        else if (x > x0 && x < x1)
+            value = (x / (x1 - x0)) - (x0 / (x1 - x0));
+        else if (x >= x1 && x <= x2)
+            value = 1.0;
+        else if (x > x2 && x < x3)
+            value = (-x / (x3 - x2)) + (x3 / (x3 - x2));
+        else
+            value = 0.0
+        finalResult.push(value);
+
+        //high
+        x0 = 60.0; x1 = 80.0;
+        if (x <= x0)
+            value = 0.0;
+        else if (x > x0 && x < x1)
+            value = (x / (x1 - x0)) - (x0 / (x1 - x0));
+        else
+            value = 1.0;
+        finalResult.push(value);
+
+        return finalResult;
+    }
+
     function setFace(obj) {
         if (playerObject.posX > obj.posX) {
-            faceCountL = 0;
             obj.face = faceRight;
-            if (faceCountR == 0) {
-                obj.imageX = 0;
-                obj.imageY = 0;
-                faceCountR++;
-            }
         }
         else if (playerObject.posX < obj.posX) {
-            faceCountR = 0;
             obj.face = faceLeft;
-            if (faceCountL == 0) {
-                obj.imageX = 325;
-                obj.imageY = 80;
-                faceCountL++;
-            }
         }
     }
 
@@ -252,7 +604,7 @@ if (ctx) {
             if (chaseType == "basicChase") {
                 chase(aiObject);
             }
-            else if (chaseType == "horizontalChase") {
+            else if (chaseType == "verticalChase") {
                 verticalChase(aiObject);
             }
             else if (chaseType == "returnOriginPos") {
