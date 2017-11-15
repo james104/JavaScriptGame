@@ -120,36 +120,36 @@ if (ctx) {
     var action = ["basicChase", "escape", "shortAttack", "longAttack", "drinkMilk"];
 
     ai5.shortAttackLeftXy["x1"] = 0, ai5.shortAttackLeftXy["y1"] = 160,
-        ai5.shortAttackLeftXy["x2"] = 80, ai5.shortAttackLeftXy["y2"] = 160,
-        ai5.shortAttackLeftXy["x3"] = 160, ai5.shortAttackLeftXy["y3"] = 160,
-        ai5.shortAttackLeftXy["x4"] = 240, ai5.shortAttackLeftXy["y4"] = 160;
+    ai5.shortAttackLeftXy["x2"] = 80, ai5.shortAttackLeftXy["y2"] = 160,
+    ai5.shortAttackLeftXy["x3"] = 160, ai5.shortAttackLeftXy["y3"] = 160,
+    ai5.shortAttackLeftXy["x4"] = 240, ai5.shortAttackLeftXy["y4"] = 160;
     ai5.shortAttackRightXy["x1"] = 400, ai5.shortAttackRightXy["y1"] = 0,
-        ai5.shortAttackRightXy["x2"] = 480, ai5.shortAttackRightXy["y2"] = 0,
-        ai5.shortAttackRightXy["x3"] = 560, ai5.shortAttackRightXy["y3"] = 0,
-        ai5.shortAttackRightXy["x4"] = 640, ai5.shortAttackRightXy["y4"] = 0;
+    ai5.shortAttackRightXy["x2"] = 480, ai5.shortAttackRightXy["y2"] = 0,
+    ai5.shortAttackRightXy["x3"] = 560, ai5.shortAttackRightXy["y3"] = 0,
+    ai5.shortAttackRightXy["x4"] = 640, ai5.shortAttackRightXy["y4"] = 0;
 
     ai5.walkLeftXy["x1"] = 570, ai5.walkLeftXy["y1"] = 80,
-        ai5.walkLeftXy["x2"] = 490, ai5.walkLeftXy["y2"] = 80,
-        ai5.walkLeftXy["x3"] = 410, ai5.walkLeftXy["y3"] = 80,
-        ai5.walkLeftXy["x4"] = 330, ai5.walkLeftXy["y4"] = 80;
+    ai5.walkLeftXy["x2"] = 490, ai5.walkLeftXy["y2"] = 80,
+    ai5.walkLeftXy["x3"] = 410, ai5.walkLeftXy["y3"] = 80,
+    ai5.walkLeftXy["x4"] = 330, ai5.walkLeftXy["y4"] = 80;
     ai5.walkRightXy["x1"] = 80, ai5.walkRightXy["y1"] = 0,
-        ai5.walkRightXy["x2"] = 160, ai5.walkRightXy["y2"] = 0,
-        ai5.walkRightXy["x3"] = 240, ai5.walkRightXy["y3"] = 0,
-        ai5.walkRightXy["x4"] = 320, ai5.walkRightXy["y4"] = 0;
+    ai5.walkRightXy["x2"] = 160, ai5.walkRightXy["y2"] = 0,
+    ai5.walkRightXy["x3"] = 240, ai5.walkRightXy["y3"] = 0,
+    ai5.walkRightXy["x4"] = 320, ai5.walkRightXy["y4"] = 0;
 
     ai5.longAttackLeftXy["x1"] = 410, ai5.longAttackLeftXy["y1"] = 160,
-        ai5.longAttackLeftXy["x2"] = 490, ai5.longAttackLeftXy["y2"] = 160,
-        ai5.longAttackLeftXy["x3"] = 570, ai5.longAttackLeftXy["y3"] = 160,
-        ai5.longAttackLeftXy["x4"] = 650, ai5.longAttackLeftXy["y4"] = 160;
+    ai5.longAttackLeftXy["x2"] = 490, ai5.longAttackLeftXy["y2"] = 160,
+    ai5.longAttackLeftXy["x3"] = 570, ai5.longAttackLeftXy["y3"] = 160,
+    ai5.longAttackLeftXy["x4"] = 650, ai5.longAttackLeftXy["y4"] = 160;
     ai5.longAttackRightXy["x1"] = 0, ai5.longAttackRightXy["y1"] = 80,
-        ai5.longAttackRightXy["x2"] = 80, ai5.longAttackRightXy["y2"] = 80,
-        ai5.longAttackRightXy["x3"] = 160, ai5.longAttackRightXy["y3"] = 80,
-        ai5.longAttackRightXy["x4"] = 240, ai5.longAttackRightXy["y4"] = 80;
+    ai5.longAttackRightXy["x2"] = 80, ai5.longAttackRightXy["y2"] = 80,
+    ai5.longAttackRightXy["x3"] = 160, ai5.longAttackRightXy["y3"] = 80,
+    ai5.longAttackRightXy["x4"] = 240, ai5.longAttackRightXy["y4"] = 80;
 
     ai5.emissionAnimateXy["x1"] = 0, ai5.emissionAnimateXy["y1"] = 870,
-        ai5.emissionAnimateXy["x2"] = 40, ai5.emissionAnimateXy["y2"] = 870,
-        ai5.emissionAnimateXy["x3"] = 80, ai5.emissionAnimateXy["y3"] = 870,
-        ai5.emissionAnimateXy["x4"] = 120, ai5.emissionAnimateXy["y4"] = 870;
+    ai5.emissionAnimateXy["x2"] = 40, ai5.emissionAnimateXy["y2"] = 870,
+    ai5.emissionAnimateXy["x3"] = 80, ai5.emissionAnimateXy["y3"] = 870,
+    ai5.emissionAnimateXy["x4"] = 120, ai5.emissionAnimateXy["y4"] = 870;
 
     chaseSpeed = "";
     chaseType = "";
@@ -171,7 +171,7 @@ if (ctx) {
         if (!ai5.attackLaunched) {
             if (attackType == 1) {
                 ai5.attackFinished = false;
-                chaseSpeed = "normal";
+                chaseSpeed = "slow";
                 chaseType = "basicChase";
             }
             else if (attackType == 2) {
@@ -183,7 +183,7 @@ if (ctx) {
             aiChase(chaseSpeed, chaseType, ai5);
         }
         //draw(ai);
-
+        console.log(ai5.posX + " " + ai5.posY);
 
         //1.aiAttackCall function is call for short or long attack for ai
         //change the attackLeft and attackRight array for short and long attack
