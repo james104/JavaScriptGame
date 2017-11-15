@@ -21,7 +21,7 @@ canvasElement.height = "700";
 canvasElement.style.background = "url(img/newBackground.bmp)";
 canvasElement.style.backgroundSize = "cover";
 var ctx = canvasElement.getContext && canvasElement.getContext('2d');
-var stage = 5;
+var stage = 4;
 
 //--- 1 end of canvas ---//
 
@@ -1083,6 +1083,11 @@ if (ctx) {
         console.log("consumption: " + consumption);
     }
 
+    //Gaussian Randomness
+    function gRand() {
+        var p = Math.random() + Math.random() + Math.random();
+        return Math.round((p / 3) * 10);
+    }
     // reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
     // reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
 
