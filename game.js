@@ -108,7 +108,7 @@ if (ctx) {
     
     ai5 = new aiObject(325, 80, 80, 80, 900, 400, 100, 100, playerObject.speed);
     var currAction = "";
-    var action = ["basicChase", "shortAttack", "longAttack"];
+    var action = ["basicChase", "escape", "shortAttack", "longAttack", "drinkMilk"];
 
     ai5.shortAttackLeftXy["x1"] = 0, ai5.shortAttackLeftXy["y1"] = 160,
     ai5.shortAttackLeftXy["x2"] = 80, ai5.shortAttackLeftXy["y2"] = 160,
@@ -168,7 +168,7 @@ if (ctx) {
             else if (attackType == 2) {
                 ai5.attackFinished = false;
                 chaseSpeed = "slow";
-                chaseType = "horizontalChase";
+                chaseType = "verticalChase";
             }
     
             aiChase(chaseSpeed, chaseType, ai5);
@@ -180,6 +180,203 @@ if (ctx) {
         var distance;
         distance = Math.sqrt(Math.pow((aiObj.posX - playerObject.posX), 2) + Math.pow((aiObj.posY - playerObject.posY), 2));
         return Math.round(distance);
+    }
+
+    function drinkMilkFuzzyRules(distanceFuzzySets, hpFuzzySets, mpFuzzySets) {
+
+        var veryNearValue = distanceFuzzySets[0];
+        var nearValue = distanceFuzzySets[1];
+        var farValue = distanceFuzzySets[2];
+        var veryFarValue = distanceFuzzySets[3];
+        var dyingValue = hpFuzzySets[0];
+        var injuredValue = hpFuzzySets[1];
+        var healthyValue = hpFuzzySets[2];
+        var lowMpValue = mpFuzzySets[0];
+        var midMpValue = mpFuzzySets[1];
+        var highMpValue = mpFuzzySets[2];
+
+        //rules
+
+        var fuzzyRule1 = [nearValue, dyingValue, midMpValue];
+        var fuzzyRule2 = [nearValue, dyingValue, highMpValue];
+        var fuzzyRule3 = [farValue, dyingValue, midMpValue];
+        var fuzzyRule4 = [farValue, dyingValue, highMpValue];
+        var fuzzyRule5 = [veryFarValue, dyingValue, midMpValue];
+        var fuzzyRule6 = [veryFarValue, dyingValue, highMpValue];
+
+        //Conjunction
+        var fuzzyAxiomsRule1 = min(fuzzyRule1);
+        var fuzzyAxiomsRule2 = min(fuzzyRule2);
+        var fuzzyAxiomsRule3 = min(fuzzyRule3);
+        var fuzzyAxiomsRule4 = min(fuzzyRule4);
+        var fuzzyAxiomsRule5 = min(fuzzyRule5);
+        var fuzzyAxiomsRule6 = min(fuzzyRule6);
+        var result = [fuzzyAxiomsRule1, fuzzyAxiomsRule2, fuzzyAxiomsRule3,
+                        fuzzyAxiomsRule4, fuzzyAxiomsRule5, fuzzyAxiomsRule6];
+        //Disjunction
+        return max(result);
+    }
+
+    function escapeFuzzyRules(distanceFuzzySets, hpFuzzySets, mpFuzzySets) {
+
+        var veryNearValue = distanceFuzzySets[0];
+        var nearValue = distanceFuzzySets[1];
+        var farValue = distanceFuzzySets[2];
+        var veryFarValue = distanceFuzzySets[3];
+        var dyingValue = hpFuzzySets[0];
+        var injuredValue = hpFuzzySets[1];
+        var healthyValue = hpFuzzySets[2];
+        var lowMpValue = mpFuzzySets[0];
+        var midMpValue = mpFuzzySets[1];
+        var highMpValue = mpFuzzySets[2];
+
+        //rules
+        var fuzzyRule1 = [veryNearValue, dyingValue, lowMpValue];
+        var fuzzyRule2 = [veryNearValue, dyingValue, midMpValue];
+        var fuzzyRule3 = [veryNearValue, dyingValue, highMpValue];
+        var fuzzyRule4 = [nearValue, dyingValue, lowMpValue];
+        var fuzzyRule5 = [farValue, dyingValue, lowMpValue];
+        var fuzzyRule6 = [veryFarValue, dyingValue, lowMpValue];
+
+        //Conjunction
+        var fuzzyAxiomsRule1 = min(fuzzyRule1);
+        var fuzzyAxiomsRule2 = min(fuzzyRule2);
+        var fuzzyAxiomsRule3 = min(fuzzyRule3);
+        var fuzzyAxiomsRule4 = min(fuzzyRule4);
+        var fuzzyAxiomsRule5 = min(fuzzyRule5);
+        var fuzzyAxiomsRule6 = min(fuzzyRule6);
+        var result = [fuzzyAxiomsRule1, fuzzyAxiomsRule2, fuzzyAxiomsRule3,
+                        fuzzyAxiomsRule4, fuzzyAxiomsRule5, fuzzyAxiomsRule6];
+        //Disjunction
+        return max(result);
+    }
+
+    function longAttackFuzzyRules(distanceFuzzySets, hpFuzzySets, mpFuzzySets) {
+
+        var nearValue = distanceFuzzySets[1];
+        var farValue = distanceFuzzySets[2];
+        var veryFarValue = distanceFuzzySets[3];
+        var dyingValue = hpFuzzySets[0];
+        var injuredValue = hpFuzzySets[1];
+        var healthyValue = hpFuzzySets[2];
+        var lowMpValue = mpFuzzySets[0];
+        var midMpValue = mpFuzzySets[1];
+        var highMpValue = mpFuzzySets[2];
+
+        //rules
+        var fuzzyRule1 = [veryFarValue, injuredValue, highMpValue];
+        var fuzzyRule2 = [veryFarValue, injuredValue, midMpValue];
+        var fuzzyRule3 = [veryFarValue, healthyValue, highMpValue];
+        var fuzzyRule4 = [veryFarValue, healthyValue, midMpValue];
+        var fuzzyRule5 = [farValue, healthyValue, highMpValue];
+        var fuzzyRule6 = [farValue, healthyValue, midMpValue];
+        var fuzzyRule7 = [farValue, injuredValue, highMpValue];
+        var fuzzyRule8 = [farValue, injuredValue, midMpValue];
+        //Conjunction
+        var fuzzyAxiomsRule1 = min(fuzzyRule1);
+        var fuzzyAxiomsRule2 = min(fuzzyRule2);
+        var fuzzyAxiomsRule3 = min(fuzzyRule3);
+        var fuzzyAxiomsRule4 = min(fuzzyRule4);
+        var fuzzyAxiomsRule5 = min(fuzzyRule5);
+        var fuzzyAxiomsRule6 = min(fuzzyRule6);
+        var fuzzyAxiomsRule7 = min(fuzzyRule7);
+        var fuzzyAxiomsRule8 = min(fuzzyRule8);
+        var result = [fuzzyAxiomsRule1, fuzzyAxiomsRule2, fuzzyAxiomsRule3,
+                        fuzzyAxiomsRule4, fuzzyAxiomsRule5, fuzzyAxiomsRule6,
+                        fuzzyAxiomsRule7, fuzzyAxiomsRule8];
+        //Disjunction
+        return max(result);
+    }
+
+    function basicChaseFuzzyRules(distanceFuzzySets, hpFuzzySets, mpFuzzySets) {
+
+        var nearValue = distanceFuzzySets[1];
+        var farValue = distanceFuzzySets[2];
+        var veryFarValue = distanceFuzzySets[3];
+        var dyingValue = hpFuzzySets[0];
+        var injuredValue = hpFuzzySets[1];
+        var healthyValue = hpFuzzySets[2];
+        var lowMpValue = mpFuzzySets[0];
+        var midMpValue = mpFuzzySets[1];
+        var highMpValue = mpFuzzySets[2];
+
+        //rules
+        var fuzzyRule1 = [nearValue, healthyValue, highMpValue];
+        var fuzzyRule2 = [nearValue, healthyValue, midMpValue];
+        var fuzzyRule3 = [nearValue, healthyValue, lowMpValue];
+        var fuzzyRule4 = [nearValue, injuredValue, lowMpValue];
+        var fuzzyRule5 = [nearValue, injuredValue, highMpValue];
+        var fuzzyRule6 = [nearValue, injuredValue, midMpValue];
+        var fuzzyRule7 = [farValue, healthyValue, lowMpValue];
+        var fuzzyRule8 = [farValue, injuredValue, lowMpValue];
+        var fuzzyRule9 = [veryFarValue, injuredValue, lowMpValue];
+        var fuzzyRule10 = [veryFarValue, healthyValue, lowMpValue]
+
+        //Conjunction
+        var fuzzyAxiomsRule1 = min(fuzzyRule1);
+        var fuzzyAxiomsRule2 = min(fuzzyRule2);
+        var fuzzyAxiomsRule3 = min(fuzzyRule3);
+        var fuzzyAxiomsRule4 = min(fuzzyRule4);
+        var fuzzyAxiomsRule5 = min(fuzzyRule5);
+        var fuzzyAxiomsRule6 = min(fuzzyRule6);
+        var fuzzyAxiomsRule7 = min(fuzzyRule7);
+        var fuzzyAxiomsRule8 = min(fuzzyRule8);
+        var fuzzyAxiomsRule9 = min(fuzzyRule9);
+        var fuzzyAxiomsRule10 = min(fuzzyRule10);
+        var result = [fuzzyAxiomsRule1, fuzzyAxiomsRule2, fuzzyAxiomsRule3,
+                        fuzzyAxiomsRule4, fuzzyAxiomsRule5, fuzzyAxiomsRule6,
+                        fuzzyAxiomsRule7, fuzzyAxiomsRule8, fuzzyAxiomsRule9,
+                        fuzzyAxiomsRule10];
+        //Disjunction
+        return max(result);
+    }
+
+    function shortAttackFuzzyRules(distanceFuzzySets, hpFuzzySets, mpFuzzySets) {
+
+        var veryNearValue = distanceFuzzySets[0];
+        var dyingValue = hpFuzzySets[0];
+        var injuredValue = hpFuzzySets[1];
+        var healthyValue = hpFuzzySets[2];
+        var lowMpValue = mpFuzzySets[0];
+        var midMpValue =mpFuzzySets[1];
+        var highMpValue = mpFuzzySets[2];
+
+        //rules
+        var fuzzyRule1 = [veryNearValue, injuredValue, highMpValue];
+        var fuzzyRule2 = [veryNearValue, injuredValue, midMpValue];
+        var fuzzyRule3 = [veryNearValue, injuredValue, lowMpValue];
+        var fuzzyRule4 = [veryNearValue, healthyValue, highMpValue];
+        var fuzzyRule5 = [veryNearValue, healthyValue, midMpValue];
+        var fuzzyRule6 = [veryNearValue, healthyValue, lowMpValue];
+        //Conjunction
+        var fuzzyAxiomsRule1 = min(fuzzyRule1);
+        var fuzzyAxiomsRule2 = min(fuzzyRule2);
+        var fuzzyAxiomsRule3 = min(fuzzyRule3);
+        var fuzzyAxiomsRule4 = min(fuzzyRule4);
+        var fuzzyAxiomsRule5 = min(fuzzyRule5);
+        var fuzzyAxiomsRule6 = min(fuzzyRule6);
+        var result = [fuzzyAxiomsRule1, fuzzyAxiomsRule2, fuzzyAxiomsRule3,
+                        fuzzyAxiomsRule4, fuzzyAxiomsRule5, fuzzyAxiomsRule6];
+        //Disjunction
+        return max(result);
+    }
+
+    function min(valueList) {
+        var minValue = valueList[0];
+        for (var i = 0; i < x.length ; i++){
+            if (valueList[i] < minValue)
+                minValue = valueList[i];
+        }
+        return minValue;
+    }
+
+    function max(valueList) {
+        var maxValue = valueList[0];
+        for (var i = 0; i < x.length ; i++) {
+            if (valueList[i] > maxValue)
+                maxValue = valueList[i];
+        }
+        return maxValue;
     }
 
     //w: 1500; h: 700
@@ -280,6 +477,46 @@ if (ctx) {
         return finalResult;
     }
 
+    function mpFuzzySets(x) {
+        var value;
+        var finalResult = [];
+
+        //low
+        var x0 = 20.0, x1 = 40.0, x2 = 60.0, x3 = 80.0;
+        if (x <= x0)
+            value = 1.0;
+        else if (x > x0 && x < x1)
+            value = (-x / (x1 - x0)) + (x1 / (x1 - x0));
+        else
+            value = 0.0;
+        finalResult.push(value);
+
+        //middle
+        if (x <= x0)
+            value = 0.0;
+        else if (x > x0 && x < x1)
+            value = (x / (x1 - x0)) - (x0 / (x1 - x0));
+        else if (x >= x1 && x <= x2)
+            value = 1.0;
+        else if (x > x2 && x < x3)
+            value = (-x / (x3 - x2)) + (x3 / (x3 - x2));
+        else
+            value = 0.0
+        finalResult.push(value);
+
+        //high
+        x0 = 60.0; x1 = 80.0;
+        if (x <= x0)
+            value = 0.0;
+        else if (x > x0 && x < x1)
+            value = (x / (x1 - x0)) - (x0 / (x1 - x0));
+        else
+            value = 1.0;
+        finalResult.push(value);
+
+        return finalResult;
+    }
+
     faceCountR = 0;
     faceCountL = 0;
     function setFace(obj) {
@@ -342,7 +579,7 @@ if (ctx) {
             if (chaseType == "basicChase") {
                 chase(aiObject);
             }
-            else if (chaseType == "horizontalChase") {
+            else if (chaseType == "verticalChase") {
                 verticalChase(aiObject);
             }
             walkAnimation(image, aiObject.walkLeftXy, aiObject.walkRightXy, aiObject);    
