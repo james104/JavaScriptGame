@@ -517,27 +517,13 @@ if (ctx) {
         return finalResult;
     }
 
-    faceCountR = 0;
-    faceCountL = 0;
     function setFace(obj) {
         if (playerObject.posX > obj.posX) {
-            faceCountL = 0;
             obj.face = faceRight;
-            if (faceCountR == 0) {
-                obj.imageX = 0;
-                obj.imageY = 0;
-                faceCountR++;
-            }
         }
 
         else if (playerObject.posX < obj.posX) {
-            faceCountR = 0;
             obj.face = faceLeft;
-            if (faceCountL == 0) {
-                obj.imageX = 325;
-                obj.imageY = 80;
-                faceCountL++;
-            }
         }
     }
     
