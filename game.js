@@ -184,7 +184,7 @@ if (ctx) {
         }
         //draw(ai);
         //console.log(playerObject.posX + " " + playerObject.posY + " " + ai5.posX + " " + ai5.posY);
-
+        console.log(ai5.hp);
         //1.aiAttackCall function is call for short or long attack for ai
         //change the attackLeft and attackRight array for short and long attack
         //it will run the animation for you
@@ -831,7 +831,7 @@ if (ctx) {
         }, 15);
     }
 
-    function emissionObject(aiObject, emissionType = "horizontal") {
+    function emissionObject(aiObject, emissionType) {
         this.imageWidth = 40;
         this.imageHeight = 30;
         this.wantedWidth = 40;
@@ -996,7 +996,7 @@ if (ctx) {
         point["x4"] = posX + wantedWidth, point["y4"] = posY + wantedHeight;
 
         for (i = 1; i < 5; i++) {
-            if (point["x" + i] > targetObject.posX && point["x" + i] < targetObject.posX + targetObject.wantedWidth &&
+            if (point["x" + i] - 25 > targetObject.posX && point["x" + i] + 10 < targetObject.posX + targetObject.wantedWidth &&
                 point["y" + i] > targetObject.posY && point["y" + i] < targetObject.posY + targetObject.wantedHeight) {
                 return true;
             }
@@ -1032,29 +1032,29 @@ if (ctx) {
     }
 
     function reduceHp(object, damage) {
-        x = spriteStatusArr[object.name].hpX;
-        y = spriteStatusArr[object.name].hpY;
-        spriteHpTextX = x + spriteStatusW, spriteHpTextY = y + 15;
+        //x = spriteStatusArr[object.name].hpX;
+        //y = spriteStatusArr[object.name].hpY;
+        //spriteHpTextX = x + spriteStatusW, spriteHpTextY = y + 15;
 
-        clearPreviousImage(x, y, spriteStatusW + 40, spriteStatusH);
+        //clearPreviousImage(x, y, spriteStatusW + 40, spriteStatusH);
 
-        orignHp = spriteStatusArr[object.name].fullHp;
+        //orignHp = spriteStatusArr[object.name].fullHp;
         object.hp -= damage;
-        currHp = object.hp;
-        hpPercentage = currHp / orignHp;
+        //currHp = object.hp;
+        //hpPercentage = currHp / orignHp;
 
-        if (currHp <= 0) {
-            currHp = 0;
-            hpPercentage = 0;
-        }
+        //if (currHp <= 0) {
+        //    currHp = 0;
+        //    hpPercentage = 0;
+        //}
 
-        //for hp bar
-        ctx.fillStyle = hpColor;
-        ctx.fillRect(x, y, spriteStatusW * hpPercentage, spriteStatusH);
-        ctx.fillStyle = textColor;
-        ctx.fillText(currHp, spriteHpTextX, spriteHpTextY);
+        ////for hp bar
+        //ctx.fillStyle = hpColor;
+        //ctx.fillRect(x, y, spriteStatusW * hpPercentage, spriteStatusH);
+        //ctx.fillStyle = textColor;
+        //ctx.fillText(currHp, spriteHpTextX, spriteHpTextY);
 
-        console.log("damage: " + damage);
+        //console.log("damage: " + damage);
     }
 
     function reduceMp(object, consumption) {
@@ -1193,6 +1193,10 @@ if (ctx) {
 
             if (stage == 1 && shortAttackCollision(playerObject, aiDog)) {
                 reduceHp(aiDog, Math.floor(Math.random() * 10) + 1);
+            }
+
+            if (stage == 5 && shortAttackCollision(playerObject, ai5)) {
+                reduceHp(ai5, 10);
             }
 
             //user timeout to enable player attack
