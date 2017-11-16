@@ -576,6 +576,16 @@ if (ctx) {
         }, 1500);
     }
 
+    //slower short or long attack
+    function aiAttackCallSlow(image, attackLeftXy, attackRightXy, aiObject) {
+        aiObject.attackLaunched = true;
+        attackAnimation(image, attackLeftXy, attackRightXy, aiObject);
+        //user timeout to enable ai attack again
+        setTimeout(function () {
+            aiObject.attackLaunched = false;
+        }, 3000);
+    }
+
     //ai long attack
     // setInterval(function(){
     //     aiAttackCall(image, ai.longAttackLeftXy, ai.longAttackRightXy, ai);
@@ -849,7 +859,7 @@ if (ctx) {
                 this.posX += aiObject.wantedWidth + this.wantedWidth;
             }
             if (this.emissionType == "line") {
-                this.bAlgorithmLine = new bAlgorithmLine(this.posX, this.posY, playerObject.pox + (playerObject.wantedWidth / 2), playerObject.posY + (playerObject.wantedHeight / 2), this);
+                this.bAlgorithmLine = new bAlgorithmLine(this.posX, this.posY, playerObject.posX + (playerObject.wantedWidth / 2), playerObject.posY + (playerObject.wantedHeight / 2), this);
             }
         } else if (this.emissionType == "vertical") {
             this.posX = aiObject.posX + (this.wantedWidth / 2);
@@ -866,13 +876,17 @@ if (ctx) {
             if (emissionObject.emissionType == "horizontal") {
                 if (emissionObject.face == faceLeft) {
                     clearPreviousImage(emissionObject.posX, emissionObject.posY, emissionObject.wantedWidth + 20, emissionObject.wantedHeight);
-                } else if (emissionObject.face == faceRight) {
+                } else {
                     clearPreviousImage(emissionObject.posX - 20, emissionObject.posY, emissionObject.wantedWidth, emissionObject.wantedHeight);
                 }
             } else if (emissionObject.emissionType == "vertical") {
                 clearPreviousImage(emissionObject.posX, emissionObject.posY - 20, emissionObject.wantedWidth, emissionObject.wantedHeight);
             } else if (emissionObject.emissionType == "line") {
-
+                if (emissionObject.face == faceLeft) {
+                    clearPreviousImage(emissionObject.posX, emissionObject.posY - 20, emissionObject.wantedWidth + 20, emissionObject.wantedHeight + 20);
+                } else {
+                    clearPreviousImage(emissionObject.posX - 20, emissionObject.posY - 20, emissionObject.wantedWidth + 20, emissionObject.wantedHeight + 20);
+                }
             }
 
             emissionObject.repeat++;
@@ -894,16 +908,28 @@ if (ctx) {
             } else if (emissionObject.emissionType == "vertical") {
                 emissionObject.posY += emissionObject.speed;
             } else if (emissionObject.emissionType == "line") {
-                if(emissionObject.bAlgorithmLine.steep){
+                if (emissionObject.bAlgorithmLine.steep) {
                     emissionObject.posX = emissionObject.bAlgorithmLine.y;
-                    emissionObject.posY += emissionObject.speed;
-                }else{
-                    emissionObject.posX += emissionObject.speed;
+                    emissionObject.posY += 5;
+                } else {
+                    if (emissionObject.face == faceLeft) {
+                        emissionObject.posX -= 5;
+                    } else {
+                        emissionObject.posX += 5;
+                    }
                     emissionObject.posY = emissionObject.bAlgorithmLine.y;
                 }
                 emissionObject.bAlgorithmLine.error -= emissionObject.bAlgorithmLine.deltaY;
                 if (emissionObject.bAlgorithmLine.error < 0) {
-                    emissionObject.bAlgorithmLine.y += emissionObject.bAlgorithmLine.yStep;
+                    if (emissionObject.bAlgorithmLine.steep) {
+                        if(emissionObject.face == faceLeft){
+                            emissionObject.bAlgorithmLine.y += emissionObject.bAlgorithmLine.yStep - 4;
+                        }else{
+                            emissionObject.bAlgorithmLine.y += emissionObject.bAlgorithmLine.yStep + 4;
+                        }
+                    }else{
+                        emissionObject.bAlgorithmLine.y += emissionObject.bAlgorithmLine.yStep + 4;
+                    }
                     emissionObject.bAlgorithmLine.error += emissionObject.bAlgorithmLine.deltaX;
                 }
             }
@@ -926,13 +952,17 @@ if (ctx) {
                 if (emissionObject.emissionType == "horizontal") {
                     if (emissionObject.face == faceLeft) {
                         clearPreviousImage(emissionObject.posX, emissionObject.posY, emissionObject.wantedWidth + 20, emissionObject.wantedHeight);
-                    } else if (emissionObject.face == faceRight) {
+                    } else {
                         clearPreviousImage(emissionObject.posX - 20, emissionObject.posY, emissionObject.wantedWidth, emissionObject.wantedHeight);
                     }
                 } else if (emissionObject.emissionType == "vertical") {
                     clearPreviousImage(emissionObject.posX, emissionObject.posY - 20, emissionObject.wantedWidth, emissionObject.wantedHeight);
-                } else if (emissionObject.emissionType == "") {
-
+                } else if (emissionObject.emissionType == "line") {
+                    if (emissionObject.face == faceLeft) {
+                        clearPreviousImage(emissionObject.posX, emissionObject.posY, emissionObject.wantedWidth + 20, emissionObject.wantedHeight);
+                    } else {
+                        clearPreviousImage(emissionObject.posX - 20, emissionObject.posY, emissionObject.wantedWidth + 20, emissionObject.wantedHeight);
+                    }
                 }
                 clearInterval(intervalNo);
             }
@@ -1104,7 +1134,6 @@ if (ctx) {
     //Bresenham’s algorithm
     function bAlgorithmLine(x0, y0, x1, y1, emissionObject) {
         this.steep = (y0 > y1 ? y0 - y1 : y1 - y0) > (x0 > x1 ? x0 - x1 : x1 - x0);
-        this.collisionPosition = emissionObject.face == faceLeft ? 0 : 1500;
         if (this.steep) {
             //swap(x0, y0)
             x0 = x0 + y0;
@@ -1114,7 +1143,6 @@ if (ctx) {
             x1 = x1 + y1;
             y1 = x1 - y1;
             x1 = x1 - y1;
-            this.collisionPosition = 700;
         }
         if (x0 > x1) {
             //swap(x0, x1)
@@ -1126,10 +1154,22 @@ if (ctx) {
             y1 = y0 - y1;
             y0 = y0 - y1;
         }
+        this.x0 = x0;
+        this.y0 = y0;
+        this.x1 = x1;
+        this.y1 = y1;
         this.deltaX = x1 - x0;
         this.deltaY = y0 > y1 ? y0 - y1 : y1 - y0;
         this.error = this.deltaX / 2;
         this.yStep = y0 < y1 ? 1 : -1;
+        if (!this.steep) {
+            if (emissionObject.face == faceLeft) {
+                y0 = y0 + y1;
+                y1 = y0 - y1;
+                y0 = y0 - y1;
+            }
+            this.yStep = 1;
+        }
         this.y = y0;
         // for (i = x0; i < collisionPosition; i++) {
         //     steep ? console.log(y, i) : console.log(i, y);
@@ -1646,15 +1686,15 @@ if (ctx) {
             draw(object);
 
             if (!aiNinja.attackLaunched) {
-                aiAttackCall(playerImage, aiNinja.longAttackLeftXy, aiNinja.longAttackRightXy, aiNinja);
+                aiAttackCallSlow(playerImage, aiNinja.longAttackLeftXy, aiNinja.longAttackRightXy, aiNinja);
                 aiEmission = new emissionObject(aiNinja, "vertical");
-                aiAttackCall(playerImage, aiNinja.longAttackLeftXy, aiNinja.longAttackRightXy, aiNinja);
+                aiAttackCallSlow(playerImage, aiNinja.longAttackLeftXy, aiNinja.longAttackRightXy, aiNinja);
                 aiEmission = new emissionObject(aiNinja, "line");
             }
             if (!aiNinja2.attackLaunched) {
-                aiAttackCall(playerImage, aiNinja2.longAttackLeftXy, aiNinja2.longAttackRightXy, aiNinja2);
+                aiAttackCallSlow(playerImage, aiNinja2.longAttackLeftXy, aiNinja2.longAttackRightXy, aiNinja2);
                 aiEmission = new emissionObject(aiNinja2, "vertical");
-                aiAttackCall(playerImage, aiNinja2.longAttackLeftXy, aiNinja2.longAttackRightXy, aiNinja2);
+                aiAttackCallSlow(playerImage, aiNinja2.longAttackLeftXy, aiNinja2.longAttackRightXy, aiNinja2);
                 aiEmission = new emissionObject(aiNinja2, "line");
             }
             if (!aiNinja3.attackLaunched) {
@@ -1679,6 +1719,7 @@ if (ctx) {
             }
         });
 
+        //here
         // var ninjaAttackArr = [], i = 0;
         // while(ninjaAttackArr.length != 4){
         //     var tempNo = Math.floor(Math.random() * 5) + 3;
