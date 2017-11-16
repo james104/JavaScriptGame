@@ -959,9 +959,9 @@ if (ctx) {
                     clearPreviousImage(emissionObject.posX, emissionObject.posY - 20, emissionObject.wantedWidth, emissionObject.wantedHeight);
                 } else if (emissionObject.emissionType == "line") {
                     if (emissionObject.face == faceLeft) {
-                        clearPreviousImage(emissionObject.posX, emissionObject.posY, emissionObject.wantedWidth + 20, emissionObject.wantedHeight);
+                        clearPreviousImage(emissionObject.posX, emissionObject.posY - 20, emissionObject.wantedWidth + 20, emissionObject.wantedHeight + 20);
                     } else {
-                        clearPreviousImage(emissionObject.posX - 20, emissionObject.posY, emissionObject.wantedWidth + 20, emissionObject.wantedHeight);
+                        clearPreviousImage(emissionObject.posX - 20, emissionObject.posY - 20, emissionObject.wantedWidth + 20, emissionObject.wantedHeight + 20);
                     }
                 }
                 clearInterval(intervalNo);
