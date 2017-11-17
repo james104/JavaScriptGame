@@ -152,6 +152,8 @@ if (ctx) {
     ai5.emissionAnimateXy["x3"] = 80, ai5.emissionAnimateXy["y3"] = 870,
     ai5.emissionAnimateXy["x4"] = 120, ai5.emissionAnimateXy["y4"] = 870;
 
+    drawSpriteStatus(ai5);
+
     chaseSpeed = "";
     chaseType = "";
 
@@ -1033,29 +1035,29 @@ if (ctx) {
     }
 
     function reduceHp(object, damage) {
-        //x = spriteStatusArr[object.name].hpX;
-        //y = spriteStatusArr[object.name].hpY;
-        //spriteHpTextX = x + spriteStatusW, spriteHpTextY = y + 15;
+        x = spriteStatusArr[object.name].hpX;
+        y = spriteStatusArr[object.name].hpY;
+        spriteHpTextX = x + spriteStatusW, spriteHpTextY = y + 15;
 
-        //clearPreviousImage(x, y, spriteStatusW + 40, spriteStatusH);
+        clearPreviousImage(x, y, spriteStatusW + 40, spriteStatusH);
 
-        //orignHp = spriteStatusArr[object.name].fullHp;
+        orignHp = spriteStatusArr[object.name].fullHp;
         object.hp -= damage;
-        //currHp = object.hp;
-        //hpPercentage = currHp / orignHp;
+        currHp = object.hp;
+        hpPercentage = currHp / orignHp;
 
-        //if (currHp <= 0) {
-        //    currHp = 0;
-        //    hpPercentage = 0;
-        //}
+        if (currHp <= 0) {
+           currHp = 0;
+           hpPercentage = 0;
+        }
 
-        ////for hp bar
-        //ctx.fillStyle = hpColor;
-        //ctx.fillRect(x, y, spriteStatusW * hpPercentage, spriteStatusH);
-        //ctx.fillStyle = textColor;
-        //ctx.fillText(currHp, spriteHpTextX, spriteHpTextY);
+        //for hp bar
+        ctx.fillStyle = hpColor;
+        ctx.fillRect(x, y, spriteStatusW * hpPercentage, spriteStatusH);
+        ctx.fillStyle = textColor;
+        ctx.fillText(currHp, spriteHpTextX, spriteHpTextY);
 
-        //console.log("damage: " + damage);
+        console.log("damage: " + damage);
     }
 
     function reduceMp(object, consumption) {
