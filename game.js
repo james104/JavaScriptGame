@@ -117,7 +117,8 @@ if (ctx) {
 
     ai5 = new aiObject(325, 80, 80, 80, 900, 400, 100, 100, playerObject.speed);
     var currAction = "";
-    var action = ["basicChase", "escape", "shortAttack", "longAttack", "drinkMilk"];
+    //weight: 1.0 1.0 1.0 1.0 1.0
+    var action = ["drinkMilk", "escape", "basicChase", "shortAttack", "longAttack"];
 
     ai5.shortAttackLeftXy["x1"] = 0, ai5.shortAttackLeftXy["y1"] = 160,
     ai5.shortAttackLeftXy["x2"] = 80, ai5.shortAttackLeftXy["y2"] = 160,
@@ -184,7 +185,7 @@ if (ctx) {
         }
         //draw(ai);
         //console.log(playerObject.posX + " " + playerObject.posY + " " + ai5.posX + " " + ai5.posY);
-        console.log(ai5.hp);
+        //console.log(ai5.hp);
         //1.aiAttackCall function is call for short or long attack for ai
         //change the attackLeft and attackRight array for short and long attack
         //it will run the animation for you
