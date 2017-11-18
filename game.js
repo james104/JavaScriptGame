@@ -21,7 +21,7 @@ canvasElement.height = "700";
 canvasElement.style.background = "url(img/newBackground.bmp)";
 canvasElement.style.backgroundSize = "cover";
 var ctx = canvasElement.getContext && canvasElement.getContext('2d');
-var stage = 4;
+var stage = 1;
 
 //--- 1 end of canvas ---//
 
@@ -913,12 +913,12 @@ if (ctx) {
                 emissionObject.bAlgorithmLine.error -= emissionObject.bAlgorithmLine.deltaY;
                 if (emissionObject.bAlgorithmLine.error < 0) {
                     if (emissionObject.bAlgorithmLine.steep) {
-                        if(emissionObject.face == faceLeft){
+                        if (emissionObject.face == faceLeft) {
                             emissionObject.bAlgorithmLine.y += emissionObject.bAlgorithmLine.yStep - 4;
-                        }else{
+                        } else {
                             emissionObject.bAlgorithmLine.y += emissionObject.bAlgorithmLine.yStep + 4;
                         }
-                    }else{
+                    } else {
                         emissionObject.bAlgorithmLine.y += emissionObject.bAlgorithmLine.yStep + 4;
                     }
                     emissionObject.bAlgorithmLine.error += emissionObject.bAlgorithmLine.deltaX;
@@ -1420,20 +1420,8 @@ if (ctx) {
     // 
     //     
     //--- 7 start of stage 1 ---//
-
-    //ai long attack
-    // setInterval(function(){
-    //     aiAttackCall(image, aiDog.longAttackLeftXy, aiDog.longAttackRightXy, aiDog);
-    //     aiEmission = new emissionObject(aiDog);
-    // },2000);
-
-    //ai short attack
-    // setInterval(function(){
-    //     aiAttackCall(image, aiDog.shortAttackLeftXy, aiDog.shortAttackRightXy, aiDog);
-    // },1000);
-
     function stage1Initial() {
-        aiDog = new aiObject(415, 2835, 65, 65, 900, 250, 65, 65, 3);
+        aiDog = new aiObject(415, 2835, 65, 65, 900, 250, 100, 100, 3);
         aiDog.originPosX = 900, aiDog.originPosY = 250;
         aiDog.originSpeed = aiDog.speed;
         aiDog.standXy["leftX"] = 415, aiDog.standXy["leftY"] = 2835;
@@ -1459,8 +1447,7 @@ if (ctx) {
             aiDog.shortAttackRightXy["x3"] = 215, aiDog.shortAttackRightXy["y3"] = 2750,
             aiDog.shortAttackRightXy["x4"] = 315, aiDog.shortAttackRightXy["y4"] = 2750;
 
-        //set the wanted width and height first
-        aiDog.shortAttackObject = new shortAttackObject(15, 15);
+        aiDog.shortAttackObject = new shortAttackObject(30, 30);
 
         aiDog.hp = 50;
         aiDog.mp = 0;
@@ -1480,17 +1467,15 @@ if (ctx) {
     function stage1Ai(aiObject, keyObject1) {
         clearImage(aiObject.posX, aiObject.posY, aiObject.wantedWidth, aiObject.wantedHeight);
         setFace(aiObject);
-        console.log(playerObject.speed + " " + aiObject.speed);
+        // console.log(playerObject.speed + " " + aiObject.speed);
         //here have some problem
         if (boundingBoxCollision(playerObject, aiObject)) {
-            playerObject.speed = 0;
-            aiObject.speed = 0;
+            playerObject.speed = 1;
         } else {
             playerObject.speed = playerObject.originSpeed;
-            aiObject.speed = aiObject.originSpeed;
         }
 
-        if (findDistanceBetweenPlayerAndAi(aiObject) <= 50) {
+        if (findDistanceBetweenPlayerAndAi(aiObject) <= 100) {
             if (!aiObject.attackLaunched) {
                 aiAttackCall(playerImage, aiObject.shortAttackLeftXy, aiObject.shortAttackRightXy, aiObject);
 
@@ -1519,7 +1504,6 @@ if (ctx) {
         }
         draw(aiObject);
     }
-
     //--- 7 end of stage 1 ---//
     // 
     // 
@@ -1543,10 +1527,7 @@ if (ctx) {
     // 
     //     
     //--- 10 start of stage 4 ---//
-
-
     function stage4Initial() {
-        //in background
         aiNinja = new aiObject(0, 0, 75, 82, 500, 100, 75, 82, 0);
         aiNinja.standXy["leftX"] = 78, aiNinja.standXy["leftY"] = 243;
         aiNinja.standXy["rightX"] = 0, aiNinja.standXy["rightY"] = 0;
@@ -1579,7 +1560,6 @@ if (ctx) {
             aiNinja2.emissionAnimateXy["x3"] = 80, aiNinja2.emissionAnimateXy["y3"] = 870,
             aiNinja2.emissionAnimateXy["x4"] = 120, aiNinja2.emissionAnimateXy["y4"] = 870;
 
-        //in field
         aiNinja3 = new aiObject(0, 0, 75, 82, 1400, 200, 75, 82, 0);
         aiNinja3.standXy["leftX"] = 78, aiNinja3.standXy["leftY"] = 243;
         aiNinja3.standXy["rightX"] = 0, aiNinja3.standXy["rightY"] = 0;
@@ -1662,7 +1642,6 @@ if (ctx) {
 
         aiObjectArr = [aiNinja, aiNinja2, aiNinja3, aiNinja4, aiNinja5, aiNinja6, aiNinja7];
 
-
         keyObject4 = new keyObject(1200, 450);
         keyInterval = setInterval(function () {
             if (boundingBoxCollision(playerObject, keyObject4)) {
@@ -1675,65 +1654,54 @@ if (ctx) {
     }
 
     function stage4Ai(aiObjectArr, keyObject4) {
-        aiObjectArr.forEach(function (object, index) {
-            clearImage(object.posX, object.posY, object.wantedWidth, object.wantedHeight);
-            setFace(object);
-            draw(object);
+        var ninjaAttackOption = [3, 4, 5, 6, 7];
+        var range = ninjaAttackOption.length;
+        ninjaAttackOption.splice(Math.floor(Math.random() * range), 1);
 
-            if (!aiNinja.attackLaunched) {
-                aiAttackCallSlow(playerImage, aiNinja.longAttackLeftXy, aiNinja.longAttackRightXy, aiNinja);
-                aiEmission = new emissionObject(aiNinja, "vertical");
-                aiAttackCallSlow(playerImage, aiNinja.longAttackLeftXy, aiNinja.longAttackRightXy, aiNinja);
-                aiEmission = new emissionObject(aiNinja, "line");
+        aiObjectArr.forEach(function (aiObject, aiIndex) {
+            clearImage(aiObject.posX, aiObject.posY, aiObject.wantedWidth, aiObject.wantedHeight);
+            setFace(aiObject);
+            draw(aiObject);
+            aiObject.allowAttack = false;
+            if (ninjaAttackOption.indexOf(aiIndex + 1) != -1) {
+                aiObject.allowAttack = true;
             }
-            if (!aiNinja2.attackLaunched) {
-                aiAttackCallSlow(playerImage, aiNinja2.longAttackLeftXy, aiNinja2.longAttackRightXy, aiNinja2);
-                aiEmission = new emissionObject(aiNinja2, "vertical");
-                aiAttackCallSlow(playerImage, aiNinja2.longAttackLeftXy, aiNinja2.longAttackRightXy, aiNinja2);
-                aiEmission = new emissionObject(aiNinja2, "line");
-            }
-            if (!aiNinja3.attackLaunched) {
+        });
+        if (!aiNinja.attackLaunched) {
+            aiAttackCallSlow(playerImage, aiNinja.longAttackLeftXy, aiNinja.longAttackRightXy, aiNinja);
+            aiEmission = new emissionObject(aiNinja, "vertical");
+            aiAttackCallSlow(playerImage, aiNinja.longAttackLeftXy, aiNinja.longAttackRightXy, aiNinja);
+            aiEmission = new emissionObject(aiNinja, "line");
+        }
+        if (!aiNinja2.attackLaunched) {
+            aiAttackCallSlow(playerImage, aiNinja2.longAttackLeftXy, aiNinja2.longAttackRightXy, aiNinja2);
+            aiEmission = new emissionObject(aiNinja2, "vertical");
+            aiAttackCallSlow(playerImage, aiNinja2.longAttackLeftXy, aiNinja2.longAttackRightXy, aiNinja2);
+            aiEmission = new emissionObject(aiNinja2, "line");
+        }
+        if (!aiNinja3.attackLaunched && !aiNinja4.attackLaunched && !aiNinja5.attackLaunched && !aiNinja6.attackLaunched && !aiNinja7.attackLaunched) {
+            if (aiNinja3.allowAttack) {
                 aiAttackCall(playerImage, aiNinja3.longAttackLeftXy, aiNinja3.longAttackRightXy, aiNinja3);
                 aiEmission = new emissionObject(aiNinja3, "horizontal");
             }
-            if (!aiNinja4.attackLaunched) {
+            if (aiNinja4.allowAttack) {
                 aiAttackCall(playerImage, aiNinja4.longAttackLeftXy, aiNinja4.longAttackRightXy, aiNinja4);
                 aiEmission = new emissionObject(aiNinja4, "horizontal");
             }
-            if (!aiNinja5.attackLaunched) {
+            if (aiNinja5.allowAttack) {
                 aiAttackCall(playerImage, aiNinja5.longAttackLeftXy, aiNinja5.longAttackRightXy, aiNinja5);
                 aiEmission = new emissionObject(aiNinja5, "horizontal");
             }
-            if (!aiNinja6.attackLaunched) {
+            if (aiNinja6.allowAttack) {
                 aiAttackCall(playerImage, aiNinja6.longAttackLeftXy, aiNinja6.longAttackRightXy, aiNinja6);
                 aiEmission = new emissionObject(aiNinja6, "horizontal");
             }
-            if (!aiNinja7.attackLaunched) {
+            if (aiNinja7.allowAttack) {
                 aiAttackCall(playerImage, aiNinja7.longAttackLeftXy, aiNinja7.longAttackRightXy, aiNinja7);
                 aiEmission = new emissionObject(aiNinja7, "horizontal");
             }
-        });
-
-        //here
-        // var ninjaAttackArr = [], i = 0;
-        // while(ninjaAttackArr.length != 4){
-        //     var tempNo = Math.floor(Math.random() * 5) + 3;
-        //     if(!ninjaAttackArr.includes(tempNo)){
-        //         ninjaAttackArr[i] = tempNo;
-        //         i++;
-        //     }
-        // }
-        // ninjaAttackArr.forEach(function (object, index) {
-        //     clearImage(aiObjectArr[object].posX, aiObjectArr[object].posY, aiObjectArr[object].wantedWidth, aiObjectArr[object].wantedHeight);
-        //     setFace(aiObjectArr[object]);
-        //     draw(aiObjectArr[object]);
-        //     if (!aiObjectArr[object].attackLaunched) {
-        //         aiAttackCall(playerImage, aiObjectArr[object].longAttackLeftXy, aiObjectArr[object].longAttackRightXy, aiObjectArr[object]);
-        //         aiEmission = new emissionObject(aiObjectArr[object], "horizontal");
-        //     }
-        // });       
+        }
     }
-
     //--- 10 end of stage 4 ---//
     // 
     // 
@@ -1774,3 +1742,17 @@ if (ctx) {
         // if (shortAttackCollision(aiNinja5, playerObject)) {
         //     reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
         // }
+
+        function applyStage(stageNo){
+            clearInterval(keyInterval);
+            console.log(playerObject.speed);
+            stage = stageNo;
+            init();
+            ctx.clearRect(0,0,1500,700);
+            console.log(playerObject.speed);
+        }
+
+setTimeout(function(){
+    //applyStage(4);
+},3000);
+        
