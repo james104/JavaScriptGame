@@ -174,7 +174,7 @@ if (ctx) {
         // Randomly perform either 1) or 2) attack (every randomly 1-4s).
         //1: Faster, Chase (random within 2-4s), after that, Must perform short attack.
         //2: same speed, keep distance and Long attack (chase horizontally)        
-        if (false && !ai5.attackLaunched) {
+        if (true && !ai5.attackLaunched) {
             if (attackType == 1) {
                 ai5.attackFinished = false;
                 chaseSpeed = "slow";
