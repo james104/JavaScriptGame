@@ -117,7 +117,8 @@ if (ctx) {
 
     ai5 = new aiObject(325, 80, 80, 80, 900, 400, 100, 100, playerObject.speed);
     var currAction = "";
-    var action = ["basicChase", "escape", "shortAttack", "longAttack", "drinkMilk"];
+    //weight: 1.0 1.0 1.0 1.0 1.0
+    var action = ["drinkMilk", "escape", "basicChase", "shortAttack", "longAttack"];
 
     ai5.shortAttackLeftXy["x1"] = 0, ai5.shortAttackLeftXy["y1"] = 160,
         ai5.shortAttackLeftXy["x2"] = 80, ai5.shortAttackLeftXy["y2"] = 160,
@@ -127,6 +128,9 @@ if (ctx) {
         ai5.shortAttackRightXy["x2"] = 480, ai5.shortAttackRightXy["y2"] = 0,
         ai5.shortAttackRightXy["x3"] = 560, ai5.shortAttackRightXy["y3"] = 0,
         ai5.shortAttackRightXy["x4"] = 640, ai5.shortAttackRightXy["y4"] = 0;
+
+    ai5.standXy["leftX"] = 325, ai5.standXy["leftY"] = 80;
+    ai5.standXy["rightX"] = 0, ai5.standXy["rightY"] = 0;
 
     ai5.walkLeftXy["x1"] = 570, ai5.walkLeftXy["y1"] = 80,
         ai5.walkLeftXy["x2"] = 490, ai5.walkLeftXy["y2"] = 80,
@@ -151,6 +155,8 @@ if (ctx) {
         ai5.emissionAnimateXy["x3"] = 80, ai5.emissionAnimateXy["y3"] = 870,
         ai5.emissionAnimateXy["x4"] = 120, ai5.emissionAnimateXy["y4"] = 870;
 
+    //drawSpriteStatus(ai5);
+
     chaseSpeed = "";
     chaseType = "";
 
@@ -168,7 +174,7 @@ if (ctx) {
         // Randomly perform either 1) or 2) attack (every randomly 1-4s).
         //1: Faster, Chase (random within 2-4s), after that, Must perform short attack.
         //2: same speed, keep distance and Long attack (chase horizontally)        
-        if (!ai5.attackLaunched) {
+        if (true && !ai5.attackLaunched) {
             if (attackType == 1) {
                 ai5.attackFinished = false;
                 chaseSpeed = "slow";
@@ -179,41 +185,26 @@ if (ctx) {
                 chaseSpeed = "slow";
                 chaseType = "verticalChase";
             }
-
             aiChase(chaseSpeed, chaseType, ai5);
+        } else if (false && !ai5.attackLaunched) {
+            aiAttackCall(playerImage, ai5.shortAttackLeftXy, ai5.shortAttackRightXy, ai5);
+            ai5.shortAttackObject = new shortAttackObject(50, 50);
+            updateShortAttackObject(ai5.shortAttackObject, ai5.posX, ai5.posY + 50, ai5.posX + 50, ai5.posY + 50);
+            if (shortAttackCollision(ai5, playerObject)) {
+                reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+            }
+        } else if (false && !ai5.attackLaunched) {
+            aiAttackCall(playerImage, ai5.longAttackLeftXy, ai5.longAttackRightXy, ai5);
+            aiEmission = new emissionObject(ai5, "horizontal");
         }
-        //draw(ai);
-        console.log(ai5.posX + " " + ai5.posY);
-
-        //1.aiAttackCall function is call for short or long attack for ai
-        //change the attackLeft and attackRight array for short and long attack
-        //it will run the animation for you
-        //2.emissionObject is to create a long attack object, can apply horizontal or vertical attack for now
-        //set all the status of emissionObject and then run the emissionAnimation
-        //in emissionAnimation, it will also check the collision
-        //checkEmissionCollision if hit the player will reduce player hp
-        //!!! here launch one long attack here !!!
-        // aiAttackCall(playerImage, aiNinja5.longAttackLeftXy, aiNinja5.longAttackRightXy, aiNinja5);
-        // aiEmission = new emissionObject(aiNinja5, "horizontal");
-
-        //1.shortAttackObject create a short attack for ai or player
-        //set the wanted width and height for the attack collision area
-        //2.aiAttackCall function is call for short or long attack for ai
-        //3.updateShortAttackObject set start position x and y for collision when face left and right
-        //set small bounding box based on image attack animate
-        //4.shortAttackCollision pass the launch attack object and target object to check
-        //if return true reduce target object hp
-        //!!! here launch one short attack here !!!
-        // aiNinja5.shortAttackObject = new shortAttackObject(15, 15);
-        // aiAttackCall(playerImage, aiNinja5.shortAttackLeftXy, aiNinja5.shortAttackRightXy, aiNinja5);
-        //
-        // updateShortAttackObject(aiNinja5.shortAttackObject, aiNinja5.posX, aiNinja5.posY + 42, aiNinja5.posX + 55, aiNinja5.posY + 43);
-        // if (shortAttackCollision(aiNinja5, playerObject)) {
-        //     reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-        // }
-
-
-
+        else if (!ai5.attackLaunched) {
+            if (ai5.face == faceLeft) {
+                ai5.imageX = ai5.standXy["leftX"], ai5.imageY = ai5.standXy["leftY"];
+            } else {
+                ai5.imageX = ai5.standXy["rightX"], ai5.imageY = ai5.standXy["rightY"];
+            }
+        }
+        draw(ai5);
     }
 
     function findDistanceBetweenPlayerAndAi(aiObj) {
@@ -841,7 +832,7 @@ if (ctx) {
         }, 15);
     }
 
-    function emissionObject(aiObject, emissionType = "horizontal") {
+    function emissionObject(aiObject, emissionType) {
         this.imageWidth = 40;
         this.imageHeight = 30;
         this.wantedWidth = 40;
@@ -1036,7 +1027,7 @@ if (ctx) {
         point["x4"] = posX + wantedWidth, point["y4"] = posY + wantedHeight;
 
         for (i = 1; i < 5; i++) {
-            if (point["x" + i] > targetObject.posX && point["x" + i] < targetObject.posX + targetObject.wantedWidth &&
+            if (point["x" + i] - 25 > targetObject.posX && point["x" + i] + 10 < targetObject.posX + targetObject.wantedWidth &&
                 point["y" + i] > targetObject.posY && point["y" + i] < targetObject.posY + targetObject.wantedHeight) {
                 return true;
             }
@@ -1288,6 +1279,10 @@ if (ctx) {
 
             if (stage == 1 && shortAttackCollision(playerObject, aiDog)) {
                 reduceHp(aiDog, Math.floor(Math.random() * 10) + 1);
+            }
+
+            if (stage == 5 && shortAttackCollision(playerObject, ai5)) {
+                reduceHp(ai5, 10);
             }
 
             //user timeout to enable player attack
@@ -1749,3 +1744,33 @@ if (ctx) {
 
     //--- 11 end of stage 5 ---//
 }
+
+//draw(ai);
+        //console.log(playerObject.posX + " " + playerObject.posY + " " + ai5.posX + " " + ai5.posY);
+        //console.log(ai5.hp);
+        //1.aiAttackCall function is call for short or long attack for ai
+        //change the attackLeft and attackRight array for short and long attack
+        //it will run the animation for you
+        //2.emissionObject is to create a long attack object, can apply horizontal or vertical attack for now
+        //set all the status of emissionObject and then run the emissionAnimation
+        //in emissionAnimation, it will also check the collision
+        //checkEmissionCollision if hit the player will reduce player hp
+        //!!! here launch one long attack here !!!
+        // aiAttackCall(playerImage, aiNinja5.longAttackLeftXy, aiNinja5.longAttackRightXy, aiNinja5);
+        // aiEmission = new emissionObject(aiNinja5, "horizontal");
+
+        //1.shortAttackObject create a short attack for ai or player
+        //set the wanted width and height for the attack collision area
+        //2.aiAttackCall function is call for short or long attack for ai
+        //3.updateShortAttackObject set start position x and y for collision when face left and right
+        //set small bounding box based on image attack animate
+        //4.shortAttackCollision pass the launch attack object and target object to check
+        //if return true reduce target object hp
+        //!!! here launch one short attack here !!!
+        // aiNinja5.shortAttackObject = new shortAttackObject(15, 15);
+        // aiAttackCall(playerImage, aiNinja5.shortAttackLeftXy, aiNinja5.shortAttackRightXy, aiNinja5);
+        //
+        // updateShortAttackObject(aiNinja5.shortAttackObject, aiNinja5.posX, aiNinja5.posY + 42, aiNinja5.posX + 55, aiNinja5.posY + 43);
+        // if (shortAttackCollision(aiNinja5, playerObject)) {
+        //     reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+        // }
