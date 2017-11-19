@@ -21,7 +21,7 @@ canvasElement.height = "700";
 canvasElement.style.background = "url(img/newBackground.bmp)";
 canvasElement.style.backgroundSize = "cover";
 var ctx = canvasElement.getContext && canvasElement.getContext('2d');
-var stage = 4;
+var stage = 5;
 
 //--- 1 end of canvas ---//
 
@@ -157,7 +157,7 @@ if (ctx) {
         ai5.emissionAnimateXy["x3"] = 80, ai5.emissionAnimateXy["y3"] = 870,
         ai5.emissionAnimateXy["x4"] = 120, ai5.emissionAnimateXy["y4"] = 870;
 
-    //drawSpriteStatus(ai5);
+    drawSpriteStatus(ai5);
 
     chaseSpeed = "";
     chaseType = "";
