@@ -21,7 +21,7 @@ canvasElement.height = "700";
 canvasElement.style.background = "url(img/newBackground.bmp)";
 canvasElement.style.backgroundSize = "cover";
 var ctx = canvasElement.getContext && canvasElement.getContext('2d');
-var stage = 1;
+var stage = 4;
 
 //--- 1 end of canvas ---//
 
@@ -44,6 +44,8 @@ if (ctx) {
     var spriteStatusArr = [];
     ctx.font = "20px Arial";
     ctx.fillStyle = textColor;
+    var timeInterval, currentInterval, keyInterval;
+    var emissionArr = [];
 
     //--- 2 end of global_variable ---//
     // 
@@ -863,6 +865,8 @@ if (ctx) {
         //random to prevent same name of interval 
         var intervalNo = Math.floor(Math.random() * 100) + 1;
 
+        
+
         intervalNo = setInterval(function () {
             if (emissionObject.emissionType == "horizontal") {
                 if (emissionObject.face == faceLeft) {
@@ -926,6 +930,7 @@ if (ctx) {
             }
             checkEmissionCollision(emissionObject, playerObject, intervalNo);
         }, 50);
+        emissionArr[intervalNo] = intervalNo;
     }
 
     function checkEmissionCollision(emissionObject, playerObject, intervalNo) {
@@ -976,25 +981,12 @@ if (ctx) {
     }
 
     function boundingBoxCollision(playerObject, object) {
-        var point = [];
-        var posX = playerObject.posX, posY = playerObject.posY;
-        point["x1"] = posX, point["y1"] = posY;
-        point["x2"] = posX, point["y2"] = posY + playerObject.wantedHeight;
-        point["x3"] = posX + playerObject.wantedWidth, point["y3"] = posY;
-        point["x4"] = posX + playerObject.wantedWidth, point["y4"] = posY + playerObject.wantedHeight;
-
-        //add middle point checking for object smaller than playerObject
-        point["x5"] = posX + Math.round(playerObject.wantedWidth / 2), point["y5"] = playerObject.posY;
-        point["x6"] = posX + Math.round(playerObject.wantedWidth / 2), point["y6"] = playerObject.posY + playerObject.wantedHeight;
-        point["x7"] = posX, point["y7"] = playerObject.posY + Math.round(playerObject.wantedHeight / 2);
-        point["x8"] = posX + playerObject.wantedWidth, point["y8"] = playerObject.posY + Math.round(playerObject.wantedHeight / 2);
-
-        for (i = 1; i < 9; i++) {
-            if (point["x" + i] > object.posX && point["x" + i] < object.posX + object.wantedWidth &&
-                point["y" + i] > object.posY && point["y" + i] < object.posY + object.wantedHeight) {
-                clearPreviousImage(object.posX, object.posY, object.wantedWidth, object.wantedHeight);
-                return true;
-            }
+        if (playerObject.posX < object.posX + object.wantedWidth &&
+            playerObject.posX + playerObject.wantedWidth > object.posX &&
+            playerObject.posY < object.posY + object.wantedHeight &&
+            playerObject.wantedHeight + playerObject.posY > object.posY) {
+            clearPreviousImage(object.posX, object.posY, object.wantedWidth, object.wantedHeight);
+            return true;
         }
         return false;
     }
@@ -1114,6 +1106,17 @@ if (ctx) {
         console.log("consumption: " + consumption);
     }
 
+    function resetHpMp() {
+        spriteHpX = 150, spriteHpY = 20,
+            spriteMpX = spriteHpX, spriteMpY = spriteHpY + 20,
+            spriteStatusW = 200, spriteStatusH = 15,
+            spriteHpTextX = spriteHpX + spriteStatusW, spriteHpTextY = spriteHpY + 15,
+            spriteMpTextX = spriteHpTextX, spriteMpTextY = spriteHpTextY + 20;
+        playerObject.hp = 100;
+        playerObject.mp = 100;
+        drawSpriteStatus(playerObject);
+    }
+
     //Gaussian Randomness
     function gRand() {
         var p = Math.random() + Math.random() + Math.random();
@@ -1183,6 +1186,23 @@ if (ctx) {
         this.wantedHeight = 35;
     }
 
+    function applyStage(stageNo) {
+        // console.log(emissionArr.length);
+        emissionArr.forEach(function (object, index) {
+            clearInterval(object);
+        });
+        clearInterval(timeInterval);
+        clearInterval(currentInterval);
+        clearInterval(keyInterval);
+        
+        ctx.clearRect(0, 0, 1500, 700);
+        stage = stageNo;
+        resetHpMp();
+        playerObject.posX = 100;
+        playerObject.posY = 400;
+        init();
+    }
+
     //--- 3 end of global_function ---//
     //     
     //     
@@ -1213,7 +1233,7 @@ if (ctx) {
         this.attackAnimte = 1;
         this.attackRepeat = 0;
         this.keyGet = false;
-        this.shortAttackObject = new shortAttackObject(35, 20);
+        this.shortAttackObject = new shortAttackObject(50, 25);
     }
     playerObject = new playerObject();
 
@@ -1255,6 +1275,25 @@ if (ctx) {
 
     //record player input
     document.onkeydown = function (key) {
+        switch (key.keyCode) {
+            case 49:
+                applyStage(1);
+                break;
+            case 50:
+                applyStage(2);
+                break;
+            case 51:
+                applyStage(3);
+                break;
+            case 52:
+                applyStage(4);
+                break;
+            case 53:
+                applyStage(5);
+                break;
+            default:
+                break;
+        }
         //key.returnValue = false;
         if (key.keyCode != 90 || keyStatus[90] != false) {
             keyStatus[key.keyCode] = true;
@@ -1270,14 +1309,18 @@ if (ctx) {
     function playerAction() {
         clearPreviousImage(playerObject.posX, playerObject.posY, playerObject.imageWidth, playerObject.imageHeight);
 
+        if (playerObject.hp <= 0) {
+            applyStage(stage);
+        }
+
         if (keyStatus[90] && !playerObject.shortAttackLaunched) {//Z(attack)
             playerObject.shortAttackLaunched = true;
             attackAnimation(playerImage, playerAttackLeftXy, playerAttackRightXy, playerObject);
 
-            //set small bounding box based on image attack animate 160 445 535 285
-            updateShortAttackObject(playerObject.shortAttackObject, playerObject.posX, playerObject.posY + 42, playerObject.posX + 55, playerObject.posY + 43);
+            //set small bounding box based on image attack animate 160 445 535 285    140 440 530 280 484 243
+            updateShortAttackObject(playerObject.shortAttackObject, playerObject.posX - 20, playerObject.posY + 40, playerObject.posX + 50, playerObject.posY + 40);
 
-            if (stage == 1 && shortAttackCollision(playerObject, aiDog)) {
+            if (stage == 1 && boundingBoxCollision(playerObject, aiDog)) {
                 reduceHp(aiDog, Math.floor(Math.random() * 10) + 1);
             }
 
@@ -1358,7 +1401,7 @@ if (ctx) {
 
     function init() {
         var gameStatus = "start";
-        setInterval(timerFunction, 1000);
+        timeInterval = setInterval(timerFunction, 1000);
         switch (stage) {
             case 1:
                 stage1Initial();
@@ -1376,7 +1419,7 @@ if (ctx) {
                 break;
         }
         //player status and function
-        setInterval(callIntervalFunction, 20);
+        currentInterval = setInterval(callIntervalFunction, 20);
     }
 
     //--- 5 end of start_function ---//
@@ -1447,8 +1490,9 @@ if (ctx) {
             aiDog.shortAttackRightXy["x3"] = 215, aiDog.shortAttackRightXy["y3"] = 2750,
             aiDog.shortAttackRightXy["x4"] = 315, aiDog.shortAttackRightXy["y4"] = 2750;
 
-        aiDog.shortAttackObject = new shortAttackObject(30, 30);
+        aiDog.shortAttackObject = new shortAttackObject(50, 50);
 
+        aiDog.name = "aidog";
         aiDog.hp = 50;
         aiDog.mp = 0;
         drawSpriteStatus(aiDog);
@@ -1467,7 +1511,7 @@ if (ctx) {
     function stage1Ai(aiObject, keyObject1) {
         clearImage(aiObject.posX, aiObject.posY, aiObject.wantedWidth, aiObject.wantedHeight);
         setFace(aiObject);
-        // console.log(playerObject.speed + " " + aiObject.speed);
+        
         //here have some problem
         if (boundingBoxCollision(playerObject, aiObject)) {
             playerObject.speed = 1;
@@ -1480,7 +1524,7 @@ if (ctx) {
                 aiAttackCall(playerImage, aiObject.shortAttackLeftXy, aiObject.shortAttackRightXy, aiObject);
 
                 //set small bounding box based on image attack animate 315 2955 160 2790
-                updateShortAttackObject(aiDog.shortAttackObject, aiDog.posX, aiDog.posY + 35, aiDog.posX + 45, aiDog.posY + 40);
+                updateShortAttackObject(aiDog.shortAttackObject, aiDog.posX - 50, aiDog.posY + 35, aiDog.posX + 95, aiDog.posY + 40);
                 if (shortAttackCollision(aiDog, playerObject)) {
                     reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
                 }
@@ -1669,36 +1713,36 @@ if (ctx) {
         });
         if (!aiNinja.attackLaunched) {
             aiAttackCallSlow(playerImage, aiNinja.longAttackLeftXy, aiNinja.longAttackRightXy, aiNinja);
-            aiEmission = new emissionObject(aiNinja, "vertical");
+            aiEmission1v = new emissionObject(aiNinja, "vertical");
             aiAttackCallSlow(playerImage, aiNinja.longAttackLeftXy, aiNinja.longAttackRightXy, aiNinja);
-            aiEmission = new emissionObject(aiNinja, "line");
+            aiEmission1l = new emissionObject(aiNinja, "line");
         }
         if (!aiNinja2.attackLaunched) {
             aiAttackCallSlow(playerImage, aiNinja2.longAttackLeftXy, aiNinja2.longAttackRightXy, aiNinja2);
-            aiEmission = new emissionObject(aiNinja2, "vertical");
+            aiEmission2v = new emissionObject(aiNinja2, "vertical");
             aiAttackCallSlow(playerImage, aiNinja2.longAttackLeftXy, aiNinja2.longAttackRightXy, aiNinja2);
-            aiEmission = new emissionObject(aiNinja2, "line");
+            aiEmission2l = new emissionObject(aiNinja2, "line");
         }
         if (!aiNinja3.attackLaunched && !aiNinja4.attackLaunched && !aiNinja5.attackLaunched && !aiNinja6.attackLaunched && !aiNinja7.attackLaunched) {
             if (aiNinja3.allowAttack) {
                 aiAttackCall(playerImage, aiNinja3.longAttackLeftXy, aiNinja3.longAttackRightXy, aiNinja3);
-                aiEmission = new emissionObject(aiNinja3, "horizontal");
+                aiEmission3h = new emissionObject(aiNinja3, "horizontal");
             }
             if (aiNinja4.allowAttack) {
                 aiAttackCall(playerImage, aiNinja4.longAttackLeftXy, aiNinja4.longAttackRightXy, aiNinja4);
-                aiEmission = new emissionObject(aiNinja4, "horizontal");
+                aiEmission4h = new emissionObject(aiNinja4, "horizontal");
             }
             if (aiNinja5.allowAttack) {
                 aiAttackCall(playerImage, aiNinja5.longAttackLeftXy, aiNinja5.longAttackRightXy, aiNinja5);
-                aiEmission = new emissionObject(aiNinja5, "horizontal");
+                aiEmission5h = new emissionObject(aiNinja5, "horizontal");
             }
             if (aiNinja6.allowAttack) {
                 aiAttackCall(playerImage, aiNinja6.longAttackLeftXy, aiNinja6.longAttackRightXy, aiNinja6);
-                aiEmission = new emissionObject(aiNinja6, "horizontal");
+                aiEmission6h = new emissionObject(aiNinja6, "horizontal");
             }
             if (aiNinja7.allowAttack) {
                 aiAttackCall(playerImage, aiNinja7.longAttackLeftXy, aiNinja7.longAttackRightXy, aiNinja7);
-                aiEmission = new emissionObject(aiNinja7, "horizontal");
+                aiEmission7h = new emissionObject(aiNinja7, "horizontal");
             }
         }
     }
@@ -1712,6 +1756,14 @@ if (ctx) {
 
     //--- 11 end of stage 5 ---//
 }
+
+
+
+
+
+
+
+
 
 //draw(ai);
         //console.log(playerObject.posX + " " + playerObject.posY + " " + ai5.posX + " " + ai5.posY);
@@ -1743,16 +1795,23 @@ if (ctx) {
         //     reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
         // }
 
-        function applyStage(stageNo){
-            clearInterval(keyInterval);
-            console.log(playerObject.speed);
-            stage = stageNo;
-            init();
-            ctx.clearRect(0,0,1500,700);
-            console.log(playerObject.speed);
-        }
+        // var point = [];
+        // var posX = playerObject.posX, posY = playerObject.posY;
+        // point["x1"] = posX, point["y1"] = posY;
+        // point["x2"] = posX, point["y2"] = posY + playerObject.wantedHeight;
+        // point["x3"] = posX + playerObject.wantedWidth, point["y3"] = posY;
+        // point["x4"] = posX + playerObject.wantedWidth, point["y4"] = posY + playerObject.wantedHeight;
 
-setTimeout(function(){
-    //applyStage(4);
-},3000);
-        
+        // //add middle point checking for object smaller than playerObject
+        // point["x5"] = posX + Math.round(playerObject.wantedWidth / 2), point["y5"] = playerObject.posY;
+        // point["x6"] = posX + Math.round(playerObject.wantedWidth / 2), point["y6"] = playerObject.posY + playerObject.wantedHeight;
+        // point["x7"] = posX, point["y7"] = playerObject.posY + Math.round(playerObject.wantedHeight / 2);
+        // point["x8"] = posX + playerObject.wantedWidth, point["y8"] = playerObject.posY + Math.round(playerObject.wantedHeight / 2);
+
+        // for (i = 1; i < 9; i++) {
+        //     if (point["x" + i] > object.posX && point["x" + i] < object.posX + object.wantedWidth &&
+        //         point["y" + i] > object.posY && point["y" + i] < object.posY + object.wantedHeight) {
+        //         clearPreviousImage(object.posX, object.posY, object.wantedWidth, object.wantedHeight);
+        //         return true;
+        //     }
+        // }
