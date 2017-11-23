@@ -21,7 +21,11 @@ canvasElement.height = "700";
 canvasElement.style.background = "url(img/newBackground.bmp)";
 canvasElement.style.backgroundSize = "cover";
 var ctx = canvasElement.getContext && canvasElement.getContext('2d');
+<<<<<<< HEAD
 var stage = 5;
+=======
+var stage = 1;
+>>>>>>> feature/02-james-branch
 
 //--- 1 end of canvas ---//
 
@@ -56,7 +60,7 @@ if (ctx) {
     //--- 3 start of global_function ---//
     function callIntervalFunction() {
         playerAction();
-        if (stage == 1) {
+        if (stage == 1 && aiDog.hp > 0) {
             stage1Ai(aiDog, keyObject1);
         } else if (stage == 2) {
 
@@ -69,7 +73,7 @@ if (ctx) {
         }
 
         //for draw one more time to prevent sparkle 
-        if (stage == 1) {
+        if (stage == 1 && aiDog.hp > 0) {
             draw(aiDog);
         }
         draw(playerObject);
@@ -139,9 +143,9 @@ if (ctx) {
         ai5.walkLeftXy["x3"] = 410, ai5.walkLeftXy["y3"] = 80,
         ai5.walkLeftXy["x4"] = 330, ai5.walkLeftXy["y4"] = 80;
     ai5.walkRightXy["x1"] = 80, ai5.walkRightXy["y1"] = 0,
-        ai5.walkRightXy["x2"] = 160, ai5.walkRightXy["y2"] = 0,
-        ai5.walkRightXy["x3"] = 240, ai5.walkRightXy["y3"] = 0,
-        ai5.walkRightXy["x4"] = 320, ai5.walkRightXy["y4"] = 0;
+        ai5.walkRightXy["x2"] = 165, ai5.walkRightXy["y2"] = 0,
+        ai5.walkRightXy["x3"] = 242, ai5.walkRightXy["y3"] = 0,
+        ai5.walkRightXy["x4"] = 325, ai5.walkRightXy["y4"] = 0;
 
     ai5.longAttackLeftXy["x1"] = 410, ai5.longAttackLeftXy["y1"] = 160,
         ai5.longAttackLeftXy["x2"] = 490, ai5.longAttackLeftXy["y2"] = 160,
@@ -647,8 +651,8 @@ if (ctx) {
     }
 
     function chase(obj) {
-        preX = obj.posX;
-        preY = obj.posY;
+        preX = obj.preX = obj.posX;
+        preY = obj.preY = obj.posY;
         currX = obj.posX;
         currY = obj.posY;
         if (chaseSpeed == "fast") {
@@ -800,7 +804,7 @@ if (ctx) {
             walkXyArr = walkRightXy;
         }
         object.imageX = walkXyArr["x" + object.walkAnimate], object.imageY = walkXyArr["y" + object.walkAnimate];
-        drawInCanvas(image, walkXyArr["x" + object.walkAnimate], walkXyArr["y" + object.walkAnimate], object);
+        //drawInCanvas(image, walkXyArr["x" + object.walkAnimate], walkXyArr["y" + object.walkAnimate], object);
     }
 
     function attackAnimation(image, attackLeftXy, attackRightXy, object) {
@@ -811,8 +815,6 @@ if (ctx) {
         } else if (object.face == faceRight) {
             attackXyArr = attackRightXy;
         }
-        //draw one first to prevent sparkle
-        drawInCanvas(image, attackXyArr["x" + object.attackAnimte], attackXyArr["y" + object.attackAnimte], object);
 
         //use interval to ensure finish whole animation
         var interval = setInterval(function () {
@@ -830,8 +832,10 @@ if (ctx) {
                 object.attackRepeat = 0;
             }
             object.imageX = attackXyArr["x" + object.attackAnimte], object.imageY = attackXyArr["y" + object.attackAnimte];
-            drawInCanvas(image, attackXyArr["x" + object.attackAnimte], attackXyArr["y" + object.attackAnimte], object);
+            //drawInCanvas(image, attackXyArr["x" + object.attackAnimte], attackXyArr["y" + object.attackAnimte], object);
         }, 15);
+        //draw one first to prevent sparkle
+        drawInCanvas(image, attackXyArr["x" + object.attackAnimte], attackXyArr["y" + object.attackAnimte], object);
     }
 
     function emissionObject(aiObject, emissionType) {
@@ -865,7 +869,7 @@ if (ctx) {
         //random to prevent same name of interval 
         var intervalNo = Math.floor(Math.random() * 100) + 1;
 
-        
+
 
         intervalNo = setInterval(function () {
             if (emissionObject.emissionType == "horizontal") {
@@ -981,10 +985,10 @@ if (ctx) {
     }
 
     function boundingBoxCollision(playerObject, object) {
-        if (playerObject.posX < object.posX + object.wantedWidth &&
-            playerObject.posX + playerObject.wantedWidth > object.posX &&
-            playerObject.posY < object.posY + object.wantedHeight &&
-            playerObject.wantedHeight + playerObject.posY > object.posY) {
+        if (playerObject.posX <= object.posX + object.wantedWidth &&
+            playerObject.posX + playerObject.wantedWidth >= object.posX &&
+            playerObject.posY <= object.posY + object.wantedHeight &&
+            playerObject.wantedHeight + playerObject.posY >= object.posY) {
             clearPreviousImage(object.posX, object.posY, object.wantedWidth, object.wantedHeight);
             return true;
         }
@@ -1194,7 +1198,7 @@ if (ctx) {
         clearInterval(timeInterval);
         clearInterval(currentInterval);
         clearInterval(keyInterval);
-        
+
         ctx.clearRect(0, 0, 1500, 700);
         stage = stageNo;
         resetHpMp();
@@ -1234,6 +1238,8 @@ if (ctx) {
         this.attackRepeat = 0;
         this.keyGet = false;
         this.shortAttackObject = new shortAttackObject(50, 25);
+        this.moving = false;
+        this.bounce = 0.6;
     }
     playerObject = new playerObject();
 
@@ -1308,7 +1314,7 @@ if (ctx) {
     //define all player action in here
     function playerAction() {
         clearPreviousImage(playerObject.posX, playerObject.posY, playerObject.imageWidth, playerObject.imageHeight);
-
+        playerObject.moving = false;
         if (playerObject.hp <= 0) {
             applyStage(stage);
         }
@@ -1318,10 +1324,13 @@ if (ctx) {
             attackAnimation(playerImage, playerAttackLeftXy, playerAttackRightXy, playerObject);
 
             //set small bounding box based on image attack animate 160 445 535 285    140 440 530 280 484 243
-            updateShortAttackObject(playerObject.shortAttackObject, playerObject.posX - 20, playerObject.posY + 40, playerObject.posX + 50, playerObject.posY + 40);
+            updateShortAttackObject(playerObject.shortAttackObject, playerObject.posX - 20, playerObject.posY + 40, playerObject.posX + playerObject.wantedWidth, playerObject.posY + 40);
 
-            if (stage == 1 && boundingBoxCollision(playerObject, aiDog)) {
-                reduceHp(aiDog, Math.floor(Math.random() * 10) + 1);
+            if (stage == 1 && shortAttackCollision(playerObject, aiDog)) {
+                reduceHp(aiDog, 10);
+                if (aiDog.hp == 0) {
+                    clearPreviousImage(aiDog.posX,aiDog.posY,aiDog.wantedWidth,aiDog.wantedHeight);
+                }
             }
 
             if (stage == 5 && shortAttackCollision(playerObject, ai5)) {
@@ -1350,8 +1359,8 @@ if (ctx) {
         else {
             //check player movement only for arrow key
             if (keyStatus[37] || keyStatus[38] || keyStatus[39] || keyStatus[40]) {
-                var preX = playerObject.posX;
-                var preY = playerObject.posY;
+                var preX = playerObject.preX = playerObject.posX;
+                var preY = playerObject.preY = playerObject.posY;
                 var currX = playerObject.posX;
                 var currY = playerObject.posY;
                 //assign new postion and dicide facing
@@ -1374,6 +1383,7 @@ if (ctx) {
                     currY = currY + playerObject.speed;
                 }
                 ensureCollision(playerObject, preX, preY, currX, currY);
+                playerObject.moving = true;
                 walkAnimation(playerImage, playerWalkLeftXy, playerWalkRightXy, playerObject);
                 return true;
             }
@@ -1511,15 +1521,37 @@ if (ctx) {
     function stage1Ai(aiObject, keyObject1) {
         clearImage(aiObject.posX, aiObject.posY, aiObject.wantedWidth, aiObject.wantedHeight);
         setFace(aiObject);
-        
+
         //here have some problem
         if (boundingBoxCollision(playerObject, aiObject)) {
-            playerObject.speed = 1;
+            if (aiObject.face == faceLeft) {
+                if (playerObject.posY == aiObject.posY) {
+                    aiObject.posX = aiObject.preX + 1;
+                } else if (playerObject.posY > aiObject.posY) {
+                    aiObject.posX = aiObject.preX + 1;
+                    aiObject.posY = aiObject.preY - 1;
+                } else if (playerObject.posY < aiObject.posY) {
+                    aiObject.posX = aiObject.preX + 1;
+                    aiObject.posY = aiObject.preY + 1;
+                }
+            } else {
+                if (playerObject.posY == aiObject.posY) {
+                    aiObject.posX = aiObject.preX - 1;
+                } else if (playerObject.posY > aiObject.posY) {
+                    aiObject.posX = aiObject.preX - 1;
+                    aiObject.posY = aiObject.preY - 1;
+                } else if (playerObject.posY < aiObject.posY) {
+                    aiObject.posX = aiObject.preX - 1;
+                    aiObject.posY = aiObject.preY + 1;
+                }
+            }
+            playerObject.posX = playerObject.preX;
+            playerObject.posY = playerObject.preY;
         } else {
             playerObject.speed = playerObject.originSpeed;
         }
 
-        if (findDistanceBetweenPlayerAndAi(aiObject) <= 100) {
+        if (aiObject.face == faceLeft ? findDistanceBetweenPlayerAndAi(aiObject) <= 100 && playerObject.moving == false : findDistanceBetweenPlayerAndAi(aiObject) <= 110 && playerObject.moving == false) {
             if (!aiObject.attackLaunched) {
                 aiAttackCall(playerImage, aiObject.shortAttackLeftXy, aiObject.shortAttackRightXy, aiObject);
 
@@ -1546,7 +1578,7 @@ if (ctx) {
             chaseSpeed = "slow";
             aiChase(chaseSpeed, chaseType, aiObject);
         }
-        draw(aiObject);
+        // draw(aiObject);
     }
     //--- 7 end of stage 1 ---//
     // 
