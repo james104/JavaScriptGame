@@ -21,11 +21,7 @@ canvasElement.height = "700";
 canvasElement.style.background = "url(img/newBackground.bmp)";
 canvasElement.style.backgroundSize = "cover";
 var ctx = canvasElement.getContext && canvasElement.getContext('2d');
-<<<<<<< HEAD
 var stage = 5;
-=======
-var stage = 1;
->>>>>>> feature/02-james-branch
 
 //--- 1 end of canvas ---//
 
