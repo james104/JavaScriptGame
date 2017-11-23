@@ -1236,9 +1236,11 @@ if (ctx) {
         this.shortAttackObject = new shortAttackObject(50, 25);
         this.moving = false;
         this.bounce = 0.6;
+        this.icon = [];
     }
     playerObject = new playerObject();
 
+    playerObject.icon["posX"] = 0, playerObject.icon["posY"] = 242, playerObject.icon["width"] = 65, playerObject.icon["height"] = 47;
     drawSpriteStatus(playerObject);
 
     var keyStatus = [];
