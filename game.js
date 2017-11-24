@@ -1206,6 +1206,13 @@ if (ctx) {
         init();
     }
 
+    function nextStageObject() {
+        this.posX = 1300;
+        this.posY = 200;
+        this.wantedWidth = 200;
+        this.wantedHeight = 500;
+    }
+
     //--- 3 end of global_function ---//
     //     
     //     
@@ -1383,6 +1390,11 @@ if (ctx) {
                     //playerObject.y += playerObject.speed;
                     currY = currY + playerObject.speed;
                 }
+                // console.log(nextStageObject);
+                // if (playerObject.keyGet && boundingBoxCollision(playerObject, nextStageObject)) {
+                //     applyStage(2);
+                // }
+
                 ensureCollision(playerObject, preX, preY, currX, currY);
                 playerObject.moving = true;
                 walkAnimation(playerImage, playerWalkLeftXy, playerWalkRightXy, playerObject);
@@ -1514,6 +1526,8 @@ if (ctx) {
         keyInterval = setInterval(function () {
             if (boundingBoxCollision(playerObject, keyObject1)) {
                 playerObject.keyGet = true;
+                nextStageObject = nextStageObject();
+                ctx.drawImage(playerImage, keyObject1.imageX, keyObject1.imageY, keyObject1.imageWidth, keyObject1.imageHeight, 125, 40, 20, 20);
                 clearInterval(keyInterval);
             } else {
                 draw(keyObject1);
