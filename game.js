@@ -115,6 +115,7 @@ if (ctx) {
         this.longAttackLeftXy = [];
         this.longAttackRightXy = [];
         this.emissionAnimateXy = [];
+        this.icon = [];
     }
 
     ai5 = new aiObject(325, 80, 80, 80, 900, 400, 100, 100, playerObject.speed);
@@ -1043,6 +1044,8 @@ if (ctx) {
         ctx.fillText(object.hp, spriteHpTextX, spriteHpTextY);
         ctx.fillText(object.mp, spriteMpTextX, spriteMpTextY);
 
+        ctx.drawImage(this.image, object.icon["posX"], object.icon["posY"], object.icon["width"], object.icon["height"], spriteHpX - object.icon["width"] - 10, spriteHpY - 10, object.icon["width"], object.icon["height"]);
+
         if (gameSpriteNo % 4 == 0) {
             spriteHpX = 150, spriteHpY = spriteHpY + 50;
         }
@@ -1327,7 +1330,7 @@ if (ctx) {
             if (stage == 1 && shortAttackCollision(playerObject, aiDog)) {
                 reduceHp(aiDog, 10);
                 if (aiDog.hp == 0) {
-                    clearPreviousImage(aiDog.posX,aiDog.posY,aiDog.wantedWidth,aiDog.wantedHeight);
+                    clearPreviousImage(aiDog.posX, aiDog.posY, aiDog.wantedWidth, aiDog.wantedHeight);
                 }
             }
 
@@ -1459,7 +1462,7 @@ if (ctx) {
         } else {
             var lessThanTenMin = "";
         }
-        clearPreviousImage(0, 0, 100, 35);
+        clearPreviousImage(0, 0, 70, 35);
         ctx.fillStyle = textColor;
         ctx.fillText(lessThanTenMin + timerMin + ":" + lessThanTenSec + timerSec, timerX, timerY);
     }
@@ -1497,6 +1500,8 @@ if (ctx) {
             aiDog.shortAttackRightXy["x2"] = 115, aiDog.shortAttackRightXy["y2"] = 2750,
             aiDog.shortAttackRightXy["x3"] = 215, aiDog.shortAttackRightXy["y3"] = 2750,
             aiDog.shortAttackRightXy["x4"] = 315, aiDog.shortAttackRightXy["y4"] = 2750;
+
+        aiDog.icon["posX"] = 415, aiDog.icon["posY"] = 2765, aiDog.icon["width"] = 53, aiDog.icon["height"] = 43;
 
         aiDog.shortAttackObject = new shortAttackObject(50, 50);
 
