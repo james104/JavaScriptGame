@@ -29,9 +29,11 @@ if (ctx) {
 
     //--- 2 start of global_variable ---//
 
-
-    //img/gameImage.gif here for testing
-    var gameImage = "assets/spriteSheetNew.png";
+    var gameImagePath = "assets/spriteSheetNew.png";
+    gameImage = new Image();
+    gameImage.id = "gameImage";
+    gameImage.src = gameImagePath;
+    // gameImage.onload = init;
     var playerType = "player";
     var faceLeft = "left", faceRight = "right";
     var gameSpriteNo = 0;
@@ -46,6 +48,7 @@ if (ctx) {
     ctx.fillStyle = textColor;
     var timeInterval, currentInterval, keyInterval;
     var emissionArr = [];
+    var nextStageArea;
 
     //--- 2 end of global_variable ---//
     // 
@@ -190,14 +193,14 @@ if (ctx) {
             }
             aiChase(chaseSpeed, chaseType, ai5);
         } else if (false && !ai5.attackLaunched) {
-            aiAttackCall(playerImage, ai5.shortAttackLeftXy, ai5.shortAttackRightXy, ai5);
+            aiAttackCall(gameImage, ai5.shortAttackLeftXy, ai5.shortAttackRightXy, ai5);
             ai5.shortAttackObject = new shortAttackObject(50, 50);
             updateShortAttackObject(ai5.shortAttackObject, ai5.posX, ai5.posY + 50, ai5.posX + 50, ai5.posY + 50);
             if (shortAttackCollision(ai5, playerObject)) {
                 reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
             }
         } else if (false && !ai5.attackLaunched) {
-            aiAttackCall(playerImage, ai5.longAttackLeftXy, ai5.longAttackRightXy, ai5);
+            aiAttackCall(gameImage, ai5.longAttackLeftXy, ai5.longAttackRightXy, ai5);
             aiEmission = new emissionObject(ai5, "horizontal");
         }
         else if (!ai5.attackLaunched) {
@@ -859,7 +862,7 @@ if (ctx) {
             this.posX = aiObject.posX + (this.wantedWidth / 2);
             this.posY = aiObject.posY + aiObject.wantedHeight;
         }
-        emissionAnimation(playerImage, this);
+        emissionAnimation(gameImage, this);
     }
 
     function emissionAnimation(image, emissionObject) {
@@ -1044,7 +1047,7 @@ if (ctx) {
         ctx.fillText(object.hp, spriteHpTextX, spriteHpTextY);
         ctx.fillText(object.mp, spriteMpTextX, spriteMpTextY);
 
-        ctx.drawImage(this.image, object.icon["posX"], object.icon["posY"], object.icon["width"], object.icon["height"], spriteHpX - object.icon["width"] - 10, spriteHpY - 10, object.icon["width"], object.icon["height"]);
+        ctx.drawImage(gameImage, object.icon["posX"], object.icon["posY"], object.icon["width"], object.icon["height"], spriteHpX - object.icon["width"] - 10, spriteHpY - 10, object.icon["width"], object.icon["height"]);
 
         if (gameSpriteNo % 4 == 0) {
             spriteHpX = 150, spriteHpY = spriteHpY + 50;
@@ -1203,14 +1206,15 @@ if (ctx) {
         resetHpMp();
         playerObject.posX = 100;
         playerObject.posY = 400;
+        playerObject.keyGet = false;
         init();
     }
 
     function nextStageObject() {
-        this.posX = 1300;
-        this.posY = 200;
-        this.wantedWidth = 200;
-        this.wantedHeight = 500;
+        this.posX = 1450;
+        this.posY = 300;
+        this.wantedWidth = 50;
+        this.wantedHeight = 400;
     }
 
     //--- 3 end of global_function ---//
@@ -1281,12 +1285,6 @@ if (ctx) {
         playerAttackRightXy["x3"] = 560, playerAttackRightXy["y3"] = 242,
         playerAttackRightXy["x4"] = 640, playerAttackRightXy["y4"] = 242;
 
-    //create player image
-    playerImage = new Image();
-    playerImage.id = "playerImage";
-    playerImage.src = gameImage;
-    playerImage.onload = drawInCanvas(playerImage, playerImageRightStandX, playerImageRightStandY, playerObject);
-
     //record player input
     document.onkeydown = function (key) {
         switch (key.keyCode) {
@@ -1325,11 +1323,12 @@ if (ctx) {
         playerObject.moving = false;
         if (playerObject.hp <= 0) {
             applyStage(stage);
+            return true;
         }
 
         if (keyStatus[90] && !playerObject.shortAttackLaunched) {//Z(attack)
             playerObject.shortAttackLaunched = true;
-            attackAnimation(playerImage, playerAttackLeftXy, playerAttackRightXy, playerObject);
+            attackAnimation(gameImage, playerAttackLeftXy, playerAttackRightXy, playerObject);
 
             //set small bounding box based on image attack animate 160 445 535 285    140 440 530 280 484 243
             updateShortAttackObject(playerObject.shortAttackObject, playerObject.posX - 20, playerObject.posY + 40, playerObject.posX + playerObject.wantedWidth, playerObject.posY + 40);
@@ -1362,7 +1361,7 @@ if (ctx) {
             } else if (playerObject.face == faceRight) {
                 attackXyArr = playerAttackRightXy;
             }
-            drawInCanvas(playerImage, attackXyArr["x" + playerObject.attackAnimte], attackXyArr["y" + playerObject.attackAnimte], playerObject);
+            drawInCanvas(gameImage, attackXyArr["x" + playerObject.attackAnimte], attackXyArr["y" + playerObject.attackAnimte], playerObject);
         }
         else {
             //check player movement only for arrow key
@@ -1390,14 +1389,15 @@ if (ctx) {
                     //playerObject.y += playerObject.speed;
                     currY = currY + playerObject.speed;
                 }
-                // console.log(nextStageObject);
-                // if (playerObject.keyGet && boundingBoxCollision(playerObject, nextStageObject)) {
-                //     applyStage(2);
-                // }
+                
+                if (stage != 4 ? playerObject.keyGet && boundingBoxCollision(playerObject, nextStageArea) : false) {
+                    applyStage(stage + 1);
+                    return true;
+                }
 
                 ensureCollision(playerObject, preX, preY, currX, currY);
                 playerObject.moving = true;
-                walkAnimation(playerImage, playerWalkLeftXy, playerWalkRightXy, playerObject);
+                walkAnimation(gameImage, playerWalkLeftXy, playerWalkRightXy, playerObject);
                 return true;
             }
 
@@ -1406,10 +1406,10 @@ if (ctx) {
             //playerAttackAnimte = 1, playerAttackRepeat = 0;
             if (playerObject.face == faceLeft) {
                 playerObject.imageX = playerImageLeftStandX, playerObject.imageY = playerImageLeftStandY;
-                drawInCanvas(playerImage, playerImageLeftStandX, playerImageLeftStandY, playerObject);
+                drawInCanvas(gameImage, playerImageLeftStandX, playerImageLeftStandY, playerObject);
             } else if (playerObject.face == faceRight) {
                 playerObject.imageX = playerImageRightStandX, playerObject.imageY = playerImageRightStandY;
-                drawInCanvas(playerImage, playerImageRightStandX, playerImageRightStandY, playerObject);
+                drawInCanvas(gameImage, playerImageRightStandX, playerImageRightStandY, playerObject);
             }
         }
     }
@@ -1526,8 +1526,8 @@ if (ctx) {
         keyInterval = setInterval(function () {
             if (boundingBoxCollision(playerObject, keyObject1)) {
                 playerObject.keyGet = true;
-                nextStageObject = nextStageObject();
-                ctx.drawImage(playerImage, keyObject1.imageX, keyObject1.imageY, keyObject1.imageWidth, keyObject1.imageHeight, 125, 40, 20, 20);
+                nextStageArea = new nextStageObject();
+                ctx.drawImage(gameImage, keyObject1.imageX, keyObject1.imageY, keyObject1.imageWidth, keyObject1.imageHeight, 125, 40, 20, 20);
                 clearInterval(keyInterval);
             } else {
                 draw(keyObject1);
@@ -1570,7 +1570,7 @@ if (ctx) {
 
         if (aiObject.face == faceLeft ? findDistanceBetweenPlayerAndAi(aiObject) <= 100 && playerObject.moving == false : findDistanceBetweenPlayerAndAi(aiObject) <= 110 && playerObject.moving == false) {
             if (!aiObject.attackLaunched) {
-                aiAttackCall(playerImage, aiObject.shortAttackLeftXy, aiObject.shortAttackRightXy, aiObject);
+                aiAttackCall(gameImage, aiObject.shortAttackLeftXy, aiObject.shortAttackRightXy, aiObject);
 
                 //set small bounding box based on image attack animate 315 2955 160 2790
                 updateShortAttackObject(aiDog.shortAttackObject, aiDog.posX - 50, aiDog.posY + 35, aiDog.posX + 95, aiDog.posY + 40);
@@ -1739,6 +1739,7 @@ if (ctx) {
         keyInterval = setInterval(function () {
             if (boundingBoxCollision(playerObject, keyObject4)) {
                 playerObject.keyGet = true;
+                ctx.drawImage(gameImage, keyObject4.imageX, keyObject4.imageY, keyObject4.imageWidth, keyObject4.imageHeight, 125, 40, 20, 20);
                 clearInterval(keyInterval);
             } else {
                 draw(keyObject4);
@@ -1761,36 +1762,36 @@ if (ctx) {
             }
         });
         if (!aiNinja.attackLaunched) {
-            aiAttackCallSlow(playerImage, aiNinja.longAttackLeftXy, aiNinja.longAttackRightXy, aiNinja);
+            aiAttackCallSlow(gameImage, aiNinja.longAttackLeftXy, aiNinja.longAttackRightXy, aiNinja);
             aiEmission1v = new emissionObject(aiNinja, "vertical");
-            aiAttackCallSlow(playerImage, aiNinja.longAttackLeftXy, aiNinja.longAttackRightXy, aiNinja);
+            aiAttackCallSlow(gameImage, aiNinja.longAttackLeftXy, aiNinja.longAttackRightXy, aiNinja);
             aiEmission1l = new emissionObject(aiNinja, "line");
         }
         if (!aiNinja2.attackLaunched) {
-            aiAttackCallSlow(playerImage, aiNinja2.longAttackLeftXy, aiNinja2.longAttackRightXy, aiNinja2);
+            aiAttackCallSlow(gameImage, aiNinja2.longAttackLeftXy, aiNinja2.longAttackRightXy, aiNinja2);
             aiEmission2v = new emissionObject(aiNinja2, "vertical");
-            aiAttackCallSlow(playerImage, aiNinja2.longAttackLeftXy, aiNinja2.longAttackRightXy, aiNinja2);
+            aiAttackCallSlow(gameImage, aiNinja2.longAttackLeftXy, aiNinja2.longAttackRightXy, aiNinja2);
             aiEmission2l = new emissionObject(aiNinja2, "line");
         }
         if (!aiNinja3.attackLaunched && !aiNinja4.attackLaunched && !aiNinja5.attackLaunched && !aiNinja6.attackLaunched && !aiNinja7.attackLaunched) {
             if (aiNinja3.allowAttack) {
-                aiAttackCall(playerImage, aiNinja3.longAttackLeftXy, aiNinja3.longAttackRightXy, aiNinja3);
+                aiAttackCall(gameImage, aiNinja3.longAttackLeftXy, aiNinja3.longAttackRightXy, aiNinja3);
                 aiEmission3h = new emissionObject(aiNinja3, "horizontal");
             }
             if (aiNinja4.allowAttack) {
-                aiAttackCall(playerImage, aiNinja4.longAttackLeftXy, aiNinja4.longAttackRightXy, aiNinja4);
+                aiAttackCall(gameImage, aiNinja4.longAttackLeftXy, aiNinja4.longAttackRightXy, aiNinja4);
                 aiEmission4h = new emissionObject(aiNinja4, "horizontal");
             }
             if (aiNinja5.allowAttack) {
-                aiAttackCall(playerImage, aiNinja5.longAttackLeftXy, aiNinja5.longAttackRightXy, aiNinja5);
+                aiAttackCall(gameImage, aiNinja5.longAttackLeftXy, aiNinja5.longAttackRightXy, aiNinja5);
                 aiEmission5h = new emissionObject(aiNinja5, "horizontal");
             }
             if (aiNinja6.allowAttack) {
-                aiAttackCall(playerImage, aiNinja6.longAttackLeftXy, aiNinja6.longAttackRightXy, aiNinja6);
+                aiAttackCall(gameImage, aiNinja6.longAttackLeftXy, aiNinja6.longAttackRightXy, aiNinja6);
                 aiEmission6h = new emissionObject(aiNinja6, "horizontal");
             }
             if (aiNinja7.allowAttack) {
-                aiAttackCall(playerImage, aiNinja7.longAttackLeftXy, aiNinja7.longAttackRightXy, aiNinja7);
+                aiAttackCall(gameImage, aiNinja7.longAttackLeftXy, aiNinja7.longAttackRightXy, aiNinja7);
                 aiEmission7h = new emissionObject(aiNinja7, "horizontal");
             }
         }
@@ -1825,7 +1826,7 @@ if (ctx) {
         //in emissionAnimation, it will also check the collision
         //checkEmissionCollision if hit the player will reduce player hp
         //!!! here launch one long attack here !!!
-        // aiAttackCall(playerImage, aiNinja5.longAttackLeftXy, aiNinja5.longAttackRightXy, aiNinja5);
+        // aiAttackCall(gameImage, aiNinja5.longAttackLeftXy, aiNinja5.longAttackRightXy, aiNinja5);
         // aiEmission = new emissionObject(aiNinja5, "horizontal");
 
         //1.shortAttackObject create a short attack for ai or player
@@ -1837,7 +1838,7 @@ if (ctx) {
         //if return true reduce target object hp
         //!!! here launch one short attack here !!!
         // aiNinja5.shortAttackObject = new shortAttackObject(15, 15);
-        // aiAttackCall(playerImage, aiNinja5.shortAttackLeftXy, aiNinja5.shortAttackRightXy, aiNinja5);
+        // aiAttackCall(gameImage, aiNinja5.shortAttackLeftXy, aiNinja5.shortAttackRightXy, aiNinja5);
         //
         // updateShortAttackObject(aiNinja5.shortAttackObject, aiNinja5.posX, aiNinja5.posY + 42, aiNinja5.posX + 55, aiNinja5.posY + 43);
         // if (shortAttackCollision(aiNinja5, playerObject)) {
