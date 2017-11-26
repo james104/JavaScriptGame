@@ -1867,7 +1867,9 @@ if (ctx) {
     // 
     //     
     //--- 11 start of stage 5 ---//
-    drawSpriteStatus(ai5);
+    if(stage == 5){
+        drawSpriteStatus(ai5);
+    }    
     //--- 11 end of stage 5 ---//
 }
 
