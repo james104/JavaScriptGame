@@ -21,7 +21,7 @@ canvasElement.height = "700";
 canvasElement.style.background = "url(img/newBackground.bmp)";
 canvasElement.style.backgroundSize = "cover";
 var ctx = canvasElement.getContext && canvasElement.getContext('2d');
-var stage = 1;
+var stage = 4;
 
 //--- 1 end of canvas ---//
 
@@ -948,7 +948,7 @@ if (ctx) {
         }
         else {
             if (boundingBoxCollision(playerObject, emissionObject)) {
-                reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+                reduceHp(playerObject, 5);
                 if (emissionObject.emissionType == "horizontal") {
                     if (emissionObject.face == faceLeft) {
                         clearPreviousImage(emissionObject.posX, emissionObject.posY, emissionObject.wantedWidth + 20, emissionObject.wantedHeight);
@@ -1128,8 +1128,6 @@ if (ctx) {
         var p = Math.random() + Math.random() + Math.random();
         return Math.round((p / 3) * 10);
     }
-    // reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-    // reduceMp(playerObject, Math.floor(Math.random() * 10) + 1);
 
     //Bresenham’s algorithm
     function bAlgorithmLine(x0, y0, x1, y1, emissionObject) {
@@ -1215,6 +1213,26 @@ if (ctx) {
         this.posY = 300;
         this.wantedWidth = 50;
         this.wantedHeight = 400;
+    }
+    
+    function countDownNextStage(sec) {
+        var timerSec = sec;
+        ctx.fillStyle = textColor;
+        ctx.fillText(timerSec, timerX, timerY + timerY / 2 + 10);
+        var countDownInterval = setInterval(function () {
+            clearPreviousImage(10, 35, 70, 70);           
+            timerSec--;
+            ctx.fillStyle = textColor;    
+            if (timerSec < 10) {
+                ctx.fillText("0" + timerSec, timerX, timerY + timerY / 2 + 10);
+            } else {
+                ctx.fillText(timerSec, timerX, timerY + timerY / 2 + 10);
+            }
+            if (timerSec == 0) {
+                applyStage(stage + 1);
+                clearInterval(countDownInterval);
+            }
+        }, 1000);
     }
 
     //--- 3 end of global_function ---//
@@ -1389,7 +1407,7 @@ if (ctx) {
                     //playerObject.y += playerObject.speed;
                     currY = currY + playerObject.speed;
                 }
-                
+
                 if (stage != 4 ? playerObject.keyGet && boundingBoxCollision(playerObject, nextStageArea) : false) {
                     applyStage(stage + 1);
                     return true;
@@ -1452,8 +1470,6 @@ if (ctx) {
     // 
     //     
     //--- 6 start of game_data ---//
-
-
 
     var timerMin = 0, timerSec = 0;
     var timerX = 10, timerY = 35, timerW = 100, timerH = 100;
@@ -1575,7 +1591,7 @@ if (ctx) {
                 //set small bounding box based on image attack animate 315 2955 160 2790
                 updateShortAttackObject(aiDog.shortAttackObject, aiDog.posX - 50, aiDog.posY + 35, aiDog.posX + 95, aiDog.posY + 40);
                 if (shortAttackCollision(aiDog, playerObject)) {
-                    reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+                    reduceHp(playerObject, gRand());
                 }
             }
         } else if (findDistanceBetweenPlayerAndAi(keyObject1) > 400) {
@@ -1604,7 +1620,54 @@ if (ctx) {
     // 
     //
     //--- 8 start of stage 2 ---//
+    function stage2Initial() {
+        aiShort = new aiObject(415, 2835, 65, 65, 900, 250, 100, 100, 3);
+        aiDog.originPosX = 900, aiDog.originPosY = 250;
+        aiDog.originSpeed = aiDog.speed;
+        aiDog.standXy["leftX"] = 415, aiDog.standXy["leftY"] = 2835;
+        aiDog.standXy["rightX"] = 15, aiDog.standXy["rightY"] = 2670;
 
+        aiDog.walkLeftXy["x1"] = 315, aiDog.walkLeftXy["y1"] = 2835,
+            aiDog.walkLeftXy["x2"] = 215, aiDog.walkLeftXy["y2"] = 2835,
+            aiDog.walkLeftXy["x3"] = 115, aiDog.walkLeftXy["y3"] = 2835,
+            aiDog.walkLeftXy["x4"] = 15, aiDog.walkLeftXy["y4"] = 2835;
+
+        aiDog.walkRightXy["x1"] = 115, aiDog.walkRightXy["y1"] = 2670,
+            aiDog.walkRightXy["x2"] = 215, aiDog.walkRightXy["y2"] = 2670,
+            aiDog.walkRightXy["x3"] = 315, aiDog.walkRightXy["y3"] = 2670,
+            aiDog.walkRightXy["x4"] = 415, aiDog.walkRightXy["y4"] = 2670;
+
+        aiDog.shortAttackLeftXy["x1"] = 415, aiDog.shortAttackLeftXy["y1"] = 2920,
+            aiDog.shortAttackLeftXy["x2"] = 315, aiDog.shortAttackLeftXy["y2"] = 2920,
+            aiDog.shortAttackLeftXy["x3"] = 215, aiDog.shortAttackLeftXy["y3"] = 2920,
+            aiDog.shortAttackLeftXy["x4"] = 115, aiDog.shortAttackLeftXy["y4"] = 2920;
+
+        aiDog.shortAttackRightXy["x1"] = 15, aiDog.shortAttackRightXy["y1"] = 2750,
+            aiDog.shortAttackRightXy["x2"] = 115, aiDog.shortAttackRightXy["y2"] = 2750,
+            aiDog.shortAttackRightXy["x3"] = 215, aiDog.shortAttackRightXy["y3"] = 2750,
+            aiDog.shortAttackRightXy["x4"] = 315, aiDog.shortAttackRightXy["y4"] = 2750;
+
+        aiDog.icon["posX"] = 415, aiDog.icon["posY"] = 2765, aiDog.icon["width"] = 53, aiDog.icon["height"] = 43;
+
+        aiDog.shortAttackObject = new shortAttackObject(50, 50);
+
+        aiDog.name = "aidog";
+        aiDog.hp = 50;
+        aiDog.mp = 0;
+        drawSpriteStatus(aiDog);
+
+        keyObject1 = new keyObject(aiDog.posX + 100, aiDog.posY + 25);
+        keyInterval = setInterval(function () {
+            if (boundingBoxCollision(playerObject, keyObject1)) {
+                playerObject.keyGet = true;
+                nextStageArea = new nextStageObject();
+                ctx.drawImage(gameImage, keyObject1.imageX, keyObject1.imageY, keyObject1.imageWidth, keyObject1.imageHeight, 125, 40, 20, 20);
+                clearInterval(keyInterval);
+            } else {
+                draw(keyObject1);
+            }
+        }, 20);
+    }
     //--- 8 end of stage 2 ---//
     // 
     // 
@@ -1740,6 +1803,7 @@ if (ctx) {
             if (boundingBoxCollision(playerObject, keyObject4)) {
                 playerObject.keyGet = true;
                 ctx.drawImage(gameImage, keyObject4.imageX, keyObject4.imageY, keyObject4.imageWidth, keyObject4.imageHeight, 125, 40, 20, 20);
+                countDownNextStage(10);
                 clearInterval(keyInterval);
             } else {
                 draw(keyObject4);
@@ -1803,7 +1867,7 @@ if (ctx) {
     // 
     //     
     //--- 11 start of stage 5 ---//
-
+    drawSpriteStatus(ai5);
     //--- 11 end of stage 5 ---//
 }
 
