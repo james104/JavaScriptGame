@@ -18,7 +18,7 @@
 var canvasElement = document.getElementById("gameCanvas");
 canvasElement.width = "1500";
 canvasElement.height = "700";
-canvasElement.style.background = "url(img/newBackground.bmp)";
+canvasElement.style.background = "url(img/stage1bg.png)";
 canvasElement.style.backgroundSize = "cover";
 var ctx = canvasElement.getContext && canvasElement.getContext('2d');
 var stage = 5;
@@ -68,6 +68,7 @@ if (ctx) {
         } else if (stage == 4) {
             stage4Ai(aiObjectArr, keyObject4);
         } else if (stage == 5) {
+
             stage5Ai();
         }
 
