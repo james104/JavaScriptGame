@@ -18,7 +18,7 @@
 var canvasElement = document.getElementById("gameCanvas");
 canvasElement.width = "1500";
 canvasElement.height = "700";
-canvasElement.style.background = "url(img/stage1bg.png)";
+canvasElement.style.background = "url(img/stage4bg.png)";
 canvasElement.style.backgroundSize = "cover";
 var ctx = canvasElement.getContext && canvasElement.getContext('2d');
 var stage = 5;
