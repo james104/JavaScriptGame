@@ -165,7 +165,7 @@ if (ctx) {
 
     setInterval(function () {
         if(stage == 5){
-            increaseMp(ai5, 10);
+            increaseMp(ai5, 5);
         }        
     }, 5000);
 
@@ -227,10 +227,10 @@ if (ctx) {
             } else if (currAction == "longAttack" && !ai5.attackLaunched) {
                 aiAttackCall(gameImage, ai5.longAttackLeftXy, ai5.longAttackRightXy, ai5);
                 aiEmission = new emissionObject(ai5, "horizontal");
-                reduceMp(ai5, 10);
+                reduceMp(ai5, 20);
             }
             else if (currAction == "drinkMilk" && !ai5.attackLaunched) {
-                reduceMp(ai5, 10);
+                reduceMp(ai5, 30);
                 increaseHp(ai5, 20);
             }
             else if (!ai5.attackLaunched) {
