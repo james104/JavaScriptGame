@@ -165,7 +165,7 @@ if (ctx) {
 
     setInterval(function () {
         if(stage == 5){
-            increaseMp(ai5, 5);
+            increaseMp(ai5, 10);
         }        
     }, 5000);
 
