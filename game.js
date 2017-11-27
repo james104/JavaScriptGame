@@ -62,7 +62,7 @@ if (ctx) {
         if (stage == 1 && aiDog.hp > 0) {
             stage1Ai(aiDog, keyObject1);
         } else if (stage == 2) {
-
+            stage2Ai(aiObjectArr, keyObject2);
         } else if (stage == 3) {
 
         } else if (stage == 4) {
@@ -216,6 +216,12 @@ if (ctx) {
     function findDistanceBetweenPlayerAndAi(aiObj) {
         var distance;
         distance = Math.sqrt(Math.pow((aiObj.posX - playerObject.posX), 2) + Math.pow((aiObj.posY - playerObject.posY), 2));
+        return Math.round(distance);
+    }
+
+    function distanceBetweenObjectAndPos(object, targetPosX, targetPosY) {
+        var distance;
+        distance = Math.sqrt(Math.pow((object.posX - targetPosX), 2) + Math.pow((object.posY - targetPosY), 2));
         return Math.round(distance);
     }
 
@@ -605,6 +611,9 @@ if (ctx) {
         }
         else if (chaseSpeed == "slow") {
             aiObject.speed = playerObject.speed - 2;
+            if (stage == 2 && !boundingBoxCollision(aiBigGuy1, aiBlockObject)) {
+                aiBigGuy1.speed = 1;
+            }
         }
 
         if (!aiObject.attackLaunched) {
@@ -616,6 +625,9 @@ if (ctx) {
             }
             else if (chaseType == "returnOriginPos") {
                 returnOriginPos(aiObject);
+            }
+            else if (chaseType == "wayPointNav") {
+                wayPointNav(aiObject);
             }
             walkAnimation(image, aiObject.walkLeftXy, aiObject.walkRightXy, aiObject);
         }
@@ -655,6 +667,7 @@ if (ctx) {
         preY = obj.preY = obj.posY;
         currX = obj.posX;
         currY = obj.posY;
+
         if (chaseSpeed == "fast") {
             if (obj.posX > playerObject.posX) {
                 if (obj.posX - playerObject.speed == playerObject.posX) {
@@ -743,7 +756,9 @@ if (ctx) {
             else {
             }
         }
-
+        if (stage == 2 && boundingBoxCollision(aiBigGuy1, aiBlockObject)) {
+            aiBigGuy1.wayPointNavMode = true;
+        }
         ensureCollision(obj, preX, preY, currX, currY);
     }
 
@@ -989,7 +1004,9 @@ if (ctx) {
             playerObject.posX + playerObject.wantedWidth >= object.posX &&
             playerObject.posY <= object.posY + object.wantedHeight &&
             playerObject.wantedHeight + playerObject.posY >= object.posY) {
-            clearPreviousImage(object.posX, object.posY, object.wantedWidth, object.wantedHeight);
+            if (object.name == "keyObject") {
+                clearPreviousImage(object.posX, object.posY, object.wantedWidth, object.wantedHeight);
+            }
             return true;
         }
         return false;
@@ -1180,6 +1197,7 @@ if (ctx) {
     }
 
     function keyObject(posX, posY) {
+        this.name = "keyObject";
         this.imageX = 345;
         this.imageY = 865;
         this.imageWidth = 35;
@@ -1214,15 +1232,15 @@ if (ctx) {
         this.wantedWidth = 50;
         this.wantedHeight = 400;
     }
-    
+
     function countDownNextStage(sec) {
         var timerSec = sec;
         ctx.fillStyle = textColor;
         ctx.fillText(timerSec, timerX, timerY + timerY / 2 + 10);
         var countDownInterval = setInterval(function () {
-            clearPreviousImage(10, 35, 70, 70);           
+            clearPreviousImage(10, 35, 70, 70);
             timerSec--;
-            ctx.fillStyle = textColor;    
+            ctx.fillStyle = textColor;
             if (timerSec < 10) {
                 ctx.fillText("0" + timerSec, timerX, timerY + timerY / 2 + 10);
             } else {
@@ -1233,6 +1251,99 @@ if (ctx) {
                 clearInterval(countDownInterval);
             }
         }, 1000);
+    }
+
+    //way point navigation
+    function wayPointNavigationObject(aiBigGuy1, aiBlockObject) {
+        this.topLeftX = aiBlockObject.posX - aiBigGuy1.wantedWidth;
+        this.topLeftY = aiBlockObject.posY - aiBigGuy1.wantedHeight;
+        this.topRightX = aiBlockObject.posX + aiBlockObject.wantedWidth;
+        this.topRightY = aiBlockObject.posY - aiBigGuy1.wantedHeight;
+        this.bottomLeftX = aiBlockObject.posX - aiBigGuy1.wantedWidth;
+        this.bottomLeftY = aiBlockObject.posY + aiBlockObject.wantedHeight;
+        this.bottomRightX = aiBlockObject.posX + aiBlockObject.wantedWidth;
+        this.bottomRightY = aiBlockObject.posY + aiBlockObject.wantedHeight;
+    }
+
+    function wayPointNav(aiObject) {
+        if (aiObject.face == faceRight) {
+            if (distanceBetweenObjectAndPos(aiObject, wayPointNavigationObject.topLeftX, wayPointNavigationObject.topLeftY) < distanceBetweenObjectAndPos(aiObject, wayPointNavigationObject.bottomLeftX, wayPointNavigationObject.bottomLeftY)) {
+                aiObject.nextPosX = wayPointNavigationObject.topLeftX;
+                aiObject.nextPosY = wayPointNavigationObject.topLeftY - 10;
+                if (aiObject.posX >= aiObject.nextPosX && aiObject.posY == aiObject.nextPosY) {
+                    aiObject.nextPosX = wayPointNavigationObject.topRightX;
+                    aiObject.nextPosY = wayPointNavigationObject.topRightY - 10;
+                    if (aiObject.posX == aiObject.nextPosX && aiObject.posY == aiObject.nextPosY) {
+                        aiBigGuy1.wayPointNavMode = false;
+                    }
+                }
+            } else {
+                aiObject.nextPosX = wayPointNavigationObject.bottomLeftX;
+                aiObject.nextPosY = wayPointNavigationObject.bottomLeftY + 10;
+                if (aiObject.posX >= aiObject.nextPosX && aiObject.posY == aiObject.nextPosY) {
+                    aiObject.nextPosX = wayPointNavigationObject.bottomRightX;
+                    aiObject.nextPosY = wayPointNavigationObject.bottomRightY + 10;
+                    if (aiObject.posX == aiObject.nextPosX && aiObject.posY == aiObject.nextPosY) {
+                        aiBigGuy1.wayPointNavMode = false;
+                    }
+                }
+            }
+            preX = aiObject.posX;
+            preY = aiObject.posY;
+            currX = aiObject.posX;
+            currY = aiObject.posY;
+            if (aiObject.posX > aiObject.nextPosX) {
+                currX -= aiObject.speed;
+            }
+            else if (aiObject.posX < aiObject.nextPosX) {
+                currX += aiObject.speed;
+            }
+            if (aiObject.posY > aiObject.nextPosY) {
+                currY -= aiObject.speed;
+            }
+            else if (aiObject.posY < aiObject.nextPosY) {
+                currY += aiObject.speed;
+            }
+        } else {
+            if (distanceBetweenObjectAndPos(aiObject, wayPointNavigationObject.topRightX, wayPointNavigationObject.topRightY) < distanceBetweenObjectAndPos(aiObject, wayPointNavigationObject.bottomRightX, wayPointNavigationObject.bottomRightY)) {
+                aiObject.nextPosX = wayPointNavigationObject.topRightX;
+                aiObject.nextPosY = wayPointNavigationObject.topRightY - 10;
+                if (aiObject.posX <= aiObject.nextPosX && aiObject.posY == aiObject.nextPosY) {
+                    aiObject.nextPosX = wayPointNavigationObject.topLeftX;
+                    aiObject.nextPosY = wayPointNavigationObject.topLeftY - 10;
+                    if (aiObject.posX == aiObject.nextPosX && aiObject.posY == aiObject.nextPosY) {
+                        aiBigGuy1.wayPointNavMode = false;
+                    }
+                }
+            } else {
+                aiObject.nextPosX = wayPointNavigationObject.bottomRightX;
+                aiObject.nextPosY = wayPointNavigationObject.bottomRightY + 10;
+                if (aiObject.posX <= aiObject.nextPosX && aiObject.posY == aiObject.nextPosY) {
+                    aiObject.nextPosX = wayPointNavigationObject.bottomLeftX;
+                    aiObject.nextPosY = wayPointNavigationObject.bottomLeftY + 10;
+                    if (aiObject.posX == aiObject.nextPosX && aiObject.posY == aiObject.nextPosY) {
+                        aiBigGuy1.wayPointNavMode = false;
+                    }
+                }
+            }
+            preX = aiObject.posX;
+            preY = aiObject.posY;
+            currX = aiObject.posX;
+            currY = aiObject.posY;
+            if (aiObject.posX > aiObject.nextPosX) {
+                currX -= aiObject.speed;
+            }
+            else if (aiObject.posX < aiObject.nextPosX) {
+                currX += aiObject.speed;
+            }
+            if (aiObject.posY > aiObject.nextPosY) {
+                currY -= aiObject.speed;
+            }
+            else if (aiObject.posY < aiObject.nextPosY) {
+                currY += aiObject.speed;
+            }
+        }
+        ensureCollision(aiObject, preX, preY, currX, currY);
     }
 
     //--- 3 end of global_function ---//
@@ -1357,6 +1468,19 @@ if (ctx) {
                     clearPreviousImage(aiDog.posX, aiDog.posY, aiDog.wantedWidth, aiDog.wantedHeight);
                 }
             }
+            if (stage == 2 && shortAttackCollision(playerObject, aiBigGuy1)) {
+                reduceHp(aiBigGuy1, 10);
+                if (aiBigGuy1.hp == 0) {
+                    clearPreviousImage(aiBigGuy1.posX, aiBigGuy1.posY, aiBigGuy1.wantedWidth, aiBigGuy1.wantedHeight);
+                }
+            }
+            if (stage == 2 && shortAttackCollision(playerObject, aiBigGuy2)) {
+                reduceHp(aiBigGuy2, 10);
+                if (aiBigGuy2.hp == 0) {
+                    clearPreviousImage(aiBigGuy2.posX, aiBigGuy2.posY, aiBigGuy2.wantedWidth, aiBigGuy2.wantedHeight);
+                }
+            }
+
 
             if (stage == 5 && shortAttackCollision(playerObject, ai5)) {
                 reduceHp(ai5, 10);
@@ -1448,6 +1572,7 @@ if (ctx) {
                 stage1Initial();
                 break;
             case 2:
+                stage2Initial();
                 break;
             case 3:
                 break;
@@ -1621,52 +1746,147 @@ if (ctx) {
     //
     //--- 8 start of stage 2 ---//
     function stage2Initial() {
-        aiShort = new aiObject(415, 2835, 65, 65, 900, 250, 100, 100, 3);
-        aiDog.originPosX = 900, aiDog.originPosY = 250;
-        aiDog.originSpeed = aiDog.speed;
-        aiDog.standXy["leftX"] = 415, aiDog.standXy["leftY"] = 2835;
-        aiDog.standXy["rightX"] = 15, aiDog.standXy["rightY"] = 2670;
+        aiBigGuy1 = new aiObject(395, 2380, 95, 125, 800, 350, 95, 125, 5);
+        aiBigGuy1.originPosX = 500, aiBigGuy1.originPosY = 500;
+        aiBigGuy1.originSpeed = aiBigGuy1.speed;
+        aiBigGuy1.standXy["leftX"] = 395, aiBigGuy1.standXy["leftY"] = 2380;
+        aiBigGuy1.standXy["rightX"] = 0, aiBigGuy1.standXy["rightY"] = 2092;
 
-        aiDog.walkLeftXy["x1"] = 315, aiDog.walkLeftXy["y1"] = 2835,
-            aiDog.walkLeftXy["x2"] = 215, aiDog.walkLeftXy["y2"] = 2835,
-            aiDog.walkLeftXy["x3"] = 115, aiDog.walkLeftXy["y3"] = 2835,
-            aiDog.walkLeftXy["x4"] = 15, aiDog.walkLeftXy["y4"] = 2835;
+        aiBigGuy1.walkLeftXy["x1"] = 295, aiBigGuy1.walkLeftXy["y1"] = 2380,
+            aiBigGuy1.walkLeftXy["x2"] = 200, aiBigGuy1.walkLeftXy["y2"] = 2380,
+            aiBigGuy1.walkLeftXy["x3"] = 100, aiBigGuy1.walkLeftXy["y3"] = 2380,
+            aiBigGuy1.walkLeftXy["x4"] = 0, aiBigGuy1.walkLeftXy["y4"] = 2380;
 
-        aiDog.walkRightXy["x1"] = 115, aiDog.walkRightXy["y1"] = 2670,
-            aiDog.walkRightXy["x2"] = 215, aiDog.walkRightXy["y2"] = 2670,
-            aiDog.walkRightXy["x3"] = 315, aiDog.walkRightXy["y3"] = 2670,
-            aiDog.walkRightXy["x4"] = 415, aiDog.walkRightXy["y4"] = 2670;
+        aiBigGuy1.walkRightXy["x1"] = 100, aiBigGuy1.walkRightXy["y1"] = 2092,
+            aiBigGuy1.walkRightXy["x2"] = 198, aiBigGuy1.walkRightXy["y2"] = 2092,
+            aiBigGuy1.walkRightXy["x3"] = 296, aiBigGuy1.walkRightXy["y3"] = 2092,
+            aiBigGuy1.walkRightXy["x4"] = 395, aiBigGuy1.walkRightXy["y4"] = 2092;
 
-        aiDog.shortAttackLeftXy["x1"] = 415, aiDog.shortAttackLeftXy["y1"] = 2920,
-            aiDog.shortAttackLeftXy["x2"] = 315, aiDog.shortAttackLeftXy["y2"] = 2920,
-            aiDog.shortAttackLeftXy["x3"] = 215, aiDog.shortAttackLeftXy["y3"] = 2920,
-            aiDog.shortAttackLeftXy["x4"] = 115, aiDog.shortAttackLeftXy["y4"] = 2920;
+        aiBigGuy1.shortAttackLeftXy["x1"] = 100, aiBigGuy1.shortAttackLeftXy["y1"] = 2518,
+            aiBigGuy1.shortAttackLeftXy["x2"] = 198, aiBigGuy1.shortAttackLeftXy["y2"] = 2518,
+            aiBigGuy1.shortAttackLeftXy["x3"] = 298, aiBigGuy1.shortAttackLeftXy["y3"] = 2518,
+            aiBigGuy1.shortAttackLeftXy["x4"] = 393, aiBigGuy1.shortAttackLeftXy["y4"] = 2518;
 
-        aiDog.shortAttackRightXy["x1"] = 15, aiDog.shortAttackRightXy["y1"] = 2750,
-            aiDog.shortAttackRightXy["x2"] = 115, aiDog.shortAttackRightXy["y2"] = 2750,
-            aiDog.shortAttackRightXy["x3"] = 215, aiDog.shortAttackRightXy["y3"] = 2750,
-            aiDog.shortAttackRightXy["x4"] = 315, aiDog.shortAttackRightXy["y4"] = 2750;
+        aiBigGuy1.shortAttackRightXy["x1"] = 0, aiBigGuy1.shortAttackRightXy["y1"] = 2230,
+            aiBigGuy1.shortAttackRightXy["x2"] = 95, aiBigGuy1.shortAttackRightXy["y2"] = 2230,
+            aiBigGuy1.shortAttackRightXy["x3"] = 198, aiBigGuy1.shortAttackRightXy["y3"] = 2230,
+            aiBigGuy1.shortAttackRightXy["x4"] = 297, aiBigGuy1.shortAttackRightXy["y4"] = 2230;
 
-        aiDog.icon["posX"] = 415, aiDog.icon["posY"] = 2765, aiDog.icon["width"] = 53, aiDog.icon["height"] = 43;
+        aiBigGuy1.icon["posX"] = 18, aiBigGuy1.icon["posY"] = 2092, aiBigGuy1.icon["width"] = 55, aiBigGuy1.icon["height"] = 55;
 
-        aiDog.shortAttackObject = new shortAttackObject(50, 50);
+        aiBigGuy1.shortAttackObject = new shortAttackObject(50, 50);
 
-        aiDog.name = "aidog";
-        aiDog.hp = 50;
-        aiDog.mp = 0;
-        drawSpriteStatus(aiDog);
+        aiBigGuy1.wayPointNavMode = false;
 
-        keyObject1 = new keyObject(aiDog.posX + 100, aiDog.posY + 25);
-        keyInterval = setInterval(function () {
-            if (boundingBoxCollision(playerObject, keyObject1)) {
-                playerObject.keyGet = true;
-                nextStageArea = new nextStageObject();
-                ctx.drawImage(gameImage, keyObject1.imageX, keyObject1.imageY, keyObject1.imageWidth, keyObject1.imageHeight, 125, 40, 20, 20);
-                clearInterval(keyInterval);
+        aiBigGuy1.name = "aiBigGuy1";
+        aiBigGuy1.hp = 70;
+        aiBigGuy1.mp = 0;
+        drawSpriteStatus(aiBigGuy1);
+
+        aiBigGuy2 = new aiObject(395, 1218, 95, 135, 1300, 350, 95, 125, 5);
+        aiBigGuy2.originPosX = 700, aiBigGuy2.originPosY = 500;
+        aiBigGuy2.originSpeed = aiBigGuy2.speed;
+        aiBigGuy2.standXy["leftX"] = 395, aiBigGuy2.standXy["leftY"] = 1218;
+        aiBigGuy2.standXy["rightX"] = 0, aiBigGuy2.standXy["rightY"] = 948;
+
+        aiBigGuy2.walkLeftXy["x1"] = 295, aiBigGuy2.walkLeftXy["y1"] = 1218,
+            aiBigGuy2.walkLeftXy["x2"] = 198, aiBigGuy2.walkLeftXy["y2"] = 1218,
+            aiBigGuy2.walkLeftXy["x3"] = 99, aiBigGuy2.walkLeftXy["y3"] = 1218,
+            aiBigGuy2.walkLeftXy["x4"] = 0, aiBigGuy2.walkLeftXy["y4"] = 1218;
+
+        aiBigGuy2.walkRightXy["x1"] = 100, aiBigGuy2.walkRightXy["y1"] = 948,
+            aiBigGuy2.walkRightXy["x2"] = 198, aiBigGuy2.walkRightXy["y2"] = 948,
+            aiBigGuy2.walkRightXy["x3"] = 296, aiBigGuy2.walkRightXy["y3"] = 948,
+            aiBigGuy2.walkRightXy["x4"] = 395, aiBigGuy2.walkRightXy["y4"] = 948;
+
+        aiBigGuy2.shortAttackLeftXy["x1"] = 394, aiBigGuy2.shortAttackLeftXy["y1"] = 1355,
+            aiBigGuy2.shortAttackLeftXy["x2"] = 298, aiBigGuy2.shortAttackLeftXy["y2"] = 1355,
+            aiBigGuy2.shortAttackLeftXy["x3"] = 200, aiBigGuy2.shortAttackLeftXy["y3"] = 1355,
+            aiBigGuy2.shortAttackLeftXy["x4"] = 100, aiBigGuy2.shortAttackLeftXy["y4"] = 1355;
+
+        aiBigGuy2.shortAttackRightXy["x1"] = 0, aiBigGuy2.shortAttackRightXy["y1"] = 1085,
+            aiBigGuy2.shortAttackRightXy["x2"] = 100, aiBigGuy2.shortAttackRightXy["y2"] = 1085,
+            aiBigGuy2.shortAttackRightXy["x3"] = 198, aiBigGuy2.shortAttackRightXy["y3"] = 1085,
+            aiBigGuy2.shortAttackRightXy["x4"] = 297, aiBigGuy2.shortAttackRightXy["y4"] = 1085;
+
+        aiBigGuy2.icon["posX"] = 13, aiBigGuy2.icon["posY"] = 950, aiBigGuy2.icon["width"] = 65, aiBigGuy2.icon["height"] = 65;
+
+        aiBigGuy2.shortAttackObject = new shortAttackObject(50, 50);
+
+        aiBigGuy2.name = "aiBigGuy2";
+        aiBigGuy2.hp = 30;
+        aiBigGuy2.mp = 0;
+        drawSpriteStatus(aiBigGuy2);
+
+        aiBlockObject = new aiObject(225, 878, 18, 11, 500, 370, 190, 190);
+
+        wayPointNavigationObject = new wayPointNavigationObject(aiBigGuy1, aiBlockObject);
+
+        aiObjectArr = [aiBigGuy1, aiBigGuy2, aiBlockObject];
+
+        keyObject2 = new keyObject(0, 0);
+    }
+
+    function stage2Ai(aiObjectArr, keyObject2) {
+        aiObjectArr.forEach(function (aiObject, aiIndex) {
+            clearImage(aiObject.posX - 10, aiObject.posY - 10, aiObject.wantedWidth + 20, aiObject.wantedHeight + 20);
+            setFace(aiObject);
+            draw(aiObject);
+        });
+
+        if (aiBigGuy1.hp != 0) {
+            if (boundingBoxCollision(playerObject, aiBigGuy1)) {
+                if (aiBigGuy1.face == faceLeft) {
+                    if (playerObject.posY == aiBigGuy1.posY) {
+                        aiBigGuy1.posX = aiBigGuy1.preX + 1;
+                    } else if (playerObject.posY > aiBigGuy1.posY) {
+                        aiBigGuy1.posX = aiBigGuy1.preX + 1;
+                        aiBigGuy1.posY = aiBigGuy1.preY - 1;
+                    } else if (playerObject.posY < aiBigGuy1.posY) {
+                        aiBigGuy1.posX = aiBigGuy1.preX + 1;
+                        aiBigGuy1.posY = aiBigGuy1.preY + 1;
+                    }
+                } else {
+                    if (playerObject.posY == aiBigGuy1.posY) {
+                        aiBigGuy1.posX = aiBigGuy1.preX - 1;
+                    } else if (playerObject.posY > aiBigGuy1.posY) {
+                        aiBigGuy1.posX = aiBigGuy1.preX - 1;
+                        aiBigGuy1.posY = aiBigGuy1.preY - 1;
+                    } else if (playerObject.posY < aiBigGuy1.posY) {
+                        aiBigGuy1.posX = aiBigGuy1.preX - 1;
+                        aiBigGuy1.posY = aiBigGuy1.preY + 1;
+                    }
+                }
+                playerObject.posX = playerObject.preX;
+                playerObject.posY = playerObject.preY;
             } else {
-                draw(keyObject1);
+                playerObject.speed = playerObject.originSpeed;
             }
-        }, 20);
+
+            if (aiBigGuy1.wayPointNavMode) {
+                chaseType = "wayPointNav";
+                chaseSpeed = "slow";
+                aiChase(chaseSpeed, chaseType, aiBigGuy1);
+            } else {
+                if (aiBigGuy1.face == faceLeft ? findDistanceBetweenPlayerAndAi(aiBigGuy1) <= 100 && playerObject.moving == false : findDistanceBetweenPlayerAndAi(aiBigGuy1) <= 110 && playerObject.moving == false) {
+                    if (!aiBigGuy1.attackLaunched) {
+                        aiAttackCall(gameImage, aiBigGuy1.shortAttackLeftXy, aiBigGuy1.shortAttackRightXy, aiBigGuy1);
+
+                        //set small bounding box based on image attack animate 315 2955 160 2790
+                        updateShortAttackObject(aiBigGuy1.shortAttackObject, aiBigGuy1.posX - 50, aiBigGuy1.posY + 35, aiBigGuy1.posX + 95, aiBigGuy1.posY + 40);
+                        if (shortAttackCollision(aiBigGuy1, playerObject)) {
+                            reduceHp(playerObject, gRand());
+                        }
+                    }
+                } else {
+                    chaseType = "basicChase";
+                    chaseSpeed = "slow";
+                    aiChase(chaseSpeed, chaseType, aiBigGuy1);
+                }
+            }
+        } else {
+            clearImage(aiBigGuy1.posX - 10, aiBigGuy1.posY - 10, aiBigGuy1.wantedWidth + 20, aiBigGuy1.wantedHeight + 20);
+        }
     }
     //--- 8 end of stage 2 ---//
     // 
@@ -1867,9 +2087,9 @@ if (ctx) {
     // 
     //     
     //--- 11 start of stage 5 ---//
-    if(stage == 5){
+    if (stage == 5) {
         drawSpriteStatus(ai5);
-    }    
+    }
     //--- 11 end of stage 5 ---//
 }
 
