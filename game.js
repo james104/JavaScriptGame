@@ -18,7 +18,7 @@
 var canvasElement = document.getElementById("gameCanvas");
 canvasElement.width = "1500";
 canvasElement.height = "700";
-canvasElement.style.background = "url(img/stage4bg.png)";
+canvasElement.style.background = "url(img/stage5bg.png)";
 canvasElement.style.backgroundSize = "cover";
 var ctx = canvasElement.getContext && canvasElement.getContext('2d');
 var stage = 5;
@@ -163,7 +163,7 @@ if (ctx) {
         ai5.emissionAnimateXy["x3"] = 80, ai5.emissionAnimateXy["y3"] = 870,
         ai5.emissionAnimateXy["x4"] = 120, ai5.emissionAnimateXy["y4"] = 870;
 
-    setInterval(function () {
+    mpInterval = setInterval(function () {
         if(stage == 5){
             increaseMp(ai5, 10);
         }        
@@ -241,6 +241,16 @@ if (ctx) {
                 }
             }
             draw(ai5);
+        }
+        else {
+            clearInterval(currentInterval);
+            clearInterval(mpInterval);
+            clearInterval(timeInterval);
+            clearImage(0, 0, 1400, 700);
+            ctx.font = "50px Arial";
+            ctx.fillText("Congratulations, you have finished the game!", 250, 350);
+            ctx.fillText("Time used: " + timerMin + " mins " + timerSec + " s", 250, 400);
+            ctx.fillText("Dead: " + deadCount, 250, 450);
         }
     }
 
@@ -1569,13 +1579,14 @@ if (ctx) {
     document.onkeyup = function (key) {
         delete keyStatus[key.keyCode];
     };
-
+    var deadCount = 0;
     //define all player action in here
     function playerAction() {
         clearPreviousImage(playerObject.posX, playerObject.posY, playerObject.imageWidth, playerObject.imageHeight);
         playerObject.moving = false;
         if (playerObject.hp <= 0) {
             applyStage(stage);
+            deadCount += 1;
             return true;
         }
 
