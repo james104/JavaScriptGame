@@ -462,7 +462,7 @@ if (ctx) {
         var finalResult = [];
 
         //very near
-        var x0 = 80.0, x1 = 160.0;
+        var x0 = 50.0, x1 = 100.0;
         if (x <= x0)
             value = 1.0;
         else if (x > x0 && x < x1)
@@ -472,7 +472,7 @@ if (ctx) {
         finalResult.push(value);
 
         //near
-        var x2 = 240.0; x3 = 320.0;
+        var x2 = 150.0; x3 = 200.0;
         if (x <= x0)
             value = 0.0;
         else if (x > x0 && x < x1)
@@ -486,7 +486,7 @@ if (ctx) {
         finalResult.push(value);
 
         //far
-        x0 = 240.0; x1 = 320.0; x2 = 400.0; x3 = 480.0;
+        x0 = 150.0; x1 = 200.0; x2 = 250.0; x3 = 300.0;
         if (x <= x0)
             value = 0.0;
         else if (x > x0 && x < x1)
@@ -500,7 +500,7 @@ if (ctx) {
         finalResult.push(value);
 
         //very far
-        x0 = 400.0; x1 = 480.0;
+        x0 = 250.0; x1 = 300.0;
         if (x <= x0)
             value = 0.0;
         else if (x > x0 && x < x1)
