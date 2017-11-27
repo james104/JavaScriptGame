@@ -163,6 +163,12 @@ if (ctx) {
         ai5.emissionAnimateXy["x3"] = 80, ai5.emissionAnimateXy["y3"] = 870,
         ai5.emissionAnimateXy["x4"] = 120, ai5.emissionAnimateXy["y4"] = 870;
 
+    setInterval(function () {
+        if(stage == 5){
+            increaseMp(ai5, 10);
+        }        
+    }, 5000);
+
     //drawSpriteStatus(ai5);
 
     chaseSpeed = "";
@@ -173,72 +179,75 @@ if (ctx) {
         //if (ensurePlayerCollision(ai)) {
         //    console.log("yes");
         //}
-        setFace(ai5);
-        var distance = findDistanceBetweenPlayerAndAi(ai5);
+        if (ai5.hp != 0) {
+            setFace(ai5);
+            var distance = findDistanceBetweenPlayerAndAi(ai5);
 
-        var distanceFuzzySet = distanceFuzzySets(distance);
-        var hpFuzzySet = hpFuzzySets(ai5.hp);
-        var mpFuzzySet = mpFuzzySets(ai5.mp);
-        console.log(ai5.hp, ai5.mp, distance);
-        var defuzzEscape = escapeFuzzyRules(distanceFuzzySet, hpFuzzySet, mpFuzzySet) * behaviourWeight[0];
-        var defuzzDrink = drinkMilkFuzzyRules(distanceFuzzySet, hpFuzzySet, mpFuzzySet) * behaviourWeight[1];
-        var defuzzChase = basicChaseFuzzyRules(distanceFuzzySet, hpFuzzySet, mpFuzzySet) * behaviourWeight[2];
-        var defuzzShort = shortAttackFuzzyRules(distanceFuzzySet, hpFuzzySet, mpFuzzySet) * behaviourWeight[3];
-        var defuzzLong = longAttackFuzzyRules(distanceFuzzySet, hpFuzzySet, mpFuzzySet) * behaviourWeight[4];
-        var allResults = new Array(defuzzEscape, defuzzDrink, defuzzChase, defuzzShort, defuzzLong);
-        currAction = action[findMaxIndex(allResults)];
-        if (ai5.mp != 100) {
-            ai5.mp += 1;
-        }
-        //random number from 1 to 2
-        //if (ai5.attackFinished) {
-        //    attackType = Math.floor(Math.random() * 2 + 1);
-        //}
-        //"escape", "drinkMilk", "basicChase", "shortAttack", "longAttack"
-        // Randomly perform either 1) or 2) attack (every randomly 1-4s).
-        //1: Faster, Chase (random within 2-4s), after that, Must perform short attack.
-        //2: same speed, keep distance and Long attack (chase horizontally)    
-        if (currAction == "escape" && !ai5.attackLaunched) {
-            chaseSpeed = "slow";
-            chaseType = "escape";
-            aiChase(chaseSpeed, chaseType, ai5);
-        }
-        else if (currAction == "basicChase" && !ai5.attackLaunched) {
-            ai5.attackFinished = false;
-            chaseSpeed = "slow";
-            chaseType = "basicChase";
-            aiChase(chaseSpeed, chaseType, ai5);
-        } else if (currAction == "shortAttack" && !ai5.attackLaunched) {
-            aiAttackCall(gameImage, ai5.shortAttackLeftXy, ai5.shortAttackRightXy, ai5);
-            ai5.shortAttackObject = new shortAttackObject(50, 50);
-            updateShortAttackObject(ai5.shortAttackObject, ai5.posX, ai5.posY + 50, ai5.posX + 50, ai5.posY + 50);
-            if (shortAttackCollision(ai5, playerObject)) {
-                reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+            var distanceFuzzySet = distanceFuzzySets(distance);
+            var hpFuzzySet = hpFuzzySets(ai5.hp);
+            var mpFuzzySet = mpFuzzySets(ai5.mp);
+            // console.log(ai5.hp, ai5.mp, distance);
+            var defuzzEscape = escapeFuzzyRules(distanceFuzzySet, hpFuzzySet, mpFuzzySet) * behaviourWeight[0];
+            var defuzzDrink = drinkMilkFuzzyRules(distanceFuzzySet, hpFuzzySet, mpFuzzySet) * behaviourWeight[1];
+            var defuzzChase = basicChaseFuzzyRules(distanceFuzzySet, hpFuzzySet, mpFuzzySet) * behaviourWeight[2];
+            var defuzzShort = shortAttackFuzzyRules(distanceFuzzySet, hpFuzzySet, mpFuzzySet) * behaviourWeight[3];
+            var defuzzLong = longAttackFuzzyRules(distanceFuzzySet, hpFuzzySet, mpFuzzySet) * behaviourWeight[4];
+            var allResults = new Array(defuzzEscape, defuzzDrink, defuzzChase, defuzzShort, defuzzLong);
+            currAction = action[findMaxIndex(allResults)];
+
+            // if (ai5.mp != 100) {
+            //     ai5.mp += 1;
+            // }
+
+            //random number from 1 to 2
+            //if (ai5.attackFinished) {
+            //    attackType = Math.floor(Math.random() * 2 + 1);
+            //}
+            //"escape", "drinkMilk", "basicChase", "shortAttack", "longAttack"
+            // Randomly perform either 1) or 2) attack (every randomly 1-4s).
+            //1: Faster, Chase (random within 2-4s), after that, Must perform short attack.
+            //2: same speed, keep distance and Long attack (chase horizontally)    
+            if (currAction == "escape" && !ai5.attackLaunched) {
+                chaseSpeed = "slow";
+                chaseType = "escape";
+                aiChase(chaseSpeed, chaseType, ai5);
             }
-        } else if (currAction == "longAttack" && !ai5.attackLaunched) {
-            aiAttackCall(gameImage, ai5.longAttackLeftXy, ai5.longAttackRightXy, ai5);
-            aiEmission = new emissionObject(ai5, "horizontal");
-            ai5.mp -= 10;
-            console.log(ai5.mp);
-        }
-        else if (currAction == "drinkMilk" && !ai5.attackLaunched) {
-            ai5.mp -= 10;
-            ai5.hp += 20;
-        }
-        else if (!ai5.attackLaunched) {
-            if (ai5.face == faceLeft) {
-                ai5.imageX = ai5.standXy["leftX"], ai5.imageY = ai5.standXy["leftY"];
-            } else {
-                ai5.imageX = ai5.standXy["rightX"], ai5.imageY = ai5.standXy["rightY"];
+            else if (currAction == "basicChase" && !ai5.attackLaunched) {
+                ai5.attackFinished = false;
+                chaseSpeed = "slow";
+                chaseType = "basicChase";
+                aiChase(chaseSpeed, chaseType, ai5);
+            } else if (currAction == "shortAttack" && !ai5.attackLaunched) {
+                aiAttackCall(gameImage, ai5.shortAttackLeftXy, ai5.shortAttackRightXy, ai5);
+                ai5.shortAttackObject = new shortAttackObject(50, 50);
+                updateShortAttackObject(ai5.shortAttackObject, ai5.posX, ai5.posY + 50, ai5.posX + 50, ai5.posY + 50);
+                if (shortAttackCollision(ai5, playerObject)) {
+                    reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+                }
+            } else if (currAction == "longAttack" && !ai5.attackLaunched) {
+                aiAttackCall(gameImage, ai5.longAttackLeftXy, ai5.longAttackRightXy, ai5);
+                aiEmission = new emissionObject(ai5, "horizontal");
+                reduceMp(ai5, 10);
             }
+            else if (currAction == "drinkMilk" && !ai5.attackLaunched) {
+                reduceMp(ai5, 10);
+                increaseHp(ai5, 20);
+            }
+            else if (!ai5.attackLaunched) {
+                if (ai5.face == faceLeft) {
+                    ai5.imageX = ai5.standXy["leftX"], ai5.imageY = ai5.standXy["leftY"];
+                } else {
+                    ai5.imageX = ai5.standXy["rightX"], ai5.imageY = ai5.standXy["rightY"];
+                }
+            }
+            draw(ai5);
         }
-        draw(ai5);
     }
 
     function findMaxIndex(list) {
         var temp = list[0];
         var index = 0;
-        for (var i = 1; i < list.length ; i++)
+        for (var i = 1; i < list.length; i++)
             if (list[i] > temp) {
                 temp = list[i];
                 index = i;
@@ -632,7 +641,7 @@ if (ctx) {
     // setInterval(function(){
     //     aiAttackCall(image, ai.shortAttackLeftXy, ai.shortAttackRightXy, ai);
     // },1000);
-    
+
     function escape(obj) {
 
         preX = obj.posX;
@@ -1150,6 +1159,7 @@ if (ctx) {
 
         if (currHp <= 0) {
             currHp = 0;
+            object.hp = currHp;
             hpPercentage = 0;
         }
 
@@ -1160,6 +1170,33 @@ if (ctx) {
         ctx.fillText(currHp, spriteHpTextX, spriteHpTextY);
 
         console.log("damage: " + damage);
+    }
+
+    function increaseHp(object, restoration) {
+        x = spriteStatusArr[object.name].hpX;
+        y = spriteStatusArr[object.name].hpY;
+        spriteHpTextX = x + spriteStatusW, spriteHpTextY = y + 15;
+
+        clearPreviousImage(x, y, spriteStatusW + 40, spriteStatusH);
+
+        orignHp = spriteStatusArr[object.name].fullHp;
+        object.hp += restoration;
+        currHp = object.hp;
+        hpPercentage = currHp / orignHp;
+
+        if (currHp >= orignHp) {
+            currHp = orignHp;
+            object.hp = currHp;
+            hpPercentage = 1;
+        }
+
+        //for hp bar
+        ctx.fillStyle = hpColor;
+        ctx.fillRect(x, y, spriteStatusW * hpPercentage, spriteStatusH);
+        ctx.fillStyle = textColor;
+        ctx.fillText(currHp, spriteHpTextX, spriteHpTextY);
+
+        console.log("restoration: " + restoration);
     }
 
     function reduceMp(object, consumption) {
@@ -1176,6 +1213,7 @@ if (ctx) {
 
         if (currMp <= 0) {
             currMp = 0;
+            object.mp = currMp;
             mpPercentage = 0;
         }
 
@@ -1186,6 +1224,33 @@ if (ctx) {
         ctx.fillText(currMp, spriteMpTextX, spriteMpTextY);
 
         console.log("consumption: " + consumption);
+    }
+
+    function increaseMp(object, restoration) {
+        x = spriteStatusArr[object.name].mpX;
+        y = spriteStatusArr[object.name].mpY;
+        spriteMpTextX = x + spriteStatusW, spriteMpTextY = y + 15;
+
+        clearPreviousImage(x, y, spriteStatusW + 40, spriteStatusH);
+
+        orignMp = spriteStatusArr[object.name].fullMp;
+        object.mp += restoration;
+        currMp = object.mp;
+        mpPercentage = currMp / orignMp;
+
+        if (currMp >= orignMp) {
+            currMp = orignMp;
+            object.mp = currMp;
+            mpPercentage = 1;
+        }
+
+        //for mp bar
+        ctx.fillStyle = mpColor;
+        ctx.fillRect(x, y, spriteStatusW * mpPercentage, spriteStatusH);
+        ctx.fillStyle = textColor;
+        ctx.fillText(currMp, spriteMpTextX, spriteMpTextY);
+
+        console.log("restoration: " + restoration);
     }
 
     function resetHpMp() {
@@ -1543,6 +1608,9 @@ if (ctx) {
 
             if (stage == 5 && shortAttackCollision(playerObject, ai5)) {
                 reduceHp(ai5, 10);
+                if (ai5.hp == 0) {
+                    clearPreviousImage(ai5.posX, ai5.posY, ai5.wantedWidth, ai5.wantedHeight);
+                }
             }
 
             //user timeout to enable player attack
