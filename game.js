@@ -16,6 +16,12 @@
 //--- 1 start of canvas ---//
 
 var canvasElement = document.getElementById("gameCanvas");
+var bgAudio = new Audio("audio/bgmusic.mp3");
+var ninjaAttackAudio = new Audio("audio/attack.mp3");
+var ninjaLongAttackAudio = new Audio("audio/long.mp3");
+bgAudio.load();
+ninjaAttackAudio.load();
+ninjaLongAttackAudio.load();
 canvasElement.width = "1500";
 canvasElement.height = "700";
 canvasElement.style.background = "url(img/stage5bg.png)";
@@ -33,6 +39,8 @@ if (ctx) {
     gameImage = new Image();
     gameImage.id = "gameImage";
     gameImage.src = gameImagePath;
+    bgAudio.play();
+    bgAudio.loop = true;
     // gameImage.onload = init;
     var playerType = "player";
     var faceLeft = "left", faceRight = "right";
@@ -218,6 +226,7 @@ if (ctx) {
                 chaseType = "basicChase";
                 aiChase(chaseSpeed, chaseType, ai5);
             } else if (currAction == "shortAttack" && !ai5.attackLaunched) {
+                ninjaAttackAudio.play();
                 aiAttackCall(gameImage, ai5.shortAttackLeftXy, ai5.shortAttackRightXy, ai5);
                 ai5.shortAttackObject = new shortAttackObject(50, 50);
                 updateShortAttackObject(ai5.shortAttackObject, ai5.posX, ai5.posY + 50, ai5.posX + 50, ai5.posY + 50);
@@ -225,6 +234,7 @@ if (ctx) {
                     reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
                 }
             } else if (currAction == "longAttack" && !ai5.attackLaunched) {
+                ninjaLongAttackAudio.play();
                 aiAttackCall(gameImage, ai5.longAttackLeftXy, ai5.longAttackRightXy, ai5);
                 aiEmission = new emissionObject(ai5, "horizontal");
                 reduceMp(ai5, 20);
@@ -908,7 +918,7 @@ if (ctx) {
         } else if (object.face == faceRight) {
             attackXyArr = attackRightXy;
         }
-
+        
         //use interval to ensure finish whole animation
         var interval = setInterval(function () {
             //add 1 for each move
@@ -1593,7 +1603,7 @@ if (ctx) {
         if (keyStatus[90] && !playerObject.shortAttackLaunched) {//Z(attack)
             playerObject.shortAttackLaunched = true;
             attackAnimation(gameImage, playerAttackLeftXy, playerAttackRightXy, playerObject);
-
+            ninjaAttackAudio.play();
             //set small bounding box based on image attack animate 160 445 535 285    140 440 530 280 484 243
             updateShortAttackObject(playerObject.shortAttackObject, playerObject.posX - 20, playerObject.posY + 40, playerObject.posX + playerObject.wantedWidth, playerObject.posY + 40);
 
