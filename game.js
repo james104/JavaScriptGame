@@ -1679,7 +1679,7 @@ if (ctx) {
             default:
                 break;
         }
-        //key.returnValue = false;
+        key.returnValue = false;
         if (key.keyCode != 90 || keyStatus[90] != false) {
             keyStatus[key.keyCode] = true;
         }
