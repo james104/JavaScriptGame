@@ -10,7 +10,6 @@
 //8. stage 2
 //9. stage 3
 //10. stage 4
-//11. stage 5
 //------------------------------------------------//
 
 //--- 1 start of canvas ---//
@@ -19,15 +18,17 @@ var canvasElement = document.getElementById("gameCanvas");
 var bgAudio = new Audio("audio/bgmusic.mp3");
 var ninjaAttackAudio = new Audio("audio/attack.mp3");
 var ninjaLongAttackAudio = new Audio("audio/long.mp3");
+var key = new Audio("audio/key.mp3");
 bgAudio.load();
 ninjaAttackAudio.load();
 ninjaLongAttackAudio.load();
+key.load();
 canvasElement.width = "1500";
 canvasElement.height = "700";
 canvasElement.style.background = "url(img/stage5bg.png)";
 canvasElement.style.backgroundSize = "cover";
 var ctx = canvasElement.getContext && canvasElement.getContext('2d');
-var stage = 5;
+var stage = 2;
 
 //--- 1 end of canvas ---//
 
@@ -39,8 +40,8 @@ if (ctx) {
     gameImage = new Image();
     gameImage.id = "gameImage";
     gameImage.src = gameImagePath;
-    bgAudio.play();
-    bgAudio.loop = true;
+    // bgAudio.play();
+    // bgAudio.loop = true;
     // gameImage.onload = init;
     var playerType = "player";
     var faceLeft = "left", faceRight = "right";
@@ -72,17 +73,20 @@ if (ctx) {
         } else if (stage == 2) {
             stage2Ai(aiObjectArr, keyObject2);
         } else if (stage == 3) {
-
+            stage3Ai(aiObjectArr, keyObject3);
         } else if (stage == 4) {
-            stage4Ai(aiObjectArr, keyObject4);
-        } else if (stage == 5) {
-
             stage5Ai();
         }
 
         //for draw one more time to prevent sparkle 
         if (stage == 1 && aiDog.hp > 0) {
             draw(aiDog);
+        }
+        if (stage == 2 && aiBigGuy1.hp > 0) {
+            draw(aiBigGuy1);
+        }
+        if (stage == 2 && aiBigGuy2.hp > 0) {
+            draw(aiBigGuy2);
         }
         draw(playerObject);
     }
@@ -172,12 +176,10 @@ if (ctx) {
         ai5.emissionAnimateXy["x4"] = 120, ai5.emissionAnimateXy["y4"] = 870;
 
     mpInterval = setInterval(function () {
-        if(stage == 5){
+        if (stage == 4) {
             increaseMp(ai5, 10);
-        }        
-    }, 5000);
-
-    //drawSpriteStatus(ai5);
+        }
+    }, 2000);
 
     chaseSpeed = "";
     chaseType = "";
@@ -231,12 +233,16 @@ if (ctx) {
                 ai5.shortAttackObject = new shortAttackObject(50, 50);
                 updateShortAttackObject(ai5.shortAttackObject, ai5.posX, ai5.posY + 50, ai5.posX + 50, ai5.posY + 50);
                 if (shortAttackCollision(ai5, playerObject)) {
-                    reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
+                    reduceHp(playerObject, 10);
                 }
             } else if (currAction == "longAttack" && !ai5.attackLaunched) {
                 ninjaLongAttackAudio.play();
                 aiAttackCall(gameImage, ai5.longAttackLeftXy, ai5.longAttackRightXy, ai5);
-                aiEmission = new emissionObject(ai5, "horizontal");
+                if (playerObject.posY >= ai5.posY) {
+                    aiEmission = new emissionObject(ai5, "line", "down");
+                } else {
+                    aiEmission = new emissionObject(ai5, "line", "up");
+                }
                 reduceMp(ai5, 20);
             }
             else if (currAction == "drinkMilk" && !ai5.attackLaunched) {
@@ -651,17 +657,6 @@ if (ctx) {
         }, 3000);
     }
 
-    //ai long attack
-    // setInterval(function(){
-    //     aiAttackCall(image, ai.longAttackLeftXy, ai.longAttackRightXy, ai);
-    //     aiEmission = new emissionObject(ai, ai.emissionAnimateXy);
-    // },2000);
-
-    //ai short attack
-    // setInterval(function(){
-    //     aiAttackCall(image, ai.shortAttackLeftXy, ai.shortAttackRightXy, ai);
-    // },1000);
-
     function escape(obj) {
 
         preX = obj.posX;
@@ -699,6 +694,9 @@ if (ctx) {
             if (stage == 2 && !boundingBoxCollision(aiBigGuy1, aiBlockObject)) {
                 aiBigGuy1.speed = 1;
             }
+            if (stage == 2) {
+                aiBigGuy2.speed = 2;
+            }
         }
 
         if (!aiObject.attackLaunched) {
@@ -716,6 +714,9 @@ if (ctx) {
             }
             else if (chaseType == "wayPointNav") {
                 wayPointNav(aiObject);
+            }
+            else if (chaseType == "randomChase") {
+                randomChase(aiObject);
             }
             walkAnimation(image, aiObject.walkLeftXy, aiObject.walkRightXy, aiObject);
         }
@@ -918,7 +919,7 @@ if (ctx) {
         } else if (object.face == faceRight) {
             attackXyArr = attackRightXy;
         }
-        
+
         //use interval to ensure finish whole animation
         var interval = setInterval(function () {
             //add 1 for each move
@@ -941,7 +942,7 @@ if (ctx) {
         drawInCanvas(image, attackXyArr["x" + object.attackAnimte], attackXyArr["y" + object.attackAnimte], object);
     }
 
-    function emissionObject(aiObject, emissionType) {
+    function emissionObject(aiObject, emissionType, direction) {
         this.imageWidth = 40;
         this.imageHeight = 30;
         this.wantedWidth = 40;
@@ -965,10 +966,10 @@ if (ctx) {
             this.posX = aiObject.posX + (this.wantedWidth / 2);
             this.posY = aiObject.posY + aiObject.wantedHeight;
         }
-        emissionAnimation(gameImage, this);
+        emissionAnimation(gameImage, this, direction);
     }
 
-    function emissionAnimation(image, emissionObject) {
+    function emissionAnimation(image, emissionObject, direction) {
         //random to prevent same name of interval 
         var intervalNo = Math.floor(Math.random() * 100) + 1;
 
@@ -1010,29 +1011,56 @@ if (ctx) {
             } else if (emissionObject.emissionType == "vertical") {
                 emissionObject.posY += emissionObject.speed;
             } else if (emissionObject.emissionType == "line") {
-                if (emissionObject.bAlgorithmLine.steep) {
-                    emissionObject.posX = emissionObject.bAlgorithmLine.y;
-                    emissionObject.posY += 5;
-                } else {
-                    if (emissionObject.face == faceLeft) {
-                        emissionObject.posX -= 5;
-                    } else {
-                        emissionObject.posX += 5;
-                    }
-                    emissionObject.posY = emissionObject.bAlgorithmLine.y;
-                }
-                emissionObject.bAlgorithmLine.error -= emissionObject.bAlgorithmLine.deltaY;
-                if (emissionObject.bAlgorithmLine.error < 0) {
+                if (direction == "down") {
                     if (emissionObject.bAlgorithmLine.steep) {
+                        emissionObject.posX = emissionObject.bAlgorithmLine.y;
+                        emissionObject.posY += 5;
+                    } else {
                         if (emissionObject.face == faceLeft) {
-                            emissionObject.bAlgorithmLine.y += emissionObject.bAlgorithmLine.yStep - 4;
+                            emissionObject.posX -= 5;
+                        } else {
+                            emissionObject.posX += 5;
+                        }
+                        emissionObject.posY = emissionObject.bAlgorithmLine.y;
+                    }
+                    emissionObject.bAlgorithmLine.error -= emissionObject.bAlgorithmLine.deltaY;
+                    if (emissionObject.bAlgorithmLine.error < 0) {
+                        if (emissionObject.bAlgorithmLine.steep) {
+                            if (emissionObject.face == faceLeft) {
+                                emissionObject.bAlgorithmLine.y += emissionObject.bAlgorithmLine.yStep - 4;
+                            } else {
+                                emissionObject.bAlgorithmLine.y += emissionObject.bAlgorithmLine.yStep + 4;
+                            }
                         } else {
                             emissionObject.bAlgorithmLine.y += emissionObject.bAlgorithmLine.yStep + 4;
                         }
-                    } else {
-                        emissionObject.bAlgorithmLine.y += emissionObject.bAlgorithmLine.yStep + 4;
+                        emissionObject.bAlgorithmLine.error += emissionObject.bAlgorithmLine.deltaX;
                     }
-                    emissionObject.bAlgorithmLine.error += emissionObject.bAlgorithmLine.deltaX;
+                } else if (direction == "up") {
+                    if (emissionObject.bAlgorithmLine.steep) {
+                        emissionObject.posX = emissionObject.bAlgorithmLine.y;
+                        emissionObject.posY -= 5;
+                    } else {
+                        if (emissionObject.face == faceLeft) {
+                            emissionObject.posX -= 5;
+                        } else {
+                            emissionObject.posX += 5;
+                        }
+                        emissionObject.posY = emissionObject.bAlgorithmLine.y;
+                    }
+                    emissionObject.bAlgorithmLine.error += emissionObject.bAlgorithmLine.deltaY;
+                    if (emissionObject.bAlgorithmLine.error > 0) {
+                        if (emissionObject.bAlgorithmLine.steep) {
+                            if (emissionObject.face == faceLeft) {
+                                emissionObject.bAlgorithmLine.y -= emissionObject.bAlgorithmLine.yStep - 4;
+                            } else {
+                                emissionObject.bAlgorithmLine.y -= emissionObject.bAlgorithmLine.yStep + 4;
+                            }
+                        } else {
+                            emissionObject.bAlgorithmLine.y -= emissionObject.bAlgorithmLine.yStep + 4;
+                        }
+                        emissionObject.bAlgorithmLine.error -= emissionObject.bAlgorithmLine.deltaX;
+                    }
                 }
             }
             checkEmissionCollision(emissionObject, playerObject, intervalNo);
@@ -1051,7 +1079,11 @@ if (ctx) {
         }
         else {
             if (boundingBoxCollision(playerObject, emissionObject)) {
-                reduceHp(playerObject, 5);
+                if (stage == 4) {
+                    reduceHp(playerObject, 10);
+                } else {
+                    reduceHp(playerObject, 5);
+                }
                 if (emissionObject.emissionType == "horizontal") {
                     if (emissionObject.face == faceLeft) {
                         clearPreviousImage(emissionObject.posX, emissionObject.posY, emissionObject.wantedWidth + 20, emissionObject.wantedHeight);
@@ -1144,9 +1176,11 @@ if (ctx) {
         ctx.fillStyle = hpColor;
         ctx.fillRect(spriteHpX, spriteHpY, spriteStatusW, spriteStatusH);
 
-        // //for mp bar
-        ctx.fillStyle = mpColor;
-        ctx.fillRect(spriteMpX, spriteMpY, spriteStatusW, spriteStatusH);
+        if (object.mp > 0) {
+            // //for mp bar
+            ctx.fillStyle = mpColor;
+            ctx.fillRect(spriteMpX, spriteMpY, spriteStatusW, spriteStatusH);
+        }
 
         ctx.fillStyle = textColor;
         ctx.fillText(object.hp, spriteHpTextX, spriteHpTextY);
@@ -1155,6 +1189,7 @@ if (ctx) {
         ctx.drawImage(gameImage, object.icon["posX"], object.icon["posY"], object.icon["width"], object.icon["height"], spriteHpX - object.icon["width"] - 10, spriteHpY - 10, object.icon["width"], object.icon["height"]);
 
         if (gameSpriteNo % 4 == 0) {
+            console.log("test");
             spriteHpX = 150, spriteHpY = spriteHpY + 50;
         }
         else {
@@ -1279,8 +1314,13 @@ if (ctx) {
             spriteStatusW = 200, spriteStatusH = 15,
             spriteHpTextX = spriteHpX + spriteStatusW, spriteHpTextY = spriteHpY + 15,
             spriteMpTextX = spriteHpTextX, spriteMpTextY = spriteHpTextY + 20;
+        spriteStatusArr = [];
+        gameSpriteNo = 0;
         playerObject.hp = 100;
-        playerObject.mp = 100;
+        if (stage == 4) {
+            ai5.hp = 100;
+            ai5.mp = 100;
+        }
         drawSpriteStatus(playerObject);
     }
 
@@ -1291,7 +1331,7 @@ if (ctx) {
     }
 
     //Bresenham’s algorithm
-    function bAlgorithmLine(x0, y0, x1, y1, emissionObject) {
+    function bAlgorithmLine(x0, y0, x1, y1, object) {
         this.steep = (y0 > y1 ? y0 - y1 : y1 - y0) > (x0 > x1 ? x0 - x1 : x1 - x0);
         if (this.steep) {
             //swap(x0, y0)
@@ -1322,7 +1362,7 @@ if (ctx) {
         this.error = this.deltaX / 2;
         this.yStep = y0 < y1 ? 1 : -1;
         if (!this.steep) {
-            if (emissionObject.face == faceLeft) {
+            if (object.face == faceLeft) {
                 y0 = y0 + y1;
                 y1 = y0 - y1;
                 y0 = y0 - y1;
@@ -1352,6 +1392,13 @@ if (ctx) {
         this.wantedHeight = 35;
     }
 
+    function nextStageStatement() {
+        ctx.font = "100px Arial";
+        ctx.fillStyle = textColor;
+        ctx.fillText("Go!", 1200, 100);
+        ctx.font = "20px Arial";
+    }
+
     function applyStage(stageNo) {
         // console.log(emissionArr.length);
         emissionArr.forEach(function (object, index) {
@@ -1360,10 +1407,11 @@ if (ctx) {
         clearInterval(timeInterval);
         clearInterval(currentInterval);
         clearInterval(keyInterval);
-
         ctx.clearRect(0, 0, 1500, 700);
         stage = stageNo;
         resetHpMp();
+        ai5.posX = 900;
+        ai5.posY = 400;
         playerObject.posX = 100;
         playerObject.posY = 400;
         playerObject.keyGet = false;
@@ -1490,6 +1538,60 @@ if (ctx) {
         ensureCollision(aiObject, preX, preY, currX, currY);
     }
 
+    function randomChase(aiObject) {
+        preX = aiObject.posX;
+        preY = aiObject.posY;
+        currX = aiObject.posX;
+        currY = aiObject.posY;
+        if (aiObject.face == faceRight) {
+            if (aiObject.posX > aiObject.nextPosX) {
+                currX -= aiObject.speed;
+            }
+            else if (aiObject.posX < aiObject.nextPosX) {
+                currX += aiObject.speed;
+            }
+            if (aiObject.posY > aiObject.nextPosY) {
+                currY -= aiObject.speed;
+            }
+            else if (aiObject.posY < aiObject.nextPosY) {
+                currY += aiObject.speed;
+            }
+        } else {
+            if (aiObject.posX > aiObject.nextPosX) {
+                currX -= aiObject.speed;
+            }
+            else if (aiObject.posX < aiObject.nextPosX) {
+                currX += aiObject.speed;
+            }
+            if (aiObject.posY > aiObject.nextPosY) {
+                currY -= aiObject.speed;
+            }
+            else if (aiObject.posY < aiObject.nextPosY) {
+                currY += aiObject.speed;
+            }
+        }
+        ensureCollision(aiObject, preX, preY, currX, currY);
+        if (aiObject.posX >= aiObject.nextPosX - 5 && aiObject.posX <= aiObject.nextPosX + 5 && aiObject.posY >= aiObject.nextPosY - 5 && aiObject.posY <= aiObject.nextPosY + 5) {
+            aiBigGuy2.randomNavMode = false;
+        }
+    }
+
+    function generatePosition(aiObject) {
+        var width = 400, height;
+        if(aiObject.nextPosY == 250){
+            height = 550;
+        }else{
+            height = 250;
+        }
+        aiObject.nextPosX = Math.floor(Math.random() * width) + 1000;
+        aiObject.nextPosY = height;
+        aiObject.randomNavMode = true;
+    }
+
+    function probability(no) {
+        return Math.floor(Math.random() * no + 1);
+    }
+
     //--- 3 end of global_function ---//
     //     
     //     
@@ -1503,7 +1605,7 @@ if (ctx) {
         this.name = "keyLovers";
         this.type = "player";
         this.hp = 100;
-        this.mp = 100;
+        this.mp = 0;
         this.speed = 5;
         this.originSpeed = this.speed;
         this.posX = 100;
@@ -1573,9 +1675,6 @@ if (ctx) {
             case 52:
                 applyStage(4);
                 break;
-            case 53:
-                applyStage(5);
-                break;
             default:
                 break;
         }
@@ -1625,9 +1724,7 @@ if (ctx) {
                     clearPreviousImage(aiBigGuy2.posX, aiBigGuy2.posY, aiBigGuy2.wantedWidth, aiBigGuy2.wantedHeight);
                 }
             }
-
-
-            if (stage == 5 && shortAttackCollision(playerObject, ai5)) {
+            if (stage == 4 && shortAttackCollision(playerObject, ai5)) {
                 reduceHp(ai5, 10);
                 if (ai5.hp == 0) {
                     clearPreviousImage(ai5.posX, ai5.posY, ai5.wantedWidth, ai5.wantedHeight);
@@ -1680,7 +1777,7 @@ if (ctx) {
                     currY = currY + playerObject.speed;
                 }
 
-                if (stage != 4 ? playerObject.keyGet && boundingBoxCollision(playerObject, nextStageArea) : false) {
+                if (stage != 3 ? playerObject.keyGet && boundingBoxCollision(playerObject, nextStageArea) : false) {
                     applyStage(stage + 1);
                     return true;
                 }
@@ -1717,17 +1814,25 @@ if (ctx) {
         timeInterval = setInterval(timerFunction, 1000);
         switch (stage) {
             case 1:
+                canvasElement.style.background = "url(img/stage1bg.png)";
+                canvasElement.style.backgroundSize = "cover";
+                ctx.drawImage(gameImage, playerObject.icon["posX"], playerObject.icon["posY"], playerObject.icon["width"], playerObject.icon["height"], 140 - playerObject.icon["width"], 10, playerObject.icon["width"], playerObject.icon["height"]);
                 stage1Initial();
                 break;
             case 2:
+                canvasElement.style.background = "url(img/stage2bg.png)";
+                canvasElement.style.backgroundSize = "cover";
                 stage2Initial();
                 break;
             case 3:
+                canvasElement.style.background = "url(img/stage4bg.png)";
+                canvasElement.style.backgroundSize = "cover";
+                stage3Initial();
                 break;
             case 4:
-                stage4Initial();
-                break;
-            case 5:
+                canvasElement.style.background = "url(img/stage5bg.png)";
+                canvasElement.style.backgroundSize = "cover";
+                drawSpriteStatus(ai5);
                 break;
             default:
                 break;
@@ -1814,9 +1919,11 @@ if (ctx) {
         keyObject1 = new keyObject(aiDog.posX + 100, aiDog.posY + 25);
         keyInterval = setInterval(function () {
             if (boundingBoxCollision(playerObject, keyObject1)) {
+                nextStageStatement();
                 playerObject.keyGet = true;
                 nextStageArea = new nextStageObject();
                 ctx.drawImage(gameImage, keyObject1.imageX, keyObject1.imageY, keyObject1.imageWidth, keyObject1.imageHeight, 125, 40, 20, 20);
+                key.play();
                 clearInterval(keyInterval);
             } else {
                 draw(keyObject1);
@@ -1961,18 +2068,36 @@ if (ctx) {
 
         aiBigGuy2.shortAttackObject = new shortAttackObject(50, 50);
 
+        aiBigGuy2.randomNavMode = false;
+
         aiBigGuy2.name = "aiBigGuy2";
         aiBigGuy2.hp = 30;
         aiBigGuy2.mp = 0;
         drawSpriteStatus(aiBigGuy2);
 
-        aiBlockObject = new aiObject(225, 878, 18, 11, 500, 370, 190, 190);
+        aiBlockObject = new aiObject(225, 878, 18, 11, 500, 370, 190, 190, 0);
 
-        wayPointNavigationObject = new wayPointNavigationObject(aiBigGuy1, aiBlockObject);
+        setTimeout(function () {
+            wayPointNavigationObject = new wayPointNavigationObject(aiBigGuy1, aiBlockObject);
+        }, 1000);
 
         aiObjectArr = [aiBigGuy1, aiBigGuy2, aiBlockObject];
 
-        keyObject2 = new keyObject(0, 0);
+        keyObject2 = new keyObject(700, 450);
+        keyInterval = setInterval(function () {
+            if (aiBigGuy1.hp == 0 && aiBigGuy2.hp == 0 && !playerObject.keyGet) {
+                if (boundingBoxCollision(playerObject, keyObject2)) {
+                    nextStageStatement();
+                    playerObject.keyGet = true;
+                    nextStageArea = new nextStageObject();
+                    ctx.drawImage(gameImage, keyObject2.imageX, keyObject2.imageY, keyObject2.imageWidth, keyObject2.imageHeight, 125, 40, 20, 20);
+                    key.play();
+                    clearInterval(keyInterval);
+                } else {
+                    draw(keyObject2);
+                }
+            }
+        }, 20);
     }
 
     function stage2Ai(aiObjectArr, keyObject2) {
@@ -1980,185 +2105,216 @@ if (ctx) {
             clearImage(aiObject.posX - 10, aiObject.posY - 10, aiObject.wantedWidth + 20, aiObject.wantedHeight + 20);
             setFace(aiObject);
             draw(aiObject);
-        });
 
-        if (aiBigGuy1.hp != 0) {
-            if (boundingBoxCollision(playerObject, aiBigGuy1)) {
-                if (aiBigGuy1.face == faceLeft) {
-                    if (playerObject.posY == aiBigGuy1.posY) {
-                        aiBigGuy1.posX = aiBigGuy1.preX + 1;
-                    } else if (playerObject.posY > aiBigGuy1.posY) {
-                        aiBigGuy1.posX = aiBigGuy1.preX + 1;
-                        aiBigGuy1.posY = aiBigGuy1.preY - 1;
-                    } else if (playerObject.posY < aiBigGuy1.posY) {
-                        aiBigGuy1.posX = aiBigGuy1.preX + 1;
-                        aiBigGuy1.posY = aiBigGuy1.preY + 1;
+            if (aiObject.name == "aiBigGuy1") {
+                if (aiBigGuy1.hp != 0) {
+                    if (boundingBoxCollision(playerObject, aiBigGuy1)) {
+                        if (aiBigGuy1.face == faceLeft) {
+                            if (playerObject.posY == aiBigGuy1.posY) {
+                                aiBigGuy1.posX = aiBigGuy1.preX + 1;
+                            } else if (playerObject.posY > aiBigGuy1.posY) {
+                                aiBigGuy1.posX = aiBigGuy1.preX + 1;
+                                aiBigGuy1.posY = aiBigGuy1.preY - 1;
+                            } else if (playerObject.posY < aiBigGuy1.posY) {
+                                aiBigGuy1.posX = aiBigGuy1.preX + 1;
+                                aiBigGuy1.posY = aiBigGuy1.preY + 1;
+                            }
+                        } else {
+                            if (playerObject.posY == aiBigGuy1.posY) {
+                                aiBigGuy1.posX = aiBigGuy1.preX - 1;
+                            } else if (playerObject.posY > aiBigGuy1.posY) {
+                                aiBigGuy1.posX = aiBigGuy1.preX - 1;
+                                aiBigGuy1.posY = aiBigGuy1.preY - 1;
+                            } else if (playerObject.posY < aiBigGuy1.posY) {
+                                aiBigGuy1.posX = aiBigGuy1.preX - 1;
+                                aiBigGuy1.posY = aiBigGuy1.preY + 1;
+                            }
+                        }
+                        playerObject.posX = playerObject.preX;
+                        playerObject.posY = playerObject.preY;
+                    } else {
+                        playerObject.speed = playerObject.originSpeed;
                     }
-                } else {
-                    if (playerObject.posY == aiBigGuy1.posY) {
-                        aiBigGuy1.posX = aiBigGuy1.preX - 1;
-                    } else if (playerObject.posY > aiBigGuy1.posY) {
-                        aiBigGuy1.posX = aiBigGuy1.preX - 1;
-                        aiBigGuy1.posY = aiBigGuy1.preY - 1;
-                    } else if (playerObject.posY < aiBigGuy1.posY) {
-                        aiBigGuy1.posX = aiBigGuy1.preX - 1;
-                        aiBigGuy1.posY = aiBigGuy1.preY + 1;
-                    }
-                }
-                playerObject.posX = playerObject.preX;
-                playerObject.posY = playerObject.preY;
-            } else {
-                playerObject.speed = playerObject.originSpeed;
-            }
 
-            if (aiBigGuy1.wayPointNavMode) {
-                chaseType = "wayPointNav";
-                chaseSpeed = "slow";
-                aiChase(chaseSpeed, chaseType, aiBigGuy1);
-            } else {
-                if (aiBigGuy1.face == faceLeft ? findDistanceBetweenPlayerAndAi(aiBigGuy1) <= 100 && playerObject.moving == false : findDistanceBetweenPlayerAndAi(aiBigGuy1) <= 110 && playerObject.moving == false) {
-                    if (!aiBigGuy1.attackLaunched) {
-                        aiAttackCall(gameImage, aiBigGuy1.shortAttackLeftXy, aiBigGuy1.shortAttackRightXy, aiBigGuy1);
+                    if (aiBigGuy1.wayPointNavMode) {
+                        chaseType = "wayPointNav";
+                        chaseSpeed = "slow";
+                        aiChase(chaseSpeed, chaseType, aiBigGuy1);
+                    } else {
+                        if (aiBigGuy1.face == faceLeft ? findDistanceBetweenPlayerAndAi(aiBigGuy1) <= 100 && playerObject.moving == false : findDistanceBetweenPlayerAndAi(aiBigGuy1) <= 110 && playerObject.moving == false) {
+                            if (!aiBigGuy1.attackLaunched) {
+                                aiAttackCall(gameImage, aiBigGuy1.shortAttackLeftXy, aiBigGuy1.shortAttackRightXy, aiBigGuy1);
 
-                        //set small bounding box based on image attack animate 315 2955 160 2790
-                        updateShortAttackObject(aiBigGuy1.shortAttackObject, aiBigGuy1.posX - 50, aiBigGuy1.posY + 35, aiBigGuy1.posX + 95, aiBigGuy1.posY + 40);
-                        if (shortAttackCollision(aiBigGuy1, playerObject)) {
-                            reduceHp(playerObject, gRand());
+                                //set small bounding box based on image attack animate 315 2955 160 2790
+                                updateShortAttackObject(aiBigGuy1.shortAttackObject, aiBigGuy1.posX - 50, aiBigGuy1.posY + 35, aiBigGuy1.posX + 95, aiBigGuy1.posY + 40);
+                                if (shortAttackCollision(aiBigGuy1, playerObject)) {
+                                    reduceHp(playerObject, gRand());
+                                }
+                            }
+                        } else {
+                            chaseType = "basicChase";
+                            chaseSpeed = "slow";
+                            aiChase(chaseSpeed, chaseType, aiBigGuy1);
                         }
                     }
                 } else {
-                    chaseType = "basicChase";
-                    chaseSpeed = "slow";
-                    aiChase(chaseSpeed, chaseType, aiBigGuy1);
+                    clearImage(aiBigGuy1.posX - 10, aiBigGuy1.posY - 10, aiBigGuy1.wantedWidth + 20, aiBigGuy1.wantedHeight + 20);
+                }
+            } else if (aiObject.name == "aiBigGuy2") {
+                if (aiBigGuy2.hp != 0) {
+                    if (boundingBoxCollision(playerObject, aiBigGuy2)) {
+                        playerObject.posX = playerObject.preX;
+                        playerObject.posY = playerObject.preY;
+
+                        if (!aiBigGuy2.attackLaunched) {
+                            aiAttackCall(gameImage, aiBigGuy2.shortAttackLeftXy, aiBigGuy2.shortAttackRightXy, aiBigGuy2);
+
+                            //set small bounding box based on image attack animate 315 2955 160 2790
+                            updateShortAttackObject(aiBigGuy2.shortAttackObject, aiBigGuy2.posX - 50, aiBigGuy2.posY + 35, aiBigGuy2.posX + 95, aiBigGuy2.posY + 40);
+                            if (shortAttackCollision(aiBigGuy2, playerObject)) {
+                                reduceHp(playerObject, gRand());
+                            }
+                        }
+                    } else {
+                        if (!boundingBoxCollision(playerObject, { name: "radomAreaObject", posX: 1000, posY: 300, wantedWidth: 400, wantedHeight: 300 })) {
+                            if (!aiBigGuy2.randomNavMode) {
+                                generatePosition(aiBigGuy2);
+                                aiBigGuy2.bAlgorithmLine = new bAlgorithmLine(aiBigGuy2.posX,aiBigGuy2.posY,aiBigGuy2.nextPosX,aiBigGuy2.nextPosY,aiBigGuy2);
+                            }
+                            chaseType = "randomChase";
+                            chaseSpeed = "slow";
+                            aiChase(chaseSpeed, chaseType, aiBigGuy2);
+                        } else {
+                            aiBigGuy2.randomNavMode = true;
+                            chaseType = "basicChase";
+                            chaseSpeed = "normal";
+                            aiChase(chaseSpeed, chaseType, aiBigGuy2);
+                        }
+                    }
+                } else {
+                    clearImage(aiBigGuy2.posX - 10, aiBigGuy2.posY - 10, aiBigGuy2.wantedWidth + 20, aiBigGuy2.wantedHeight + 20);
                 }
             }
-        } else {
-            clearImage(aiBigGuy1.posX - 10, aiBigGuy1.posY - 10, aiBigGuy1.wantedWidth + 20, aiBigGuy1.wantedHeight + 20);
-        }
+            //file:///C:/Users/james/Desktop/JavaScriptGame/game.html
+
+        });
     }
     //--- 8 end of stage 2 ---//
     // 
     // 
     // 
     // 
-    //     
+    //
     //--- 9 start of stage 3 ---//
-
-    //--- 9 end of stage 3 ---//
-    // 
-    // 
-    // 
-    // 
-    //     
-    //--- 10 start of stage 4 ---//
-    function stage4Initial() {
-        aiNinja = new aiObject(0, 0, 75, 82, 500, 100, 75, 82, 0);
-        aiNinja.standXy["leftX"] = 78, aiNinja.standXy["leftY"] = 243;
-        aiNinja.standXy["rightX"] = 0, aiNinja.standXy["rightY"] = 0;
-        aiNinja.longAttackLeftXy["x1"] = 410, aiNinja.longAttackLeftXy["y1"] = 160,
-            aiNinja.longAttackLeftXy["x2"] = 490, aiNinja.longAttackLeftXy["y2"] = 160,
-            aiNinja.longAttackLeftXy["x3"] = 570, aiNinja.longAttackLeftXy["y3"] = 160,
-            aiNinja.longAttackLeftXy["x4"] = 650, aiNinja.longAttackLeftXy["y4"] = 160;
-        aiNinja.longAttackRightXy["x1"] = 0, aiNinja.longAttackRightXy["y1"] = 80,
-            aiNinja.longAttackRightXy["x2"] = 80, aiNinja.longAttackRightXy["y2"] = 80,
-            aiNinja.longAttackRightXy["x3"] = 160, aiNinja.longAttackRightXy["y3"] = 80,
-            aiNinja.longAttackRightXy["x4"] = 240, aiNinja.longAttackRightXy["y4"] = 80;
+    function stage3Initial() {
+        15, 3005, 70, 111
+        aiNinja = new aiObject(15, 3005, 70, 111, 500, 100, 75, 82, 0);
+        aiNinja.standXy["leftX"] = 15, aiNinja.standXy["leftY"] = 3005;
+        aiNinja.standXy["rightX"] = 15, aiNinja.standXy["rightY"] = 3005;
+        aiNinja.longAttackLeftXy["x1"] = 15, aiNinja.longAttackLeftXy["y1"] = 3005,
+            aiNinja.longAttackLeftXy["x2"] = 15, aiNinja.longAttackLeftXy["y2"] = 3005,
+            aiNinja.longAttackLeftXy["x3"] = 15, aiNinja.longAttackLeftXy["y3"] = 3005,
+            aiNinja.longAttackLeftXy["x4"] = 15, aiNinja.longAttackLeftXy["y4"] = 3005;
+        aiNinja.longAttackRightXy["x1"] = 15, aiNinja.longAttackRightXy["y1"] = 3005,
+            aiNinja.longAttackRightXy["x2"] = 15, aiNinja.longAttackRightXy["y2"] = 3005,
+            aiNinja.longAttackRightXy["x3"] = 15, aiNinja.longAttackRightXy["y3"] = 3005,
+            aiNinja.longAttackRightXy["x4"] = 15, aiNinja.longAttackRightXy["y4"] = 3005;
         aiNinja.emissionAnimateXy["x1"] = 0, aiNinja.emissionAnimateXy["y1"] = 870,
             aiNinja.emissionAnimateXy["x2"] = 40, aiNinja.emissionAnimateXy["y2"] = 870,
             aiNinja.emissionAnimateXy["x3"] = 80, aiNinja.emissionAnimateXy["y3"] = 870,
             aiNinja.emissionAnimateXy["x4"] = 120, aiNinja.emissionAnimateXy["y4"] = 870;
 
-        aiNinja2 = new aiObject(0, 0, 75, 82, 1250, 70, 75, 82, 0);
-        aiNinja2.standXy["leftX"] = 78, aiNinja2.standXy["leftY"] = 243;
-        aiNinja2.standXy["rightX"] = 0, aiNinja2.standXy["rightY"] = 0;
-        aiNinja2.longAttackLeftXy["x1"] = 410, aiNinja2.longAttackLeftXy["y1"] = 160,
-            aiNinja2.longAttackLeftXy["x2"] = 490, aiNinja2.longAttackLeftXy["y2"] = 160,
-            aiNinja2.longAttackLeftXy["x3"] = 570, aiNinja2.longAttackLeftXy["y3"] = 160,
-            aiNinja2.longAttackLeftXy["x4"] = 650, aiNinja2.longAttackLeftXy["y4"] = 160;
-        aiNinja2.longAttackRightXy["x1"] = 0, aiNinja2.longAttackRightXy["y1"] = 80,
-            aiNinja2.longAttackRightXy["x2"] = 80, aiNinja2.longAttackRightXy["y2"] = 80,
-            aiNinja2.longAttackRightXy["x3"] = 160, aiNinja2.longAttackRightXy["y3"] = 80,
-            aiNinja2.longAttackRightXy["x4"] = 240, aiNinja2.longAttackRightXy["y4"] = 80;
+        aiNinja2 = new aiObject(15, 3005, 70, 111, 1250, 70, 75, 82, 0);
+        aiNinja2.standXy["leftX"] = 15, aiNinja2.standXy["leftY"] = 3005;
+        aiNinja2.standXy["rightX"] = 15, aiNinja2.standXy["rightY"] = 3005;
+        aiNinja2.longAttackLeftXy["x1"] = 15, aiNinja2.longAttackLeftXy["y1"] = 3005,
+            aiNinja2.longAttackLeftXy["x2"] = 15, aiNinja2.longAttackLeftXy["y2"] = 3005,
+            aiNinja2.longAttackLeftXy["x3"] = 15, aiNinja2.longAttackLeftXy["y3"] = 3005,
+            aiNinja2.longAttackLeftXy["x4"] = 15, aiNinja2.longAttackLeftXy["y4"] = 3005;
+        aiNinja2.longAttackRightXy["x1"] = 15, aiNinja2.longAttackRightXy["y1"] = 3005,
+            aiNinja2.longAttackRightXy["x2"] = 15, aiNinja2.longAttackRightXy["y2"] = 3005,
+            aiNinja2.longAttackRightXy["x3"] = 15, aiNinja2.longAttackRightXy["y3"] = 3005,
+            aiNinja2.longAttackRightXy["x4"] = 15, aiNinja2.longAttackRightXy["y4"] = 3005;
         aiNinja2.emissionAnimateXy["x1"] = 0, aiNinja2.emissionAnimateXy["y1"] = 870,
             aiNinja2.emissionAnimateXy["x2"] = 40, aiNinja2.emissionAnimateXy["y2"] = 870,
             aiNinja2.emissionAnimateXy["x3"] = 80, aiNinja2.emissionAnimateXy["y3"] = 870,
             aiNinja2.emissionAnimateXy["x4"] = 120, aiNinja2.emissionAnimateXy["y4"] = 870;
 
-        aiNinja3 = new aiObject(0, 0, 75, 82, 1400, 200, 75, 82, 0);
-        aiNinja3.standXy["leftX"] = 78, aiNinja3.standXy["leftY"] = 243;
-        aiNinja3.standXy["rightX"] = 0, aiNinja3.standXy["rightY"] = 0;
-        aiNinja3.longAttackLeftXy["x1"] = 410, aiNinja3.longAttackLeftXy["y1"] = 160,
-            aiNinja3.longAttackLeftXy["x2"] = 490, aiNinja3.longAttackLeftXy["y2"] = 160,
-            aiNinja3.longAttackLeftXy["x3"] = 570, aiNinja3.longAttackLeftXy["y3"] = 160,
-            aiNinja3.longAttackLeftXy["x4"] = 650, aiNinja3.longAttackLeftXy["y4"] = 160;
-        aiNinja3.longAttackRightXy["x1"] = 0, aiNinja3.longAttackRightXy["y1"] = 80,
-            aiNinja3.longAttackRightXy["x2"] = 80, aiNinja3.longAttackRightXy["y2"] = 80,
-            aiNinja3.longAttackRightXy["x3"] = 160, aiNinja3.longAttackRightXy["y3"] = 80,
-            aiNinja3.longAttackRightXy["x4"] = 240, aiNinja3.longAttackRightXy["y4"] = 80;
+        aiNinja3 = new aiObject(15, 3005, 70, 111, 1400, 200, 75, 82, 0);
+        aiNinja3.standXy["leftX"] = 15, aiNinja3.standXy["leftY"] = 3005;
+        aiNinja3.standXy["rightX"] = 15, aiNinja3.standXy["rightY"] = 3005;
+        aiNinja3.longAttackLeftXy["x1"] = 15, aiNinja3.longAttackLeftXy["y1"] = 3005,
+            aiNinja3.longAttackLeftXy["x2"] = 15, aiNinja3.longAttackLeftXy["y2"] = 3005,
+            aiNinja3.longAttackLeftXy["x3"] = 15, aiNinja3.longAttackLeftXy["y3"] = 3005,
+            aiNinja3.longAttackLeftXy["x4"] = 15, aiNinja3.longAttackLeftXy["y4"] = 3005;
+        aiNinja3.longAttackRightXy["x1"] = 15, aiNinja3.longAttackRightXy["y1"] = 3005,
+            aiNinja3.longAttackRightXy["x2"] = 15, aiNinja3.longAttackRightXy["y2"] = 3005,
+            aiNinja3.longAttackRightXy["x3"] = 15, aiNinja3.longAttackRightXy["y3"] = 3005,
+            aiNinja3.longAttackRightXy["x4"] = 15, aiNinja3.longAttackRightXy["y4"] = 3005;
         aiNinja3.emissionAnimateXy["x1"] = 0, aiNinja3.emissionAnimateXy["y1"] = 870,
             aiNinja3.emissionAnimateXy["x2"] = 40, aiNinja3.emissionAnimateXy["y2"] = 870,
             aiNinja3.emissionAnimateXy["x3"] = 80, aiNinja3.emissionAnimateXy["y3"] = 870,
             aiNinja3.emissionAnimateXy["x4"] = 120, aiNinja3.emissionAnimateXy["y4"] = 870;
 
-        aiNinja4 = new aiObject(0, 0, 75, 82, 1400, 300, 75, 82, 0);
-        aiNinja4.standXy["leftX"] = 78, aiNinja4.standXy["leftY"] = 243;
-        aiNinja4.standXy["rightX"] = 0, aiNinja4.standXy["rightY"] = 0;
-        aiNinja4.longAttackLeftXy["x1"] = 410, aiNinja4.longAttackLeftXy["y1"] = 160,
-            aiNinja4.longAttackLeftXy["x2"] = 490, aiNinja4.longAttackLeftXy["y2"] = 160,
-            aiNinja4.longAttackLeftXy["x3"] = 570, aiNinja4.longAttackLeftXy["y3"] = 160,
-            aiNinja4.longAttackLeftXy["x4"] = 650, aiNinja4.longAttackLeftXy["y4"] = 160;
-        aiNinja4.longAttackRightXy["x1"] = 0, aiNinja4.longAttackRightXy["y1"] = 80,
-            aiNinja4.longAttackRightXy["x2"] = 80, aiNinja4.longAttackRightXy["y2"] = 80,
-            aiNinja4.longAttackRightXy["x3"] = 160, aiNinja4.longAttackRightXy["y3"] = 80,
-            aiNinja4.longAttackRightXy["x4"] = 240, aiNinja4.longAttackRightXy["y4"] = 80;
+        aiNinja4 = new aiObject(15, 3005, 70, 111, 1400, 300, 75, 82, 0);
+        aiNinja4.standXy["leftX"] = 15, aiNinja4.standXy["leftY"] = 3005;
+        aiNinja4.standXy["rightX"] = 15, aiNinja4.standXy["rightY"] = 3005;
+        aiNinja4.longAttackLeftXy["x1"] = 15, aiNinja4.longAttackLeftXy["y1"] = 3005,
+            aiNinja4.longAttackLeftXy["x2"] = 15, aiNinja4.longAttackLeftXy["y2"] = 3005,
+            aiNinja4.longAttackLeftXy["x3"] = 15, aiNinja4.longAttackLeftXy["y3"] = 3005,
+            aiNinja4.longAttackLeftXy["x4"] = 15, aiNinja4.longAttackLeftXy["y4"] = 3005;
+        aiNinja4.longAttackRightXy["x1"] = 15, aiNinja4.longAttackRightXy["y1"] = 3005,
+            aiNinja4.longAttackRightXy["x2"] = 15, aiNinja4.longAttackRightXy["y2"] = 3005,
+            aiNinja4.longAttackRightXy["x3"] = 15, aiNinja4.longAttackRightXy["y3"] = 3005,
+            aiNinja4.longAttackRightXy["x4"] = 15, aiNinja4.longAttackRightXy["y4"] = 3005;
         aiNinja4.emissionAnimateXy["x1"] = 0, aiNinja4.emissionAnimateXy["y1"] = 870,
             aiNinja4.emissionAnimateXy["x2"] = 40, aiNinja4.emissionAnimateXy["y2"] = 870,
             aiNinja4.emissionAnimateXy["x3"] = 80, aiNinja4.emissionAnimateXy["y3"] = 870,
             aiNinja4.emissionAnimateXy["x4"] = 120, aiNinja4.emissionAnimateXy["y4"] = 870;
 
-        aiNinja5 = new aiObject(0, 0, 75, 82, 1400, 400, 75, 82, 0);
-        aiNinja5.standXy["leftX"] = 78, aiNinja5.standXy["leftY"] = 243;
-        aiNinja5.standXy["rightX"] = 0, aiNinja5.standXy["rightY"] = 0;
-        aiNinja5.longAttackLeftXy["x1"] = 410, aiNinja5.longAttackLeftXy["y1"] = 160,
-            aiNinja5.longAttackLeftXy["x2"] = 490, aiNinja5.longAttackLeftXy["y2"] = 160,
-            aiNinja5.longAttackLeftXy["x3"] = 570, aiNinja5.longAttackLeftXy["y3"] = 160,
-            aiNinja5.longAttackLeftXy["x4"] = 650, aiNinja5.longAttackLeftXy["y4"] = 160;
-        aiNinja5.longAttackRightXy["x1"] = 0, aiNinja5.longAttackRightXy["y1"] = 80,
-            aiNinja5.longAttackRightXy["x2"] = 80, aiNinja5.longAttackRightXy["y2"] = 80,
-            aiNinja5.longAttackRightXy["x3"] = 160, aiNinja5.longAttackRightXy["y3"] = 80,
-            aiNinja5.longAttackRightXy["x4"] = 240, aiNinja5.longAttackRightXy["y4"] = 80;
+        aiNinja5 = new aiObject(15, 3005, 70, 111, 1400, 400, 75, 82, 0);
+        aiNinja5.standXy["leftX"] = 15, aiNinja5.standXy["leftY"] = 3005;
+        aiNinja5.standXy["rightX"] = 15, aiNinja5.standXy["rightY"] = 3005;
+        aiNinja5.longAttackLeftXy["x1"] = 15, aiNinja5.longAttackLeftXy["y1"] = 3005,
+            aiNinja5.longAttackLeftXy["x2"] = 15, aiNinja5.longAttackLeftXy["y2"] = 3005,
+            aiNinja5.longAttackLeftXy["x3"] = 15, aiNinja5.longAttackLeftXy["y3"] = 3005,
+            aiNinja5.longAttackLeftXy["x4"] = 15, aiNinja5.longAttackLeftXy["y4"] = 3005;
+        aiNinja5.longAttackRightXy["x1"] = 15, aiNinja5.longAttackRightXy["y1"] = 3005,
+            aiNinja5.longAttackRightXy["x2"] = 15, aiNinja5.longAttackRightXy["y2"] = 3005,
+            aiNinja5.longAttackRightXy["x3"] = 15, aiNinja5.longAttackRightXy["y3"] = 3005,
+            aiNinja5.longAttackRightXy["x4"] = 15, aiNinja5.longAttackRightXy["y4"] = 3005;
         aiNinja5.emissionAnimateXy["x1"] = 0, aiNinja5.emissionAnimateXy["y1"] = 870,
             aiNinja5.emissionAnimateXy["x2"] = 40, aiNinja5.emissionAnimateXy["y2"] = 870,
             aiNinja5.emissionAnimateXy["x3"] = 80, aiNinja5.emissionAnimateXy["y3"] = 870,
             aiNinja5.emissionAnimateXy["x4"] = 120, aiNinja5.emissionAnimateXy["y4"] = 870;
 
-        aiNinja6 = new aiObject(0, 0, 75, 82, 1400, 500, 75, 82, 0);
-        aiNinja6.standXy["leftX"] = 78, aiNinja6.standXy["leftY"] = 243;
-        aiNinja6.standXy["rightX"] = 0, aiNinja6.standXy["rightY"] = 0;
-        aiNinja6.longAttackLeftXy["x1"] = 410, aiNinja6.longAttackLeftXy["y1"] = 160,
-            aiNinja6.longAttackLeftXy["x2"] = 490, aiNinja6.longAttackLeftXy["y2"] = 160,
-            aiNinja6.longAttackLeftXy["x3"] = 570, aiNinja6.longAttackLeftXy["y3"] = 160,
-            aiNinja6.longAttackLeftXy["x4"] = 650, aiNinja6.longAttackLeftXy["y4"] = 160;
-        aiNinja6.longAttackRightXy["x1"] = 0, aiNinja6.longAttackRightXy["y1"] = 80,
-            aiNinja6.longAttackRightXy["x2"] = 80, aiNinja6.longAttackRightXy["y2"] = 80,
-            aiNinja6.longAttackRightXy["x3"] = 160, aiNinja6.longAttackRightXy["y3"] = 80,
-            aiNinja6.longAttackRightXy["x4"] = 240, aiNinja6.longAttackRightXy["y4"] = 80;
+        aiNinja6 = new aiObject(15, 3005, 70, 111, 1400, 500, 75, 82, 0);
+        aiNinja6.standXy["leftX"] = 15, aiNinja6.standXy["leftY"] = 3005;
+        aiNinja6.standXy["rightX"] = 15, aiNinja6.standXy["rightY"] = 3005;
+        aiNinja6.longAttackLeftXy["x1"] = 15, aiNinja6.longAttackLeftXy["y1"] = 3005,
+            aiNinja6.longAttackLeftXy["x2"] = 15, aiNinja6.longAttackLeftXy["y2"] = 3005,
+            aiNinja6.longAttackLeftXy["x3"] = 15, aiNinja6.longAttackLeftXy["y3"] = 3005,
+            aiNinja6.longAttackLeftXy["x4"] = 15, aiNinja6.longAttackLeftXy["y4"] = 3005;
+        aiNinja6.longAttackRightXy["x1"] = 15, aiNinja6.longAttackRightXy["y1"] = 3005,
+            aiNinja6.longAttackRightXy["x2"] = 15, aiNinja6.longAttackRightXy["y2"] = 3005,
+            aiNinja6.longAttackRightXy["x3"] = 15, aiNinja6.longAttackRightXy["y3"] = 3005,
+            aiNinja6.longAttackRightXy["x4"] = 15, aiNinja6.longAttackRightXy["y4"] = 3005;
         aiNinja6.emissionAnimateXy["x1"] = 0, aiNinja6.emissionAnimateXy["y1"] = 870,
             aiNinja6.emissionAnimateXy["x2"] = 40, aiNinja6.emissionAnimateXy["y2"] = 870,
             aiNinja6.emissionAnimateXy["x3"] = 80, aiNinja6.emissionAnimateXy["y3"] = 870,
             aiNinja6.emissionAnimateXy["x4"] = 120, aiNinja6.emissionAnimateXy["y4"] = 870;
 
-        aiNinja7 = new aiObject(0, 0, 75, 82, 1400, 600, 75, 82, 0);
-        aiNinja7.standXy["leftX"] = 78, aiNinja7.standXy["leftY"] = 243;
-        aiNinja7.standXy["rightX"] = 0, aiNinja7.standXy["rightY"] = 0;
-        aiNinja7.longAttackLeftXy["x1"] = 410, aiNinja7.longAttackLeftXy["y1"] = 160,
-            aiNinja7.longAttackLeftXy["x2"] = 490, aiNinja7.longAttackLeftXy["y2"] = 160,
-            aiNinja7.longAttackLeftXy["x3"] = 570, aiNinja7.longAttackLeftXy["y3"] = 160,
-            aiNinja7.longAttackLeftXy["x4"] = 650, aiNinja7.longAttackLeftXy["y4"] = 160;
-        aiNinja7.longAttackRightXy["x1"] = 0, aiNinja7.longAttackRightXy["y1"] = 80,
-            aiNinja7.longAttackRightXy["x2"] = 80, aiNinja7.longAttackRightXy["y2"] = 80,
-            aiNinja7.longAttackRightXy["x3"] = 160, aiNinja7.longAttackRightXy["y3"] = 80,
-            aiNinja7.longAttackRightXy["x4"] = 240, aiNinja7.longAttackRightXy["y4"] = 80;
+        aiNinja7 = new aiObject(15, 3005, 70, 111, 1400, 600, 75, 82, 0);
+        aiNinja7.standXy["leftX"] = 15, aiNinja7.standXy["leftY"] = 3005;
+        aiNinja7.standXy["rightX"] = 15, aiNinja7.standXy["rightY"] = 3005;
+        aiNinja7.longAttackLeftXy["x1"] = 15, aiNinja7.longAttackLeftXy["y1"] = 3005,
+            aiNinja7.longAttackLeftXy["x2"] = 15, aiNinja7.longAttackLeftXy["y2"] = 3005,
+            aiNinja7.longAttackLeftXy["x3"] = 15, aiNinja7.longAttackLeftXy["y3"] = 3005,
+            aiNinja7.longAttackLeftXy["x4"] = 15, aiNinja7.longAttackLeftXy["y4"] = 3005;
+        aiNinja7.longAttackRightXy["x1"] = 15, aiNinja7.longAttackRightXy["y1"] = 3005,
+            aiNinja7.longAttackRightXy["x2"] = 15, aiNinja7.longAttackRightXy["y2"] = 3005,
+            aiNinja7.longAttackRightXy["x3"] = 15, aiNinja7.longAttackRightXy["y3"] = 3005,
+            aiNinja7.longAttackRightXy["x4"] = 15, aiNinja7.longAttackRightXy["y4"] = 3005;
         aiNinja7.emissionAnimateXy["x1"] = 0, aiNinja7.emissionAnimateXy["y1"] = 870,
             aiNinja7.emissionAnimateXy["x2"] = 40, aiNinja7.emissionAnimateXy["y2"] = 870,
             aiNinja7.emissionAnimateXy["x3"] = 80, aiNinja7.emissionAnimateXy["y3"] = 870,
@@ -2166,20 +2322,21 @@ if (ctx) {
 
         aiObjectArr = [aiNinja, aiNinja2, aiNinja3, aiNinja4, aiNinja5, aiNinja6, aiNinja7];
 
-        keyObject4 = new keyObject(1200, 450);
+        keyObject3 = new keyObject(1200, 450);
         keyInterval = setInterval(function () {
-            if (boundingBoxCollision(playerObject, keyObject4)) {
+            if (boundingBoxCollision(playerObject, keyObject3)) {
                 playerObject.keyGet = true;
-                ctx.drawImage(gameImage, keyObject4.imageX, keyObject4.imageY, keyObject4.imageWidth, keyObject4.imageHeight, 125, 40, 20, 20);
+                ctx.drawImage(gameImage, keyObject3.imageX, keyObject3.imageY, keyObject3.imageWidth, keyObject3.imageHeight, 125, 40, 20, 20);
                 countDownNextStage(10);
+                key.play();
                 clearInterval(keyInterval);
             } else {
-                draw(keyObject4);
+                draw(keyObject3);
             }
         }, 20);
     }
 
-    function stage4Ai(aiObjectArr, keyObject4) {
+    function stage3Ai(aiObjectArr, keyObject3) {
         var ninjaAttackOption = [3, 4, 5, 6, 7];
         var range = ninjaAttackOption.length;
         ninjaAttackOption.splice(Math.floor(Math.random() * range), 1);
@@ -2194,16 +2351,24 @@ if (ctx) {
             }
         });
         if (!aiNinja.attackLaunched) {
-            aiAttackCallSlow(gameImage, aiNinja.longAttackLeftXy, aiNinja.longAttackRightXy, aiNinja);
-            aiEmission1v = new emissionObject(aiNinja, "vertical");
-            aiAttackCallSlow(gameImage, aiNinja.longAttackLeftXy, aiNinja.longAttackRightXy, aiNinja);
-            aiEmission1l = new emissionObject(aiNinja, "line");
+            if (probability(3) == 2) {
+                aiAttackCallSlow(gameImage, aiNinja.longAttackLeftXy, aiNinja.longAttackRightXy, aiNinja);
+                aiEmission1v = new emissionObject(aiNinja, "vertical");
+            }
+            if (probability(2) == 2) {
+                aiAttackCallSlow(gameImage, aiNinja.longAttackLeftXy, aiNinja.longAttackRightXy, aiNinja);
+                aiEmission1l = new emissionObject(aiNinja, "line", "down");
+            }
         }
         if (!aiNinja2.attackLaunched) {
-            aiAttackCallSlow(gameImage, aiNinja2.longAttackLeftXy, aiNinja2.longAttackRightXy, aiNinja2);
-            aiEmission2v = new emissionObject(aiNinja2, "vertical");
-            aiAttackCallSlow(gameImage, aiNinja2.longAttackLeftXy, aiNinja2.longAttackRightXy, aiNinja2);
-            aiEmission2l = new emissionObject(aiNinja2, "line");
+            if (probability(3) == 2) {
+                aiAttackCallSlow(gameImage, aiNinja2.longAttackLeftXy, aiNinja2.longAttackRightXy, aiNinja2);
+                aiEmission2v = new emissionObject(aiNinja2, "vertical");
+            }
+            if (probability(2) == 2) {
+                aiAttackCallSlow(gameImage, aiNinja2.longAttackLeftXy, aiNinja2.longAttackRightXy, aiNinja2);
+                aiEmission2l = new emissionObject(aiNinja2, "line", "down");
+            }
         }
         if (!aiNinja3.attackLaunched && !aiNinja4.attackLaunched && !aiNinja5.attackLaunched && !aiNinja6.attackLaunched && !aiNinja7.attackLaunched) {
             if (aiNinja3.allowAttack) {
@@ -2228,74 +2393,5 @@ if (ctx) {
             }
         }
     }
-    //--- 10 end of stage 4 ---//
-    // 
-    // 
-    // 
-    // 
-    //     
-    //--- 11 start of stage 5 ---//
-    if (stage == 5) {
-        drawSpriteStatus(ai5);
-    }
-    //--- 11 end of stage 5 ---//
+    //--- 9 end of stage 3 ---//    
 }
-
-
-
-
-
-
-
-
-
-//draw(ai);
-        //console.log(playerObject.posX + " " + playerObject.posY + " " + ai5.posX + " " + ai5.posY);
-        //console.log(ai5.hp);
-        //1.aiAttackCall function is call for short or long attack for ai
-        //change the attackLeft and attackRight array for short and long attack
-        //it will run the animation for you
-        //2.emissionObject is to create a long attack object, can apply horizontal or vertical attack for now
-        //set all the status of emissionObject and then run the emissionAnimation
-        //in emissionAnimation, it will also check the collision
-        //checkEmissionCollision if hit the player will reduce player hp
-        //!!! here launch one long attack here !!!
-        // aiAttackCall(gameImage, aiNinja5.longAttackLeftXy, aiNinja5.longAttackRightXy, aiNinja5);
-        // aiEmission = new emissionObject(aiNinja5, "horizontal");
-
-        //1.shortAttackObject create a short attack for ai or player
-        //set the wanted width and height for the attack collision area
-        //2.aiAttackCall function is call for short or long attack for ai
-        //3.updateShortAttackObject set start position x and y for collision when face left and right
-        //set small bounding box based on image attack animate
-        //4.shortAttackCollision pass the launch attack object and target object to check
-        //if return true reduce target object hp
-        //!!! here launch one short attack here !!!
-        // aiNinja5.shortAttackObject = new shortAttackObject(15, 15);
-        // aiAttackCall(gameImage, aiNinja5.shortAttackLeftXy, aiNinja5.shortAttackRightXy, aiNinja5);
-        //
-        // updateShortAttackObject(aiNinja5.shortAttackObject, aiNinja5.posX, aiNinja5.posY + 42, aiNinja5.posX + 55, aiNinja5.posY + 43);
-        // if (shortAttackCollision(aiNinja5, playerObject)) {
-        //     reduceHp(playerObject, Math.floor(Math.random() * 10) + 1);
-        // }
-
-        // var point = [];
-        // var posX = playerObject.posX, posY = playerObject.posY;
-        // point["x1"] = posX, point["y1"] = posY;
-        // point["x2"] = posX, point["y2"] = posY + playerObject.wantedHeight;
-        // point["x3"] = posX + playerObject.wantedWidth, point["y3"] = posY;
-        // point["x4"] = posX + playerObject.wantedWidth, point["y4"] = posY + playerObject.wantedHeight;
-
-        // //add middle point checking for object smaller than playerObject
-        // point["x5"] = posX + Math.round(playerObject.wantedWidth / 2), point["y5"] = playerObject.posY;
-        // point["x6"] = posX + Math.round(playerObject.wantedWidth / 2), point["y6"] = playerObject.posY + playerObject.wantedHeight;
-        // point["x7"] = posX, point["y7"] = playerObject.posY + Math.round(playerObject.wantedHeight / 2);
-        // point["x8"] = posX + playerObject.wantedWidth, point["y8"] = playerObject.posY + Math.round(playerObject.wantedHeight / 2);
-
-        // for (i = 1; i < 9; i++) {
-        //     if (point["x" + i] > object.posX && point["x" + i] < object.posX + object.wantedWidth &&
-        //         point["y" + i] > object.posY && point["y" + i] < object.posY + object.wantedHeight) {
-        //         clearPreviousImage(object.posX, object.posY, object.wantedWidth, object.wantedHeight);
-        //         return true;
-        //     }
-        // }
