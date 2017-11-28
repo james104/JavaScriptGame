@@ -28,7 +28,7 @@ canvasElement.height = "700";
 canvasElement.style.background = "url(img/stage5bg.png)";
 canvasElement.style.backgroundSize = "cover";
 var ctx = canvasElement.getContext && canvasElement.getContext('2d');
-var stage = 2;
+var stage = 1;
 
 //--- 1 end of canvas ---//
 
@@ -40,8 +40,8 @@ if (ctx) {
     gameImage = new Image();
     gameImage.id = "gameImage";
     gameImage.src = gameImagePath;
-    // bgAudio.play();
-    // bgAudio.loop = true;
+    bgAudio.play();
+    bgAudio.loop = true;
     // gameImage.onload = init;
     var playerType = "player";
     var faceLeft = "left", faceRight = "right";
