@@ -133,7 +133,7 @@ if (ctx) {
     ai5 = new aiObject(325, 80, 80, 80, 900, 400, 100, 100, playerObject.speed);
     var currAction = "";
     //weight: 1.0 1.0 1.0 1.0 1.0
-    var behaviourWeight = [5.0, 4.0, 3.0, 2.0, 1.0];
+    var actionWeight = [5.0, 4.0, 3.0, 2.0, 1.0];
     var action = ["escape", "drinkMilk", "basicChase", "shortAttack", "longAttack"];
 
     ai5.shortAttackLeftXy["x1"] = 0, ai5.shortAttackLeftXy["y1"] = 160,
@@ -195,13 +195,14 @@ if (ctx) {
             var hpFuzzySet = hpFuzzySets(ai5.hp);
             var mpFuzzySet = mpFuzzySets(ai5.mp);
             // console.log(ai5.hp, ai5.mp, distance);
-            var defuzzEscape = escapeFuzzyRules(distanceFuzzySet, hpFuzzySet, mpFuzzySet) * behaviourWeight[0];
-            var defuzzDrink = drinkMilkFuzzyRules(distanceFuzzySet, hpFuzzySet, mpFuzzySet) * behaviourWeight[1];
-            var defuzzChase = basicChaseFuzzyRules(distanceFuzzySet, hpFuzzySet, mpFuzzySet) * behaviourWeight[2];
-            var defuzzShort = shortAttackFuzzyRules(distanceFuzzySet, hpFuzzySet, mpFuzzySet) * behaviourWeight[3];
-            var defuzzLong = longAttackFuzzyRules(distanceFuzzySet, hpFuzzySet, mpFuzzySet) * behaviourWeight[4];
+            var defuzzEscape = escapeFuzzyRules(distanceFuzzySet, hpFuzzySet, mpFuzzySet) * actionWeight[0];
+            var defuzzDrink = drinkMilkFuzzyRules(distanceFuzzySet, hpFuzzySet, mpFuzzySet) * actionWeight[1];
+            var defuzzChase = basicChaseFuzzyRules(distanceFuzzySet, hpFuzzySet, mpFuzzySet) * actionWeight[2];
+            var defuzzShort = shortAttackFuzzyRules(distanceFuzzySet, hpFuzzySet, mpFuzzySet) * actionWeight[3];
+            var defuzzLong = longAttackFuzzyRules(distanceFuzzySet, hpFuzzySet, mpFuzzySet) * actionWeight[4];
             var allResults = new Array(defuzzEscape, defuzzDrink, defuzzChase, defuzzShort, defuzzLong);
-            currAction = action[findMaxIndex(allResults)];
+            var outputIndex = maxIndex(allResults)
+            currAction = action[outputIndex];
 
             // if (ai5.mp != 100) {
             //     ai5.mp += 1;
@@ -264,7 +265,7 @@ if (ctx) {
         }
     }
 
-    function findMaxIndex(list) {
+    function maxIndex(list) {
         var temp = list[0];
         var index = 0;
         for (var i = 1; i < list.length; i++)
