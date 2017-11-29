@@ -63,7 +63,7 @@ if (ctx) {
     ctx.font = "20px Arial";
     ctx.fillStyle = textColor;
     var timeInterval, currentInterval, keyInterval;
-    var emissionArr = [];
+    var emissionArr = [], emissionArrDetail = [];
     var nextStageArea;
 
     //--- 2 end of global_variable ---//
@@ -97,6 +97,9 @@ if (ctx) {
         }
         if (stage == 4 && ai5.hp > 0) {
             draw(ai5);
+            // emissionArrDetail.forEach(function (object, index) {
+            //     drawInCanvas(image, object.animateArrXy["x" + object.animate], object.animateArrXy["y" + object.animate], object);
+            // });
         }
         draw(playerObject);
     }
@@ -181,9 +184,9 @@ if (ctx) {
         ai5.longAttackRightXy["x4"] = 240, ai5.longAttackRightXy["y4"] = 80;
 
     ai5.emissionAnimateXy["x1"] = 0, ai5.emissionAnimateXy["y1"] = 870,
-        ai5.emissionAnimateXy["x2"] = 40, ai5.emissionAnimateXy["y2"] = 870,
-        ai5.emissionAnimateXy["x3"] = 80, ai5.emissionAnimateXy["y3"] = 870,
-        ai5.emissionAnimateXy["x4"] = 120, ai5.emissionAnimateXy["y4"] = 870;
+        ai5.emissionAnimateXy["x2"] = 44, ai5.emissionAnimateXy["y2"] = 870,
+        ai5.emissionAnimateXy["x3"] = 0, ai5.emissionAnimateXy["y3"] = 913,
+        ai5.emissionAnimateXy["x4"] = 0, ai5.emissionAnimateXy["y4"] = 870;
 
     ai5.icon["posX"] = 0, ai5.icon["posY"] = 0, ai5.icon["width"] = 70, ai5.icon["height"] = 45;
 
@@ -976,7 +979,11 @@ if (ctx) {
         //random to prevent same name of interval 
         var intervalNo = Math.floor(Math.random() * 100) + 1;
 
-
+        if (stage == 3) {
+            var intervalTime = 50;
+        } else if (stage == 4) {
+            var intervalTime = 20;
+        }
 
         intervalNo = setInterval(function () {
             if (emissionObject.emissionType == "horizontal") {
@@ -1067,8 +1074,9 @@ if (ctx) {
                 }
             }
             checkEmissionCollision(emissionObject, playerObject, intervalNo);
-        }, 50);
+        }, intervalTime);
         emissionArr[intervalNo] = intervalNo;
+        emissionArrDetail[intervalNo] = emissionObject;
     }
 
     function checkEmissionCollision(emissionObject, playerObject, intervalNo) {
@@ -2291,9 +2299,9 @@ if (ctx) {
             aiNinja.longAttackRightXy["x3"] = 15, aiNinja.longAttackRightXy["y3"] = 3005,
             aiNinja.longAttackRightXy["x4"] = 15, aiNinja.longAttackRightXy["y4"] = 3005;
         aiNinja.emissionAnimateXy["x1"] = 0, aiNinja.emissionAnimateXy["y1"] = 870,
-            aiNinja.emissionAnimateXy["x2"] = 40, aiNinja.emissionAnimateXy["y2"] = 870,
-            aiNinja.emissionAnimateXy["x3"] = 80, aiNinja.emissionAnimateXy["y3"] = 870,
-            aiNinja.emissionAnimateXy["x4"] = 120, aiNinja.emissionAnimateXy["y4"] = 870;
+            aiNinja.emissionAnimateXy["x2"] = 44, aiNinja.emissionAnimateXy["y2"] = 870,
+            aiNinja.emissionAnimateXy["x3"] = 0, aiNinja.emissionAnimateXy["y3"] = 913,
+            aiNinja.emissionAnimateXy["x4"] = 0, aiNinja.emissionAnimateXy["y4"] = 870;
 
         aiNinja2 = new aiObject(15, 3005, 70, 111, 1250, 70, 75, 82, 0);
         aiNinja2.standXy["leftX"] = 15, aiNinja2.standXy["leftY"] = 3005;
@@ -2307,9 +2315,9 @@ if (ctx) {
             aiNinja2.longAttackRightXy["x3"] = 15, aiNinja2.longAttackRightXy["y3"] = 3005,
             aiNinja2.longAttackRightXy["x4"] = 15, aiNinja2.longAttackRightXy["y4"] = 3005;
         aiNinja2.emissionAnimateXy["x1"] = 0, aiNinja2.emissionAnimateXy["y1"] = 870,
-            aiNinja2.emissionAnimateXy["x2"] = 40, aiNinja2.emissionAnimateXy["y2"] = 870,
-            aiNinja2.emissionAnimateXy["x3"] = 80, aiNinja2.emissionAnimateXy["y3"] = 870,
-            aiNinja2.emissionAnimateXy["x4"] = 120, aiNinja2.emissionAnimateXy["y4"] = 870;
+            aiNinja2.emissionAnimateXy["x2"] = 44, aiNinja2.emissionAnimateXy["y2"] = 870,
+            aiNinja2.emissionAnimateXy["x3"] = 0, aiNinja2.emissionAnimateXy["y3"] = 913,
+            aiNinja2.emissionAnimateXy["x4"] = 0, aiNinja2.emissionAnimateXy["y4"] = 870;
 
         aiNinja3 = new aiObject(15, 3005, 70, 111, 1400, 200, 75, 82, 0);
         aiNinja3.standXy["leftX"] = 15, aiNinja3.standXy["leftY"] = 3005;
@@ -2323,9 +2331,9 @@ if (ctx) {
             aiNinja3.longAttackRightXy["x3"] = 15, aiNinja3.longAttackRightXy["y3"] = 3005,
             aiNinja3.longAttackRightXy["x4"] = 15, aiNinja3.longAttackRightXy["y4"] = 3005;
         aiNinja3.emissionAnimateXy["x1"] = 0, aiNinja3.emissionAnimateXy["y1"] = 870,
-            aiNinja3.emissionAnimateXy["x2"] = 40, aiNinja3.emissionAnimateXy["y2"] = 870,
-            aiNinja3.emissionAnimateXy["x3"] = 80, aiNinja3.emissionAnimateXy["y3"] = 870,
-            aiNinja3.emissionAnimateXy["x4"] = 120, aiNinja3.emissionAnimateXy["y4"] = 870;
+            aiNinja3.emissionAnimateXy["x2"] = 44, aiNinja3.emissionAnimateXy["y2"] = 870,
+            aiNinja3.emissionAnimateXy["x3"] = 0, aiNinja3.emissionAnimateXy["y3"] = 913,
+            aiNinja3.emissionAnimateXy["x4"] = 0, aiNinja3.emissionAnimateXy["y4"] = 870;
 
         aiNinja4 = new aiObject(15, 3005, 70, 111, 1400, 300, 75, 82, 0);
         aiNinja4.standXy["leftX"] = 15, aiNinja4.standXy["leftY"] = 3005;
@@ -2339,9 +2347,9 @@ if (ctx) {
             aiNinja4.longAttackRightXy["x3"] = 15, aiNinja4.longAttackRightXy["y3"] = 3005,
             aiNinja4.longAttackRightXy["x4"] = 15, aiNinja4.longAttackRightXy["y4"] = 3005;
         aiNinja4.emissionAnimateXy["x1"] = 0, aiNinja4.emissionAnimateXy["y1"] = 870,
-            aiNinja4.emissionAnimateXy["x2"] = 40, aiNinja4.emissionAnimateXy["y2"] = 870,
-            aiNinja4.emissionAnimateXy["x3"] = 80, aiNinja4.emissionAnimateXy["y3"] = 870,
-            aiNinja4.emissionAnimateXy["x4"] = 120, aiNinja4.emissionAnimateXy["y4"] = 870;
+            aiNinja4.emissionAnimateXy["x2"] = 44, aiNinja4.emissionAnimateXy["y2"] = 870,
+            aiNinja4.emissionAnimateXy["x3"] = 0, aiNinja4.emissionAnimateXy["y3"] = 913,
+            aiNinja4.emissionAnimateXy["x4"] = 0, aiNinja4.emissionAnimateXy["y4"] = 870;
 
         aiNinja5 = new aiObject(15, 3005, 70, 111, 1400, 400, 75, 82, 0);
         aiNinja5.standXy["leftX"] = 15, aiNinja5.standXy["leftY"] = 3005;
@@ -2355,9 +2363,9 @@ if (ctx) {
             aiNinja5.longAttackRightXy["x3"] = 15, aiNinja5.longAttackRightXy["y3"] = 3005,
             aiNinja5.longAttackRightXy["x4"] = 15, aiNinja5.longAttackRightXy["y4"] = 3005;
         aiNinja5.emissionAnimateXy["x1"] = 0, aiNinja5.emissionAnimateXy["y1"] = 870,
-            aiNinja5.emissionAnimateXy["x2"] = 40, aiNinja5.emissionAnimateXy["y2"] = 870,
-            aiNinja5.emissionAnimateXy["x3"] = 80, aiNinja5.emissionAnimateXy["y3"] = 870,
-            aiNinja5.emissionAnimateXy["x4"] = 120, aiNinja5.emissionAnimateXy["y4"] = 870;
+            aiNinja5.emissionAnimateXy["x2"] = 44, aiNinja5.emissionAnimateXy["y2"] = 870,
+            aiNinja5.emissionAnimateXy["x3"] = 0, aiNinja5.emissionAnimateXy["y3"] = 913,
+            aiNinja5.emissionAnimateXy["x4"] = 0, aiNinja5.emissionAnimateXy["y4"] = 870;
 
         aiNinja6 = new aiObject(15, 3005, 70, 111, 1400, 500, 75, 82, 0);
         aiNinja6.standXy["leftX"] = 15, aiNinja6.standXy["leftY"] = 3005;
@@ -2371,9 +2379,9 @@ if (ctx) {
             aiNinja6.longAttackRightXy["x3"] = 15, aiNinja6.longAttackRightXy["y3"] = 3005,
             aiNinja6.longAttackRightXy["x4"] = 15, aiNinja6.longAttackRightXy["y4"] = 3005;
         aiNinja6.emissionAnimateXy["x1"] = 0, aiNinja6.emissionAnimateXy["y1"] = 870,
-            aiNinja6.emissionAnimateXy["x2"] = 40, aiNinja6.emissionAnimateXy["y2"] = 870,
-            aiNinja6.emissionAnimateXy["x3"] = 80, aiNinja6.emissionAnimateXy["y3"] = 870,
-            aiNinja6.emissionAnimateXy["x4"] = 120, aiNinja6.emissionAnimateXy["y4"] = 870;
+            aiNinja6.emissionAnimateXy["x2"] = 44, aiNinja6.emissionAnimateXy["y2"] = 870,
+            aiNinja6.emissionAnimateXy["x3"] = 0, aiNinja6.emissionAnimateXy["y3"] = 913,
+            aiNinja6.emissionAnimateXy["x4"] = 0, aiNinja6.emissionAnimateXy["y4"] = 870;
 
         aiNinja7 = new aiObject(15, 3005, 70, 111, 1400, 600, 75, 82, 0);
         aiNinja7.standXy["leftX"] = 15, aiNinja7.standXy["leftY"] = 3005;
@@ -2387,9 +2395,9 @@ if (ctx) {
             aiNinja7.longAttackRightXy["x3"] = 15, aiNinja7.longAttackRightXy["y3"] = 3005,
             aiNinja7.longAttackRightXy["x4"] = 15, aiNinja7.longAttackRightXy["y4"] = 3005;
         aiNinja7.emissionAnimateXy["x1"] = 0, aiNinja7.emissionAnimateXy["y1"] = 870,
-            aiNinja7.emissionAnimateXy["x2"] = 40, aiNinja7.emissionAnimateXy["y2"] = 870,
-            aiNinja7.emissionAnimateXy["x3"] = 80, aiNinja7.emissionAnimateXy["y3"] = 870,
-            aiNinja7.emissionAnimateXy["x4"] = 120, aiNinja7.emissionAnimateXy["y4"] = 870;
+            aiNinja7.emissionAnimateXy["x2"] = 44, aiNinja7.emissionAnimateXy["y2"] = 870,
+            aiNinja7.emissionAnimateXy["x3"] = 0, aiNinja7.emissionAnimateXy["y3"] = 913,
+            aiNinja7.emissionAnimateXy["x4"] = 0, aiNinja7.emissionAnimateXy["y4"] = 870;
 
         aiObjectArr = [aiNinja, aiNinja2, aiNinja3, aiNinja4, aiNinja5, aiNinja6, aiNinja7];
 
