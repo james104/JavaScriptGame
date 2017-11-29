@@ -19,10 +19,12 @@ var bgAudio = new Audio("audio/bgmusic.mp3");
 var ninjaAttackAudio = new Audio("audio/attack.mp3");
 var ninjaLongAttackAudio = new Audio("audio/long.mp3");
 var key = new Audio("audio/key.mp3");
+var winAudio = new Audio("audio/win.mp3");
 bgAudio.load();
 ninjaAttackAudio.load();
 ninjaLongAttackAudio.load();
 key.load();
+winAudio.load();
 canvasElement.width = "1500";
 canvasElement.height = "700";
 canvasElement.style.background = "url(img/stage5bg.png)";
@@ -225,7 +227,7 @@ if (ctx) {
             }
             else if (currAction == "basicChase" && !ai5.attackLaunched) {
                 ai5.attackFinished = false;
-                chaseSpeed = "slow";
+                chaseSpeed = "normal";
                 chaseType = "basicChase";
                 aiChase(chaseSpeed, chaseType, ai5);
             } else if (currAction == "shortAttack" && !ai5.attackLaunched) {
@@ -264,6 +266,8 @@ if (ctx) {
             clearInterval(mpInterval);
             clearInterval(timeInterval);
             clearImage(0, 0, 1400, 700);
+            bgAudio.pause();
+            winAudio.play();
             ctx.font = "50px Arial";
             ctx.fillText("Congratulations, you have finished the game!", 250, 350);
             ctx.fillText("Time used: " + timerMin + " mins " + timerSec + " s", 250, 400);
@@ -1397,6 +1401,8 @@ if (ctx) {
         ctx.font = "100px Arial";
         ctx.fillStyle = textColor;
         ctx.fillText("Go!", 1200, 100);
+        ctx.font = "50px Arial";
+        ctx.fillText("=======>", 1200, 150);
         ctx.font = "20px Arial";
     }
 
