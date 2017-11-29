@@ -191,7 +191,7 @@ if (ctx) {
         if (stage == 4) {
             increaseMp(ai5, 10);
         }
-    }, 2000);
+    }, 5000);
 
     chaseSpeed = "";
     chaseType = "";
