@@ -182,6 +182,8 @@ if (ctx) {
         ai5.emissionAnimateXy["x3"] = 80, ai5.emissionAnimateXy["y3"] = 870,
         ai5.emissionAnimateXy["x4"] = 120, ai5.emissionAnimateXy["y4"] = 870;
 
+    ai5.icon["posX"] = 0, ai5.icon["posY"] = 0, ai5.icon["width"] = 70, ai5.icon["height"] = 45;
+
     mpInterval = setInterval(function () {
         if (stage == 4) {
             increaseMp(ai5, 10);
@@ -1590,9 +1592,9 @@ if (ctx) {
 
     function generatePosition(aiObject) {
         var width = 400, height;
-        if(aiObject.nextPosY == 250){
+        if (aiObject.nextPosY == 250) {
             height = 550;
-        }else{
+        } else {
             height = 250;
         }
         aiObject.nextPosX = Math.floor(Math.random() * width) + 1000;
@@ -2093,6 +2095,7 @@ if (ctx) {
         drawSpriteStatus(aiBigGuy2);
 
         aiBlockObject = new aiObject(225, 878, 18, 11, 500, 370, 190, 190, 0);
+        aiBlockObject.name = "aiBlockObject";
 
         setTimeout(function () {
             wayPointNavigationObject = new wayPointNavigationObject(aiBigGuy1, aiBlockObject);
@@ -2126,48 +2129,23 @@ if (ctx) {
             if (aiObject.name == "aiBigGuy1") {
                 if (aiBigGuy1.hp != 0) {
                     if (boundingBoxCollision(playerObject, aiBigGuy1)) {
-                        if (aiBigGuy1.face == faceLeft) {
-                            if (playerObject.posY == aiBigGuy1.posY) {
-                                aiBigGuy1.posX = aiBigGuy1.preX + 1;
-                            } else if (playerObject.posY > aiBigGuy1.posY) {
-                                aiBigGuy1.posX = aiBigGuy1.preX + 1;
-                                aiBigGuy1.posY = aiBigGuy1.preY - 1;
-                            } else if (playerObject.posY < aiBigGuy1.posY) {
-                                aiBigGuy1.posX = aiBigGuy1.preX + 1;
-                                aiBigGuy1.posY = aiBigGuy1.preY + 1;
-                            }
-                        } else {
-                            if (playerObject.posY == aiBigGuy1.posY) {
-                                aiBigGuy1.posX = aiBigGuy1.preX - 1;
-                            } else if (playerObject.posY > aiBigGuy1.posY) {
-                                aiBigGuy1.posX = aiBigGuy1.preX - 1;
-                                aiBigGuy1.posY = aiBigGuy1.preY - 1;
-                            } else if (playerObject.posY < aiBigGuy1.posY) {
-                                aiBigGuy1.posX = aiBigGuy1.preX - 1;
-                                aiBigGuy1.posY = aiBigGuy1.preY + 1;
-                            }
-                        }
                         playerObject.posX = playerObject.preX;
                         playerObject.posY = playerObject.preY;
-                    } else {
-                        playerObject.speed = playerObject.originSpeed;
-                    }
 
-                    if (aiBigGuy1.wayPointNavMode) {
-                        chaseType = "wayPointNav";
-                        chaseSpeed = "slow";
-                        aiChase(chaseSpeed, chaseType, aiBigGuy1);
-                    } else {
-                        if (aiBigGuy1.face == faceLeft ? findDistanceBetweenPlayerAndAi(aiBigGuy1) <= 100 && playerObject.moving == false : findDistanceBetweenPlayerAndAi(aiBigGuy1) <= 110 && playerObject.moving == false) {
-                            if (!aiBigGuy1.attackLaunched) {
-                                aiAttackCall(gameImage, aiBigGuy1.shortAttackLeftXy, aiBigGuy1.shortAttackRightXy, aiBigGuy1);
+                        if (!aiBigGuy1.attackLaunched) {
+                            aiAttackCall(gameImage, aiBigGuy1.shortAttackLeftXy, aiBigGuy1.shortAttackRightXy, aiBigGuy1);
 
-                                //set small bounding box based on image attack animate 315 2955 160 2790
-                                updateShortAttackObject(aiBigGuy1.shortAttackObject, aiBigGuy1.posX - 50, aiBigGuy1.posY + 35, aiBigGuy1.posX + 95, aiBigGuy1.posY + 40);
-                                if (shortAttackCollision(aiBigGuy1, playerObject)) {
-                                    reduceHp(playerObject, gRand());
-                                }
+                            //set small bounding box based on image attack animate 315 2955 160 2790
+                            updateShortAttackObject(aiBigGuy1.shortAttackObject, aiBigGuy1.posX - 50, aiBigGuy1.posY + 35, aiBigGuy1.posX + 95, aiBigGuy1.posY + 40);
+                            if (shortAttackCollision(aiBigGuy1, playerObject)) {
+                                reduceHp(playerObject, gRand());
                             }
+                        }
+                    } else {
+                        if (aiBigGuy1.wayPointNavMode) {
+                            chaseType = "wayPointNav";
+                            chaseSpeed = "slow";
+                            aiChase(chaseSpeed, chaseType, aiBigGuy1);
                         } else {
                             chaseType = "basicChase";
                             chaseSpeed = "slow";
@@ -2186,7 +2164,7 @@ if (ctx) {
                         if (!aiBigGuy2.attackLaunched) {
                             aiAttackCall(gameImage, aiBigGuy2.shortAttackLeftXy, aiBigGuy2.shortAttackRightXy, aiBigGuy2);
 
-                            //set small bounding box based on image attack animate 315 2955 160 2790
+                            //set small bounding box based on image attack animate
                             updateShortAttackObject(aiBigGuy2.shortAttackObject, aiBigGuy2.posX - 50, aiBigGuy2.posY + 35, aiBigGuy2.posX + 95, aiBigGuy2.posY + 40);
                             if (shortAttackCollision(aiBigGuy2, playerObject)) {
                                 reduceHp(playerObject, gRand());
@@ -2196,7 +2174,7 @@ if (ctx) {
                         if (!boundingBoxCollision(playerObject, { name: "radomAreaObject", posX: 1000, posY: 300, wantedWidth: 400, wantedHeight: 300 })) {
                             if (!aiBigGuy2.randomNavMode) {
                                 generatePosition(aiBigGuy2);
-                                aiBigGuy2.bAlgorithmLine = new bAlgorithmLine(aiBigGuy2.posX,aiBigGuy2.posY,aiBigGuy2.nextPosX,aiBigGuy2.nextPosY,aiBigGuy2);
+                                aiBigGuy2.bAlgorithmLine = new bAlgorithmLine(aiBigGuy2.posX, aiBigGuy2.posY, aiBigGuy2.nextPosX, aiBigGuy2.nextPosY, aiBigGuy2);
                             }
                             chaseType = "randomChase";
                             chaseSpeed = "slow";
@@ -2211,9 +2189,12 @@ if (ctx) {
                 } else {
                     clearImage(aiBigGuy2.posX - 10, aiBigGuy2.posY - 10, aiBigGuy2.wantedWidth + 20, aiBigGuy2.wantedHeight + 20);
                 }
+            } else if (aiObject.name == "aiBlockObject") {
+                if (boundingBoxCollision(playerObject, aiBlockObject)) {
+                    playerObject.posX = playerObject.preX;
+                    playerObject.posY = playerObject.preY;
+                }
             }
-            //file:///C:/Users/james/Desktop/JavaScriptGame/game.html
-
         });
     }
     //--- 8 end of stage 2 ---//
