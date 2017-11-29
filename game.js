@@ -20,10 +20,12 @@ var ninjaAttackAudio = new Audio("audio/attack.mp3");
 var ninjaLongAttackAudio = new Audio("audio/long.mp3");
 var key = new Audio("audio/key.mp3");
 var winAudio = new Audio("audio/win.mp3");
+var dogBark = new Audio("audio/dogBark.mp3");
 bgAudio.load();
 ninjaAttackAudio.load();
 ninjaLongAttackAudio.load();
 key.load();
+dogBark.load();
 winAudio.load();
 canvasElement.width = "1500";
 canvasElement.height = "700";
@@ -36,6 +38,9 @@ var stage = 1;
 
 if (ctx) {
 
+    function allSoundPause() {
+        dogBark.pause();
+    }
     //--- 2 start of global_variable ---//
 
     var gameImagePath = "assets/spriteSheetNew.png";
@@ -1821,22 +1826,26 @@ if (ctx) {
         timeInterval = setInterval(timerFunction, 1000);
         switch (stage) {
             case 1:
+                allSoundPause();
                 canvasElement.style.background = "url(img/stage1bg.png)";
                 canvasElement.style.backgroundSize = "cover";
                 ctx.drawImage(gameImage, playerObject.icon["posX"], playerObject.icon["posY"], playerObject.icon["width"], playerObject.icon["height"], 140 - playerObject.icon["width"], 10, playerObject.icon["width"], playerObject.icon["height"]);
                 stage1Initial();
                 break;
             case 2:
+                allSoundPause();
                 canvasElement.style.background = "url(img/stage2bg.png)";
                 canvasElement.style.backgroundSize = "cover";
                 stage2Initial();
                 break;
             case 3:
+                allSoundPause();
                 canvasElement.style.background = "url(img/stage4bg.png)";
                 canvasElement.style.backgroundSize = "cover";
                 stage3Initial();
                 break;
             case 4:
+                allSoundPause();
                 canvasElement.style.background = "url(img/stage5bg.png)";
                 canvasElement.style.backgroundSize = "cover";
                 drawSpriteStatus(ai5);
@@ -1997,6 +2006,7 @@ if (ctx) {
             chaseType = "basicChase";
             chaseSpeed = "slow";
             aiChase(chaseSpeed, chaseType, aiObject);
+            dogBark.play()
         }
         // draw(aiObject);
     }
