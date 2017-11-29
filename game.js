@@ -95,6 +95,9 @@ if (ctx) {
         if (stage == 2 && aiBigGuy2.hp > 0) {
             draw(aiBigGuy2);
         }
+        if (stage == 4 && ai5.hp > 0) {
+            draw(ai5);
+        }
         draw(playerObject);
     }
     this.image = new Image();
@@ -267,6 +270,7 @@ if (ctx) {
             ctx.fillText("Congratulations, you have finished the game!", 250, 350);
             ctx.fillText("Time used: " + timerMin + " mins " + timerSec + " s", 250, 400);
             ctx.fillText("Dead: " + deadCount, 250, 450);
+            ctx.font = "20px Arial";
         }
     }
 
@@ -1183,7 +1187,9 @@ if (ctx) {
 
         ctx.fillStyle = textColor;
         ctx.fillText(object.hp, spriteHpTextX, spriteHpTextY);
-        ctx.fillText(object.mp, spriteMpTextX, spriteMpTextY);
+        if (object.mp > 0) {
+            ctx.fillText(object.mp, spriteMpTextX, spriteMpTextY);
+        }
 
         ctx.drawImage(gameImage, object.icon["posX"], object.icon["posY"], object.icon["width"], object.icon["height"], spriteHpX - object.icon["width"] - 10, spriteHpY - 10, object.icon["width"], object.icon["height"]);
 
@@ -1944,23 +1950,23 @@ if (ctx) {
         if (boundingBoxCollision(playerObject, aiObject)) {
             if (aiObject.face == faceLeft) {
                 if (playerObject.posY == aiObject.posY) {
-                    aiObject.posX = aiObject.preX + 1;
+                    aiObject.posX = aiObject.preX + playerObject.speed;
                 } else if (playerObject.posY > aiObject.posY) {
-                    aiObject.posX = aiObject.preX + 1;
-                    aiObject.posY = aiObject.preY - 1;
+                    aiObject.posX = aiObject.preX + playerObject.speed;
+                    aiObject.posY = aiObject.preY - playerObject.speed;
                 } else if (playerObject.posY < aiObject.posY) {
-                    aiObject.posX = aiObject.preX + 1;
-                    aiObject.posY = aiObject.preY + 1;
+                    aiObject.posX = aiObject.preX + playerObject.speed;
+                    aiObject.posY = aiObject.preY + playerObject.speed;
                 }
             } else {
                 if (playerObject.posY == aiObject.posY) {
-                    aiObject.posX = aiObject.preX - 1;
+                    aiObject.posX = aiObject.preX - playerObject.speed;
                 } else if (playerObject.posY > aiObject.posY) {
-                    aiObject.posX = aiObject.preX - 1;
-                    aiObject.posY = aiObject.preY - 1;
+                    aiObject.posX = aiObject.preX - playerObject.speed;
+                    aiObject.posY = aiObject.preY - playerObject.speed;
                 } else if (playerObject.posY < aiObject.posY) {
-                    aiObject.posX = aiObject.preX - 1;
-                    aiObject.posY = aiObject.preY + 1;
+                    aiObject.posX = aiObject.preX - playerObject.speed;
+                    aiObject.posY = aiObject.preY + playerObject.speed;
                 }
             }
             playerObject.posX = playerObject.preX;
@@ -2118,7 +2124,47 @@ if (ctx) {
                     if (boundingBoxCollision(playerObject, aiBigGuy1)) {
                         playerObject.posX = playerObject.preX;
                         playerObject.posY = playerObject.preY;
+                        if (playerObject.posY == 230) {
+                            aiBigGuy1.posY++;
+                            if (aiBigGuy1.face == faceLeft) {
+                                if (playerObject.posY == aiBigGuy1.posY) {
+                                    aiBigGuy1.posX = aiBigGuy1.preX + playerObject.speed;
+                                } else if (playerObject.posY > aiBigGuy1.posY) {
+                                    aiBigGuy1.posX = aiBigGuy1.preX + playerObject.speed;
 
+                                } else if (playerObject.posY < aiBigGuy1.posY) {
+                                    aiBigGuy1.posX = aiBigGuy1.preX + playerObject.speed;
+                                }
+                            } else {
+                                if (playerObject.posY == aiBigGuy1.posY) {
+                                    aiBigGuy1.posX = aiBigGuy1.preX - playerObject.speed;
+                                } else if (playerObject.posY > aiBigGuy1.posY) {
+                                    aiBigGuy1.posX = aiBigGuy1.preX - playerObject.speed;
+                                } else if (playerObject.posY < aiBigGuy1.posY) {
+                                    aiBigGuy1.posX = aiBigGuy1.preX - playerObject.speed;
+                                }
+                            }
+                        } else if (playerObject.posY == 615) {
+                            aiBigGuy1.posY--;
+                            if (aiBigGuy1.face == faceLeft) {
+                                if (playerObject.posY == aiBigGuy1.posY) {
+                                    aiBigGuy1.posX = aiBigGuy1.preX + playerObject.speed;
+                                } else if (playerObject.posY > aiBigGuy1.posY) {
+                                    aiBigGuy1.posX = aiBigGuy1.preX + playerObject.speed;
+
+                                } else if (playerObject.posY < aiBigGuy1.posY) {
+                                    aiBigGuy1.posX = aiBigGuy1.preX + playerObject.speed;
+                                }
+                            } else {
+                                if (playerObject.posY == aiBigGuy1.posY) {
+                                    aiBigGuy1.posX = aiBigGuy1.preX - playerObject.speed;
+                                } else if (playerObject.posY > aiBigGuy1.posY) {
+                                    aiBigGuy1.posX = aiBigGuy1.preX - playerObject.speed;
+                                } else if (playerObject.posY < aiBigGuy1.posY) {
+                                    aiBigGuy1.posX = aiBigGuy1.preX - playerObject.speed;
+                                }
+                            }
+                        }
                         if (!aiBigGuy1.attackLaunched) {
                             aiAttackCall(gameImage, aiBigGuy1.shortAttackLeftXy, aiBigGuy1.shortAttackRightXy, aiBigGuy1);
 
@@ -2147,7 +2193,47 @@ if (ctx) {
                     if (boundingBoxCollision(playerObject, aiBigGuy2)) {
                         playerObject.posX = playerObject.preX;
                         playerObject.posY = playerObject.preY;
+                        if (playerObject.posY == 230) {
+                            aiBigGuy2.posY++;
+                            if (aiBigGuy2.face == faceLeft) {
+                                if (playerObject.posY == aiBigGuy2.posY) {
+                                    aiBigGuy2.posX = aiBigGuy2.preX + playerObject.speed;
+                                } else if (playerObject.posY > aiBigGuy2.posY) {
+                                    aiBigGuy2.posX = aiBigGuy2.preX + playerObject.speed;
 
+                                } else if (playerObject.posY < aiBigGuy2.posY) {
+                                    aiBigGuy2.posX = aiBigGuy2.preX + playerObject.speed;
+                                }
+                            } else {
+                                if (playerObject.posY == aiBigGuy2.posY) {
+                                    aiBigGuy2.posX = aiBigGuy2.preX - playerObject.speed;
+                                } else if (playerObject.posY > aiBigGuy2.posY) {
+                                    aiBigGuy2.posX = aiBigGuy2.preX - playerObject.speed;
+                                } else if (playerObject.posY < aiBigGuy2.posY) {
+                                    aiBigGuy2.posX = aiBigGuy2.preX - playerObject.speed;
+                                }
+                            }
+                        } else if (playerObject.posY == 615) {
+                            aiBigGuy2.posY--;
+                            if (aiBigGuy2.face == faceLeft) {
+                                if (playerObject.posY == aiBigGuy2.posY) {
+                                    aiBigGuy2.posX = aiBigGuy2.preX + playerObject.speed;
+                                } else if (playerObject.posY > aiBigGuy2.posY) {
+                                    aiBigGuy2.posX = aiBigGuy2.preX + playerObject.speed;
+
+                                } else if (playerObject.posY < aiBigGuy2.posY) {
+                                    aiBigGuy2.posX = aiBigGuy2.preX + playerObject.speed;
+                                }
+                            } else {
+                                if (playerObject.posY == aiBigGuy2.posY) {
+                                    aiBigGuy2.posX = aiBigGuy2.preX - playerObject.speed;
+                                } else if (playerObject.posY > aiBigGuy2.posY) {
+                                    aiBigGuy2.posX = aiBigGuy2.preX - playerObject.speed;
+                                } else if (playerObject.posY < aiBigGuy2.posY) {
+                                    aiBigGuy2.posX = aiBigGuy2.preX - playerObject.speed;
+                                }
+                            }
+                        }
                         if (!aiBigGuy2.attackLaunched) {
                             aiAttackCall(gameImage, aiBigGuy2.shortAttackLeftXy, aiBigGuy2.shortAttackRightXy, aiBigGuy2);
 
