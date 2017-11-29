@@ -213,18 +213,6 @@ if (ctx) {
             var outputIndex = maxIndex(allResults)
             currAction = action[outputIndex];
 
-            // if (ai5.mp != 100) {
-            //     ai5.mp += 1;
-            // }
-
-            //random number from 1 to 2
-            //if (ai5.attackFinished) {
-            //    attackType = Math.floor(Math.random() * 2 + 1);
-            //}
-            //"escape", "drinkMilk", "basicChase", "shortAttack", "longAttack"
-            // Randomly perform either 1) or 2) attack (every randomly 1-4s).
-            //1: Faster, Chase (random within 2-4s), after that, Must perform short attack.
-            //2: same speed, keep distance and Long attack (chase horizontally)    
             if (currAction == "escape" && !ai5.attackLaunched) {
                 chaseSpeed = "slow";
                 chaseType = "escape";
@@ -317,7 +305,6 @@ if (ctx) {
         var highMpValue = mpFuzzySets[2];
 
         //rules
-
         var fuzzyRule1 = [nearValue, dyingValue, midMpValue];
         var fuzzyRule2 = [nearValue, dyingValue, highMpValue];
         var fuzzyRule3 = [farValue, dyingValue, midMpValue];
