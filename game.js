@@ -97,9 +97,6 @@ if (ctx) {
         }
         if (stage == 4 && ai5.hp > 0) {
             draw(ai5);
-            // emissionArrDetail.forEach(function (object, index) {
-            //     drawInCanvas(image, object.animateArrXy["x" + object.animate], object.animateArrXy["y" + object.animate], object);
-            // });
         }
         draw(playerObject);
     }
@@ -201,9 +198,6 @@ if (ctx) {
 
     function stage5Ai() {
         clearImage(ai5.posX, ai5.posY, ai5.wantedWidth, ai5.wantedHeight);
-        //if (ensurePlayerCollision(ai)) {
-        //    console.log("yes");
-        //}
         if (ai5.hp != 0) {
             setFace(ai5);
             var distance = findDistanceBetweenPlayerAndAi(ai5);
@@ -876,14 +870,6 @@ if (ctx) {
         }
         ensureCollision(aiObject, preX, preY, currX, currY);
     }
-
-    // function ensureAIcollision(obj) {
-    //     if (obj.posX <= 0 || obj.posX + obj.imageWidth >= 1500 ||
-    //         obj.posY <= 225 || obj.posY + obj.imageWidth >= 700) {
-    //         return true;
-    //     }
-    //     return false;
-    // }
 
     function drawInCanvas(image, imageX, imageY, object) {
         ctx.drawImage(image, imageX, imageY, object.imageWidth, object.imageHeight, object.posX, object.posY, object.wantedWidth, object.wantedHeight);
@@ -1987,7 +1973,7 @@ if (ctx) {
             if (!aiObject.attackLaunched) {
                 aiAttackCall(gameImage, aiObject.shortAttackLeftXy, aiObject.shortAttackRightXy, aiObject);
 
-                //set small bounding box based on image attack animate 315 2955 160 2790
+                //set small bounding box based on image attack animate
                 updateShortAttackObject(aiDog.shortAttackObject, aiDog.posX - 50, aiDog.posY + 35, aiDog.posX + 95, aiDog.posY + 40);
                 if (shortAttackCollision(aiDog, playerObject)) {
                     reduceHp(playerObject, gRand());
@@ -2176,7 +2162,7 @@ if (ctx) {
                         if (!aiBigGuy1.attackLaunched) {
                             aiAttackCall(gameImage, aiBigGuy1.shortAttackLeftXy, aiBigGuy1.shortAttackRightXy, aiBigGuy1);
 
-                            //set small bounding box based on image attack animate 315 2955 160 2790
+                            //set small bounding box based on image attack animate
                             updateShortAttackObject(aiBigGuy1.shortAttackObject, aiBigGuy1.posX - 50, aiBigGuy1.posY + 35, aiBigGuy1.posX + 95, aiBigGuy1.posY + 40);
                             if (shortAttackCollision(aiBigGuy1, playerObject)) {
                                 reduceHp(playerObject, gRand());
